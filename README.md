@@ -1,9 +1,10 @@
-## Sumbission for Boardroom Hackathon https://gitcoin.co/hackathon/dgov?
+## Sumbission | Boardroom Hackathon 
+https://gitcoin.co/hackathon/dgov?
 Submission for the Bounty https://gitcoin.co/issue/boardroom-inc/dgov-hackathon/2/100026328
 
-## Figma brainstorm file https://www.figma.com/file/C4JN0sVBAwihQSK705n4MI/Untitled?node-id=0%3A1
+### Figma brainstorm file https://www.figma.com/file/C4JN0sVBAwihQSK705n4MI/Untitled?node-id=0%3A1
 
-## Proposal
+### Proposal
 The idea is to create a semi-spatial interface for the protocol proposals to reduce a cognitive load from homogeneous text, identical pages, and proposals. Each protocol has to have a unique and identifiable page, color palette, etc while preserving project integrity. 
 
 Humans remember things spatially (see Mind Palace). Websites are no different from architecture and the cities — every page has to have a unique character as a room or a building. 
