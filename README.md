@@ -1,34 +1,13 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Sumbission for Boardroom Hackathon https://gitcoin.co/hackathon/dgov?
+Submission for the Bounty https://gitcoin.co/issue/boardroom-inc/dgov-hackathon/2/100026328
 
-## Getting Started
+## Figma brainstorm file https://www.figma.com/file/C4JN0sVBAwihQSK705n4MI/Untitled?node-id=0%3A1
 
-First, run the development server:
+## Proposal
+The idea is to create a semi-spatial interface for the protocol proposals to reduce a cognitive load from homogeneous text, identical pages, and proposals. Each protocol has to have a unique and identifiable page, color palette, etc while preserving project integrity. 
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+Humans remember things spatially (see Mind Palace). Websites are no different from architecture and the cities — every page has to have a unique character as a room or a building. 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Decentralized projects often rely on UI/UX patterns developed for web-2. We have to explore the patterns for a new web where wallets & governance mechanisms are part of every website. 
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The project is not trying to be a safe solution and to-go place for everyone but tries to find new methods to analyze the protocols.
