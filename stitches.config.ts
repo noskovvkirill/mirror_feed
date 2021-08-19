@@ -7,14 +7,9 @@ export const { styled, css, global, getCssString, keyframes } = createCss({
             ...sand,
             white: 'rgba(255,255,255,1)',
             black: 'rgba(0,0,0,1)',
-            background: sand.sand12,
-            foreground: sand.sand11,
-            text: sand.sand2,
-            pink: '#FF97CA',
-            green: '#1FCF6A',
-            orange: '#FF8339',
-            blue: '#7187FE',
-            yellow: '#EDF41A',
+            background: sand.sand1,
+            foreground: sand.sand5,
+            text: sand.sand12
         },
         space: {
             0: "4px",
