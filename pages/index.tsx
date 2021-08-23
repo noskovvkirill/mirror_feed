@@ -3,7 +3,6 @@ import Layout from '@/design-system/Layout'
 import Box from '@/design-system/primitives/Box'
 import Button from '@/design-system/primitives/Button'
 import { request, gql } from 'graphql-request';
-import { useEffect } from 'react';
 import * as dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
@@ -42,6 +41,7 @@ const queryEntries = gql`
   }
 `;
 
+//CONSIDER ADDING https://github.com/bvaughn/react-window to render the list faster
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const data = await request('https://mirror-api.com/graphql', query).then(({ leaderboard }) =>
@@ -50,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         .reduce((acc:any, i:any) => [...acc, ...i])
         .filter((i:any) => i.ensDomain !== null)
   );
-  const domains = data.map(async (item:any, i:any) => {
+  const domains = data.map(async (item:any) => {
     return(await request('https://mirror-api.com/graphql', queryEntries, {
        label: item.ensDomain.split('.')[0]
     }).then(({ publication: { entries } }) =>
@@ -58,8 +58,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
     ))
   })
 
-  const dataNew = await Promise.all(domains)
-  const items = dataNew.reduce((acc, item) => [...acc, ...item]).sort((a,b)=>b.timestamp-a.timestamp)
+  const dataNew:any = await Promise.all(domains)
+  const items:any = dataNew.reduce((acc:any, item:any) => [...acc, ...item]).sort((a:any,b:any)=>b.timestamp-a.timestamp)
   
   return { props: { items } }
 };
@@ -67,12 +67,20 @@ export const getServerSideProps: GetServerSideProps = async () => {
 type Props = {
   items:any;
 }
+type PropsParagraph = {
+  children: any;
+  props:any
+}
+type PropsImg = {
+  children: any;
+  props: any
+}
 
-const MyParagraph = ({ children, ...props }) => (
+const MyParagraph = ({ children, ...props }:PropsParagraph) => (
   <h5 {...props}>{children}</h5>
 );
 
-const MyImg = ({ children, ...props }) => (
+const MyImg = ({ children, ...props }: PropsImg) => (
   <img style={{maxWidth:'320px'}} {...props}>{children}</img>
 );
 
@@ -81,7 +89,7 @@ const Home = ({items}:Props) => {
   return (
     <Layout>
       <Box layout='flexBoxColumn' css={{width:'720px', alignItems:'center'}}>
-        {items.map((entry) => {
+        {items.map((entry:any) => {
           return (
             <Box layout='flexBoxColumn'  key={entry.id}>
               <Box layout='flexBoxRow' css={{

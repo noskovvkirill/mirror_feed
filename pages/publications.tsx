@@ -33,7 +33,7 @@ type Props = {
     items: any;
 }
 
-const Home = ({ data, items }: Props) => {
+const Home = ({ data }: Props) => {
     
 
     return (
@@ -42,7 +42,7 @@ const Home = ({ data, items }: Props) => {
         
 
                 <Box layout='flexBoxRow' css={{ flexWrap: 'wrap', gap: '$2' }}>
-                    {data.map((item, i) => (
+                    {data.map((item:any, i:any) => (
                         <Box
                             layout='flexBoxColumn'
                             css={{
