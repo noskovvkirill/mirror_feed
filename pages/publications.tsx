@@ -4,26 +4,23 @@ import Box from '@/design-system/primitives/Box'
 import { request, gql } from 'graphql-request';
 
 const query = gql`
-  {
-    leaderboard {
-      profiles {
-        account
-        ensDomain
-        __typename
-      }
-      __typename
+ {
+  domain(id:"0x1aaf79d9b3323ad0212f6a2f34f8c627d8d45e45a55c774d080e3077334bfad9") {
+    id
+    name
+    subdomains {
+      name
+      labelName
     }
   }
+}
 `;
 
-
 export const getServerSideProps: GetServerSideProps = async () => {
-    const data = await request('https://mirror-api.com/graphql', query).then(({ leaderboard }) =>
-        leaderboard
-            .map((l: any) => l.profiles)
-            .reduce((acc: any, i: any) => [...acc, ...i])
-            .filter((i: any) => i.ensDomain !== null)
-    );
+    const data = await request('https://api.thegraph.com/subgraphs/name/ensdomains/ens', query).then(({ domain }) =>{
+      return domain.subdomains
+        .filter((i:any) => i.labelName !== null)
+  });
    
     return { props: { data } }
 };
@@ -57,7 +54,7 @@ const Home = ({ data }: Props) => {
                                 border: '1px solid lightgray'
                             }}
                             key={i}>
-                            <p>{item.ensDomain}</p>
+                            <p>{item.name}</p>
                             {/* <User ens={item.ensDomain} /> */}
                         </Box>
                     ))}

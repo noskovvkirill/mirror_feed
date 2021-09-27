@@ -1,18 +1,32 @@
+import type { GetServerSideProps } from 'next'
 import Layout from '@/design-system/Layout'
 import Box from '@/design-system/primitives/Box'
-import { request, gql } from 'graphql-request';
-import type { GetServerSideProps } from 'next'
 import Button from '@/design-system/primitives/Button'
-
+import { request, gql } from 'graphql-request';
 import * as dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 import Markdown from 'markdown-to-jsx';
+import { useEffect } from 'react';
 
-const queryEntry = gql`
-query Entry($digest: String!) {
-  entry(digest: $digest) {
-       id
+const query = gql`
+ {
+  domain(id:"0x1aaf79d9b3323ad0212f6a2f34f8c627d8d45e45a55c774d080e3077334bfad9") {
+    id
+    name
+    subdomains {
+      name
+      labelName
+    }
+  }
+}
+`;
+
+const queryEntries = gql`
+  query getEntries($label: String!) {
+    publication(ensLabel: $label) {
+      entries {
+        id
         body
         digest
         timestamp
@@ -21,54 +35,40 @@ query Entry($digest: String!) {
           displayName
           id
         }
+      }
+      __typename
     }
- __typename
-}`
+  }
+`;
 
-const query = gql`
-{
-		transactions(first:20, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
-			edges {
-				node {
-					id
-					tags {
-						name
-						value
-					}
-				}
-			}
-		}
-	}`
+// https://arweave.net/graphql'
+//CONSIDER ADDING https://github.com/bvaughn/react-window to render the list faster
+
 export const getServerSideProps: GetServerSideProps = async () => {
-  const data = await request('https://arweave.net/graphql', query).then(({ transactions }) =>{
-      return transactions.edges
+  const data = await request('https://api.thegraph.com/subgraphs/name/ensdomains/ens', query).then(({ domain }) =>{
+      return domain.subdomains
+        .filter((i:any) => i.labelName !== null)
   });
 
-  const content = data.map(({node:{tags}}:{node:{tags:any}})=>{
-     return tags.find((c:any)=>c.name === 'Original-Content-Digest').value
-  })
-
-
-const entries = await Promise.all([...new Set(content)].map(async (item:any) => {
-    return(await request('https://mirror-api.com/graphql', queryEntry, {
-       digest: item
-    }).then((data) =>
-      data.entry
+  const domains = data.map(async (item:any) => {
+    return(await request('https://mirror-api.com/graphql', queryEntries, {
+       label: item.labelName
+    }).then(({ publication: { entries } }) =>
+      entries
     ).catch(()=>{return})
     )
-  }))
-
-  const entrieFiltered = entries.filter(function( element:any ) {
+  })
+  const dataNew:any = await Promise.all(domains)
+  const items:any = dataNew.flat().sort((a:any,b:any)=>b.id-a.id).filter(function( element:any ) {
    return element !== undefined;
 });
-
-  return {props:{entries:entrieFiltered}}
- 
+  console.log('items', items[333], items[334])
+  return { props: { items: items} }
 };
-type Props = {
-    entries:any[]
-}
 
+type Props = {
+  items:any; 
+}
 type PropsParagraph = {
   children: any;
   props:any
@@ -86,14 +86,18 @@ const MyImg = ({ children, ...props }: PropsImg) => (
   <img style={{maxWidth:'320px'}} {...props}>{children}</img>
 );
 
-
-const Data = ({entries}:Props) =>{
-    return(
+const Home = ({items}:Props) => {
+  useEffect(()=>{
+    console.log('items', items)
+  },[items])
+ 
+  
+  return (
     <Layout>
-        <Box layout='flexBoxColumn'>
-        {entries.map((entry:any)=>{
-            return(
-                 <Box layout='flexBoxColumn'  key={entry.id}>
+      <Box layout='flexBoxColumn' css={{width:'720px', alignItems:'center'}}>
+        {items.map((entry:any) => {
+          return (
+            <Box layout='flexBoxColumn'  key={entry.id}>
               <Box layout='flexBoxRow' css={{
                 alignItems:'center',
                 justifyContent:'space-between',
@@ -134,11 +138,11 @@ const Data = ({entries}:Props) =>{
                   >{entry.body}</Markdown>
                 </Box>
                </Box>
-            )
+          )
         })}
-        </Box>
+      </Box>
     </Layout>
-    )
+  )
 }
 
-export default Data
+export default Home
