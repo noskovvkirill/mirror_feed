@@ -1,7 +1,7 @@
-import { createCss } from "@stitches/react";
+import { createStitches } from "@stitches/react";
 import { sand } from '@radix-ui/colors'
 
-export const { styled, css, global, getCssString, keyframes } = createCss({
+export const { styled, css, globalCss, getCssText, keyframes } = createStitches({
     theme: {
         colors: {
             ...sand,
@@ -87,7 +87,7 @@ export const fontWeightAnimation = keyframes({
 
 
 //font weights are from 300—900 
-export const globalStyles = global({
+export const globalStyles = globalCss({
     "*": {
         margin: 0,
         padding: 0,
@@ -96,12 +96,12 @@ export const globalStyles = global({
         fontFamily: "Satoshi-Variable",
     },
     "body, html, #__next": { minHeight: "100%", height: "100%" },
-    h1: { fontSize: "$1", lineHeight: "$6", fontWeight: "300" },
-    h2: { fontSize: "$2", lineHeight: "$5" },
-    h3: { fontSize: "$3", lineHeight: "$4", fontWeight: "300" },
-    h4: { fontSize: "$4", lineHeight: "$3", fontWeight: "300" },
-    h5: { fontSize: "$5", lineHeight: "$2", fontWeight: "300" },
-    p: { fontSize: "$p", lineHeight: "$p", fontWeight: "300" },
+    h1: { fontSize: "$1", lineHeight: "$6", fontWeight: "300",  margin:'$2 0' },
+    h2: { fontSize: "$2", lineHeight: "$5", margin:'$2 0' },
+    h3: { fontSize: "$3", lineHeight: "$4", margin:'$4 0 $2 0', fontWeight: "300" },
+    h4: { fontSize: "$4", lineHeight: "$3",   margin:'$4 0 $2 0', fontWeight: "300" },
+    h5: { fontSize: "$5", lineHeight: "$2",  margin:'$4 0 $2 0', fontWeight: "300" },
+    p: { fontSize: "$p", lineHeight: "$p",  margin:'$1 0', fontWeight: "300" },
     span: { fontSize: "$p", lineHeight: "$p", fontWeight: "300" },
     b: {
         fontWeight: "300",
