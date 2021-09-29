@@ -21,14 +21,14 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 
 - [x] Fetch the list of publications from ENS
 - [x] Fetch the list of entries from Arweave and Mirror
-- [] Infinite scroll
+- [x] Infinite scroll
 - [] Basic layout design, all the basic components for correct Markdown rendering
-- [] Settings, toolbar, personal styling, typaface selection, multiple columns
+- [] Settings, toolbar, personal styling, typaface selection, multiple columns //save all the settings locally at the moment
   — [] Authentication
-- [] Favourites list, subscribtion and notification support
-- [] Curated List
+- [] Favourites list, subscribtions & notifications //centralized, using supabase for indexing together with CRON jobs
+- [] Curated Lists
 - [] Search
-- [] Custom CSS support
+- [] Custom CSS support (?)
 - [] Inline comments
 - [] Commandline
 - [] Infinite scroll

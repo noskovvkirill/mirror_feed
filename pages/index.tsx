@@ -5,6 +5,8 @@ import type { GetServerSideProps } from 'next'
 import ArticlePreview from '@/design-system/ArticlePreview';
 import useSWRInfinite from 'swr/infinite'
 import Button from '@/design-system/primitives/Button'
+import {useRef, useEffect, useCallback} from 'react'
+import useOnScreen from 'hooks/useOnScreen'
 
 const queryEntry = gql`
 query Entry($digest: String!) {
@@ -126,8 +128,22 @@ return [entriesFiltered, lastCursor]
 
 
 const Data = ({entries, lastCursor}:Props) =>{
-    //complex data is not support as fallback data :---(( )) need to rewrite types
-    const { data, error, isValidating, size, setSize } = useSWRInfinite(getKey, fetcher, {fallbackData: [[entries, lastCursor]]})
+    const ref = useRef<HTMLDivElement | null>(null)
+    const entry = useOnScreen(ref, {})
+    const isVisible = !!entry?.isIntersecting
+
+    //  useScrollPosition(({ currPos }) => {
+    //   console.log(currPos.y)
+    // })
+
+    useEffect(()=>{
+      if(isVisible){
+         setSize((s)=>s+=1)
+      }
+    },[isVisible])
+
+
+    const { data, error, isValidating, setSize } = useSWRInfinite(getKey, fetcher, {fallbackData: [[entries, lastCursor]]})
     if (!data) return <Layout>loading</Layout>
     return(
     <Layout>
@@ -139,11 +155,10 @@ const Data = ({entries, lastCursor}:Props) =>{
             )
           })
         })}
-        {!isValidating && (
-           <Button onClick={()=>{
-          console.log('size', size)
-          setSize((s)=>s+=1)}}>FETCH MORE</Button>
+        {isValidating && (
+            <Box css={{padding:'$2 calc($4 * 4)'}}>Patience</Box>
         )}
+        <div ref={ref}> &nbsp;</div>
         </Box>
     </Layout>
     )

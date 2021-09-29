@@ -359,7 +359,7 @@
     "@radix-ui/react-use-size" "0.1.0"
     "@radix-ui/rect" "0.1.0"
 
-"@radix-ui/react-portal@0.1.0":
+"@radix-ui/react-portal@0.1.0", "@radix-ui/react-portal@^0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-portal/-/react-portal-0.1.0.tgz#5f72fa2f9837df9a5e27ca9ff7a63393ff8e1f0b"
   integrity sha512-HiSDaQVlhoZWvp5Wy0JPPojqo31Z3efs890oyYkpKgRDWDdMYHzEWYZxC7pB60a6c6yM5JzjJc0bP7o6bye+/Q==
@@ -603,6 +603,11 @@ acorn@^7.4.0:
   version "7.4.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
+
+add@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/add/-/add-2.0.6.tgz#248f0a9f6e5a528ef2295dbeec30532130ae2235"
+  integrity sha1-JI8Kn25aUo7yKV2+7DBTITCuIjU=
 
 ajv@^6.10.0, ajv@^6.12.4:
   version "6.12.6"
@@ -4463,6 +4468,11 @@ yarn-upgrade-all@^0.5.4:
   dependencies:
     chalk "^4.1.0"
     commander "^5.1.0"
+
+yarn@^1.22.13:
+  version "1.22.13"
+  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.22.13.tgz#8789ef23b630fe99b819b044f4b7b93ab1bc1b8f"
+  integrity sha512-G8qG4t7Ef5cLVpzbM3HWWsow4hpfeSCfKtMnjfERmp9V5qSCOKz0uGAIQCM/x3gWfCzH8Bvb4hl3ZfhG/XD1Jg==
 
 yocto-queue@^0.1.0:
   version "0.1.0"

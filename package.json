@@ -13,7 +13,9 @@
     "@radix-ui/colors": "^0.1.7",
     "@radix-ui/react-dropdown-menu": "^0.1.0",
     "@radix-ui/react-id": "^0.1.0",
+    "@radix-ui/react-portal": "^0.1.0",
     "@stitches/react": "^1.2.1",
+    "add": "^2.0.6",
     "dayjs": "^1.10.6",
     "graphql": "^15.5.1",
     "graphql-request": "^3.5.0",
@@ -28,7 +30,8 @@
     "remark-parse": "^10.0.0",
     "remark-rehype": "^9.1.0",
     "swr": "^1.0.1",
-    "unified": "^10.1.0"
+    "unified": "^10.1.0",
+    "yarn": "^1.22.13"
   },
   "devDependencies": {
     "@types/react": "17.0.24",
