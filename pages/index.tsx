@@ -4,9 +4,12 @@ import { request, gql } from 'graphql-request';
 import type { GetServerSideProps } from 'next'
 import ArticlePreview from '@/design-system/ArticlePreview';
 import useSWRInfinite from 'swr/infinite'
-import Button from '@/design-system/primitives/Button'
-import {useRef, useEffect, useCallback} from 'react'
+import {useRef, useEffect} from 'react'
 import useOnScreen from 'hooks/useOnScreen'
+
+//global state
+import {ignoredPublication, pinnedItems, PinnedItem, IgnoredPublication, ReadingListItem} from 'contexts'
+import {useRecoilValue} from 'recoil'
 
 const queryEntry = gql`
 query Entry($digest: String!) {
@@ -132,33 +135,48 @@ const Data = ({entries, lastCursor}:Props) =>{
     const entry = useOnScreen(ref, {})
     const isVisible = !!entry?.isIntersecting
 
-    //  useScrollPosition(({ currPos }) => {
-    //   console.log(currPos.y)
-    // })
+    const ignoredList = useRecoilValue(ignoredPublication)
+    const pinnedList = useRecoilValue(pinnedItems)
+
+
+    // eslint-disable-next-line
+    const { data, error, isValidating, setSize } = useSWRInfinite(getKey, fetcher, {fallbackData: [[entries, lastCursor]]})
+    
 
     useEffect(()=>{
       if(isVisible){
          setSize((s)=>s+=1)
       }
-    },[isVisible])
+    },[isVisible, setSize])
 
-
-    const { data, error, isValidating, setSize } = useSWRInfinite(getKey, fetcher, {fallbackData: [[entries, lastCursor]]})
-    if (!data) return <Layout>loading</Layout>
+    if(error) return <Layout>Error ocurred..</Layout>
+    if (!data) return <Layout>Patience...</Layout>
+    
     return(
     <Layout>
         <Box layout='flexBoxColumn'>
-        {data.map((page:any)=>{
-          return page[0].map((entry:any)=>{
-            return(
-                <ArticlePreview key={entry.digest} entry={entry}/>
-            )
-          })
-        })}
-        {isValidating && (
-            <Box css={{padding:'$2 calc($4 * 4)'}}>Patience</Box>
-        )}
-        <div ref={ref}> &nbsp;</div>
+          {data.map((page:any)=>{
+            return page[0].map((entry:any)=>{
+              if(ignoredList.findIndex((item:IgnoredPublication)=>entry.publication.ensLabel === item.ensLabel) === -1){
+                  if(pinnedList.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest) !== -1){
+                    return;
+                  } else {
+                      return(
+                      <ArticlePreview pinned={false} key={entry.digest} entry={entry}/>
+                      )
+                  }
+              } else {
+                return;
+              }
+            })
+          })}
+      
+              <Box css={{padding:'$2 calc($4 * 4)', boxSizing:'border-box', height:'48px', transition:'$all', color:'$foregroundText'}}>
+                {isValidating && (
+                <>Patience</>)}
+              </Box>
+       
+          <div ref={ref}> &nbsp;</div>
         </Box>
     </Layout>
     )

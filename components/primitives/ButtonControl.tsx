@@ -2,6 +2,7 @@ import Button from '@/design-system/primitives/Button'
 import {styled} from 'stitches.config'
 import { ReactChild,useState } from 'react'
 import * as Portal from '@radix-ui/react-portal';
+import {useRef, useEffect} from 'react';
 
 const StyledControl = styled(Button,{
     border:'1px solid $foreground', 
@@ -40,42 +41,46 @@ const StyledControl = styled(Button,{
 
 const ButtonControl = ({children, label, isHighlighted, onClick}:{children:ReactChild,label:string, isHighlighted:boolean, onClick: () => void;}) => {
     const [isHover, setIsHover] = useState(false)
-    // if(isHover){
-    //      <Portal.Root>
-    //             <StyledControl
-    //         onClick={onClick}
-    //         onTouchStart={()=>setIsHover(true)} 
-    //         onTouchEnd={()=>setIsHover(false)}
-    //         onMouseEnter={()=>setIsHover(true)}
-    //         onMouseLeave={()=>setIsHover(false)}
-    //         isHighlighted={isHighlighted}>
-    //             {children}
-    //             {isHover && (
-    //                 <>
-    //                 ++{label}
-    //                 </>
-    //             )}
-    //         </StyledControl>
-    //      </Portal.Root>;
-    // }
+    const [pos, setPos] = useState({x:-99999, y:-99999})
+
     return(
-        //  <Portal.Root>
+        <>
             <StyledControl
-            // css={{position: isHover ? 'absolute' : 'relative'}}
+            css={{position:'relative'}}
             onClick={onClick}
             onTouchStart={()=>setIsHover(true)} 
             onTouchEnd={()=>setIsHover(false)}
-            onMouseEnter={()=>setIsHover(true)}
-            onMouseLeave={()=>setIsHover(false)}
+            onMouseEnter={(e)=>{
+                setIsHover(true)
+                 const target = e.target as HTMLElement;
+                const coord = target.getBoundingClientRect()
+                setPos({x:coord.x+window.scrollX, y:coord.y+window.scrollY})
+            
+            }}
+            onMouseLeave={()=>{
+                setIsHover(false)
+                setPos({x:-999999, y:-999999})
+            }}
             isHighlighted={isHighlighted}>
                 {children}
-                {isHover && (
-                    <>
-                    {label}
-                    </>
-                )}
             </StyledControl>
-        // </Portal.Root>
+            {isHover && (
+             <Portal.Root>
+                <StyledControl
+                css={{
+                position:'absolute', 
+                background:'$foregroundBronze',
+                color:'$backgroundBronze',
+                pointerEvents:'none', top:0, left:0,
+                transform:`translate(${pos.x}px, ${pos.y}px)`}}
+                isHighlighted={true}
+                >
+                    {children}
+                    {label}
+                </StyledControl>
+            </Portal.Root>
+            )}
+        </>
     )
 }
 

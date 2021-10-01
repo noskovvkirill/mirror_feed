@@ -7,13 +7,13 @@ function Icon() {
       width="15"
       height="15"
       fill="none"
-      style={{pointerEvents:'none'}}
+        style={{pointerEvents:'none'}}
       viewBox="0 0 15 15"
     >
       <path
         fill="currentColor"
         fillRule="evenodd"
-        d="M8 2.75a.5.5 0 00-1 0V7H2.75a.5.5 0 000 1H7v4.25a.5.5 0 001 0V8h4.25a.5.5 0 000-1H8V2.75z"
+        d="M3.135 6.158a.5.5 0 01.707-.023L7.5 9.565l3.658-3.43a.5.5 0 01.684.73l-4 3.75a.5.5 0 01-.684 0l-4-3.75a.5.5 0 01-.023-.707z"
         clipRule="evenodd"
       ></path>
     </svg>

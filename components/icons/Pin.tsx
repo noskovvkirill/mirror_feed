@@ -7,6 +7,7 @@ function Icon() {
       width="15"
       height="15"
       fill="none"
+      style={{pointerEvents:'none'}}
       viewBox="0 0 15 15"
     >
       <path

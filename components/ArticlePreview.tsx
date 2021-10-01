@@ -6,6 +6,7 @@ import LinkIcon from '@/design-system/icons/Link'
 import AddIcon from '@/design-system/icons/Add'
 import OpenIcon from '@/design-system/icons/Open'
 import PinIcon from '@/design-system/icons/Pin'
+import UnPinIcon from '@/design-system/icons/UnPin'
 import RemoveIcon from '@/design-system/icons/Remove'
 
 import * as dayjs from 'dayjs'
@@ -24,10 +25,16 @@ import useOnScreen from 'hooks/useOnScreen'
 import {useRef} from 'react'
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 
+//global state
+//global state
+import {ignoredPublication, pinnedItems, PinnedItem, IgnoredPublication, ReadingListItem} from 'contexts'
+import { useRecoilState, useSetRecoilState} from 'recoil'
+
 interface Props {
     entry: Entry;
+    pinned:boolean,
 }
-type Entry = {
+export type Entry = {
   id:string,
   digest:string,
   timestamp:number,
@@ -49,13 +56,8 @@ const StyledContainer = styled('div',{
     padding:'$4 $2',
     margin:'calc($4 * 1) 0',
     color:'$text',
-    // border:'1px solid $foreground',
     borderRadius:'$2',
-    // cursor:'pointer',
     transition:'$background',
-    '&:hover':{
-        // boxShadow:'$normal'
-    },
     variants:{
         isHighlighted:{
             true:{
@@ -83,10 +85,12 @@ const StyledHeader = styled('div',{
       margin:'$2 $2 $2 0',
       width:'32px',
       color:'$foreground',
-       mixBlendMode:'multiply',
-       transition:'$all',
+      mixBlendMode:'multiply',
+     transition:'$all',
       cursor:'pointer',
       'h5':{
+          userSelect:'none',
+          whiteSpace:'nowrap',
           fontWeight:'400',
           transform:'rotate(-90deg)'
       },
@@ -149,6 +153,7 @@ const StyledTitle = styled('div', {
 const StyledBody = styled('div',{
     overflow:'hidden',
     marginRight:'calc($4 * 1.5)',
+    width:'100%',
      variants:{
         isHighlighted:{
             true:{
@@ -172,10 +177,11 @@ const StyledControls = styled('div',{
     display:'flex',
     flexDirection:'column',
     gap:'$1',
-    padding:'0 $2',
-    width:'calc($4 * 7)',
-    overflow:'hidden'
-    // marginRight:'$4'
+    padding:'0 $2 $1 $2',
+    marginRight:'$2',
+    width:'fit-content',
+    boxSizing:'border-box',
+    overflow:'hidden',
 })
 
 
@@ -183,35 +189,6 @@ const StyledImageHidden = styled(StyledImage,{
     display:'none'
 })
 
-const StyledControl = styled(Button,{
-    border:'1px solid $foreground', 
-    color:'$foregroundText', 
-    borderRadius:'$round', 
-    padding:'$1', 
-    variants:{
-        isHighlighted:{
-            true:{
-                 border:'1px solid $foregroundBronze', 
-                 color:'$foregroundTextBronze', 
-                '&:hover':{
-                    background:'$foregroundBronze',
-                    color:'$backgroundBronze'
-                },
-            },
-            false:{
-                  border:'1px solid $foreground', 
-                  color:'$foregroundText', 
-                  '&:hover':{
-                    background:'$foreground',
-                    color:'$background'
-                },
-            }
-        }
-    },
-     defaultVariants:{
-        isHighlighted:false
-    }
-})
 
 
 const processor = unified()
@@ -234,16 +211,66 @@ function shorten(str:string, maxLen:number, separator = ' ') {
   return str.substr(0, str.lastIndexOf(separator, maxLen));
 } //that is a weird way to shorten the text, because I do that to markdown and may touch the styling symbols
 
-const ArticlePreview = ({entry}:Props) => {
+const ArticlePreview = ({entry, pinned}:Props) => {
     const router = useRouter()
     const ref = useRef<HTMLDivElement | null>(null)
     const el = useOnScreen(ref, {threshold:1})
     const isFocused = !!el?.isIntersecting
+    const setIgnoredList = useSetRecoilState(ignoredPublication)
+    const setPinnedItem = useSetRecoilState(pinnedItems)
 
-    // const isVisible = useOnScreen(ref)
+    if(pinned){
+        return(
+        <StyledContainer 
+            css={{ width:'256px', height:'128px', flexDirection:'column', margin:'0', mixBlendMode:'multiply'}}
+            isHighlighted={true}
+            ref={ref}>
+                    <StyledControls css={{flexDirection:'row', padding:'0', margin:'0',overflow:'visible', height:'fit-content'}}>
+                        <ButtonControl
+                        isHighlighted={true}
+                        label='open'
+                        onClick={()=>router.push(`/article/${entry.digest}`)}><OpenIcon/></ButtonControl>
+                        <ButtonControl
+                        label='to reading list'
+                        isHighlighted={true}
+                        onClick={()=>router.push(`/article/${entry.digest}`)}><AddIcon/></ButtonControl>
+                        <ButtonControl
+                            label='unpin item'
+                            isHighlighted={true}
+                            onClick={()=>
+                            setPinnedItem((prevState:PinnedItem[])=>{
+                                const indexUnPin = prevState.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest)
+                                const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
+                                return newArray
+                            })
+                            }><UnPinIcon/>
+                        </ButtonControl>
+                        {/* <ButtonControl
+                        label='ignore this publication'
+                        isHighlighted={isFocused}
+                        onClick={()=>
+                        setIgnoredList((prevState:IgnoredPublication[])=>[...prevState, {ensLabel:entry.publication.ensLabel}])
+                        }><RemoveIcon/></ButtonControl> */}
+                        {/* <StyledHeader isHighlighted={isFocused}>
+                            <h5>{entry.publication.ensLabel}</h5>
+                        </StyledHeader> */}
+
+                    </StyledControls>
+                    <StyledBody isHighlighted={true} css={{padding:'0', margin:0}}>
+                        {/* <StyledMetadata> */}
+                            {/* <StyledLabel isHighlighted={isFocused}>{entry.author.displayName}</StyledLabel> */}
+                            {/* <StyledLabel isHighlighted={isFocused}>{dayjs.unix(entry.timestamp).fromNow() }</StyledLabel> */}
+                            {/* <StyledLabel isHighlighted={isFocused} css={{backgroundColor:'transparent', padding:'0 $1', cursor:'pointer'}} as='a' rel="noreferrer" href={`https://${entry.publication.ensLabel}.mirror.xyz/${entry.digest}`} target='_blank'><LinkIcon/></StyledLabel> */}
+                        {/* </StyledMetadata> */}
+                        <StyledTitle css={{padding:0, margin:0}} isHighlighted={isFocused}>
+                            <p style={{padding:0, margin:'16px 0px'}}>{entry.title}</p>
+                        </StyledTitle>
+                        {/* {processor.processSync(shorten(entry.body,2000)).result} */}
+                    </StyledBody>
+            </StyledContainer>
+        )}
+
     return(
-        // <div ref={ref}>
-        //     {JSON.stringify(isVisible)}
             <StyledContainer 
             isHighlighted={isFocused}
             ref={ref}>
@@ -253,35 +280,41 @@ const ArticlePreview = ({entry}:Props) => {
                         label='open'
                         onClick={()=>router.push(`/article/${entry.digest}`)}><OpenIcon/></ButtonControl>
                         <ButtonControl
-                        label='read later'
+                        label='to reading list'
                         isHighlighted={isFocused}
                         onClick={()=>router.push(`/article/${entry.digest}`)}><AddIcon/></ButtonControl>
                         <br/>
                         <ButtonControl
-                        label='pin'
-                        isHighlighted={isFocused}
-                        onClick={()=>router.push(`/article/${entry.digest}`)}><PinIcon/></ButtonControl>
+                            label='pin on top'
+                            isHighlighted={isFocused}
+                            onClick={()=>
+                            setPinnedItem((prevState:PinnedItem[])=>[...prevState, {entry:entry}])
+                            }><PinIcon/>
+                        </ButtonControl>
+                       
+                  
                         <ButtonControl
-                        label='ignore'
+                        label='ignore this publication'
                         isHighlighted={isFocused}
-                        onClick={()=>router.push(`/article/${entry.digest}`)}><RemoveIcon/></ButtonControl>
-                    <StyledHeader isHighlighted={isFocused}>
-                        <h5>{entry.publication.ensLabel}</h5>
-                     </StyledHeader>
+                        onClick={()=>
+                        setIgnoredList((prevState:IgnoredPublication[])=>[...prevState, {ensLabel:entry.publication.ensLabel}])
+                        }><RemoveIcon/></ButtonControl>
+                        <StyledHeader isHighlighted={isFocused}>
+                            <h5>{entry.publication.ensLabel}</h5>
+                        </StyledHeader>
+
                     </StyledControls>
                     <StyledBody isHighlighted={isFocused}>
                         <StyledMetadata>
                             <StyledLabel isHighlighted={isFocused}>{entry.author.displayName}</StyledLabel>
                             <StyledLabel isHighlighted={isFocused}>{dayjs.unix(entry.timestamp).fromNow() }</StyledLabel>
                             <StyledLabel isHighlighted={isFocused} css={{backgroundColor:'transparent', padding:'0 $1', cursor:'pointer'}} as='a' rel="noreferrer" href={`https://${entry.publication.ensLabel}.mirror.xyz/${entry.digest}`} target='_blank'><LinkIcon/></StyledLabel>
-
                         </StyledMetadata>
                         <StyledTitle isHighlighted={isFocused}>
                             <h1>{entry.title}</h1>
                         </StyledTitle>
                         {processor.processSync(shorten(entry.body,2000)).result}
                     </StyledBody>
-                
             </StyledContainer>
         // </div>
     )
