@@ -72,7 +72,7 @@ export const { styled, css, globalCss, getCssText, keyframes } = createStitches(
             round: "9999px",
         },
         shadows: {
-            normal: "0px 4px 14px rgba(0, 0, 0, 0.7)",
+            normal: `0px 2px 4px rgba(224,206,199, 0.5)`,
         },
         zIndices: {},
         transitions: {

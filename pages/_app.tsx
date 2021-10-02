@@ -9,11 +9,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   globalStyles();
 
   return (
-    <RecoilRoot>
-      <IdProvider>
-        <Component {...pageProps} />
-      </IdProvider>
-    </RecoilRoot>
+      <RecoilRoot>
+          <IdProvider>
+            <Component {...pageProps} />
+          </IdProvider>
+      </RecoilRoot>
   );
 }
 

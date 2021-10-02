@@ -1,12 +1,11 @@
 import {styled} from 'stitches.config'
-import Button from '@/design-system/primitives/Button'
 import React from 'react'
 import {StyledImage, StyledLabel, StyledH1, StyledH2, StyledH3, StyledH4, StyledH5, StyledLink} from '@/design-system/text/TextParsing'
 import LinkIcon from '@/design-system/icons/Link'
+import SuccessMarkIcon from '@/design-system/icons/Success'
 import AddIcon from '@/design-system/icons/Add'
 import OpenIcon from '@/design-system/icons/Open'
 import PinIcon from '@/design-system/icons/Pin'
-import UnPinIcon from '@/design-system/icons/UnPin'
 import RemoveIcon from '@/design-system/icons/Remove'
 
 import * as dayjs from 'dayjs'
@@ -22,17 +21,17 @@ import remarkRehype from 'remark-rehype'
 
 import {useRouter} from 'next/router'
 import useOnScreen from 'hooks/useOnScreen'
-import {useRef} from 'react'
+import {useRef, useState} from 'react'
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 
 //global state
 //global state
-import {ignoredPublication, pinnedItems, PinnedItem, IgnoredPublication, ReadingListItem} from 'contexts'
-import { useRecoilState, useSetRecoilState} from 'recoil'
+import {ignoredPublication, pinnedItems, readLaterList, PinnedItem, IgnoredPublication, ReadingListItem} from 'contexts'
+import { useSetRecoilState} from 'recoil'
+import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 
 interface Props {
     entry: Entry;
-    pinned:boolean,
 }
 export type Entry = {
   id:string,
@@ -117,6 +116,8 @@ const StyledHeader = styled('div',{
 
 const StyledMetadata = styled('div', {
     display:'flex',
+    position:'relative',
+    top:'calc($1 / 2)',
     gap:'$0', 
     alignItems:'center',
     justifyContent:'flex-start',
@@ -182,6 +183,20 @@ const StyledControls = styled('div',{
     width:'fit-content',
     boxSizing:'border-box',
     overflow:'hidden',
+    transition:'$all',
+    variants:{
+        isVisible:{
+            true:{
+                opacity:'1'
+            },
+            false:{
+                opacity:'0'
+            }
+        }
+    },
+    defaultVariants:{
+        isVisible:false
+    }
 })
 
 
@@ -211,91 +226,80 @@ function shorten(str:string, maxLen:number, separator = ' ') {
   return str.substr(0, str.lastIndexOf(separator, maxLen));
 } //that is a weird way to shorten the text, because I do that to markdown and may touch the styling symbols
 
-const ArticlePreview = ({entry, pinned}:Props) => {
+
+
+
+const ArticlePreview = ({entry}:Props) => {
     const router = useRouter()
     const ref = useRef<HTMLDivElement | null>(null)
     const el = useOnScreen(ref, {threshold:1})
     const isFocused = !!el?.isIntersecting
     const setIgnoredList = useSetRecoilState(ignoredPublication)
     const setPinnedItem = useSetRecoilState(pinnedItems)
+    const setReadLater = useSetRecoilState(readLaterList)
+    const readingList = useRecoilValueAfterMount(readLaterList, [])
+    const [isHover, setIsHover] = useState(false)
+ 
+    return(
+            <StyledContainer 
+            id={`preview-${entry.digest}`}
+            onTouchStart={()=>setIsHover(true)} 
+            onTouchEnd={()=>setIsHover(false)}
+            onMouseEnter={()=>{
+                setIsHover(true)     
+            }}
+            onMouseLeave={()=>{
+                setIsHover(false)
+            }}
 
-    if(pinned){
-        return(
-        <StyledContainer 
-            css={{ width:'256px', height:'128px', flexDirection:'column', margin:'0', mixBlendMode:'multiply'}}
-            isHighlighted={true}
+            isHighlighted={(isHover || isFocused) ? true : false}
             ref={ref}>
-                    <StyledControls css={{flexDirection:'row', padding:'0', margin:'0',overflow:'visible', height:'fit-content'}}>
+                    <StyledControls isVisible={(isHover || isFocused) ? true : false}>
                         <ButtonControl
-                        isHighlighted={true}
+                        isHighlighted={(isHover || isFocused) ? true : false}
                         label='open'
                         onClick={()=>router.push(`/article/${entry.digest}`)}><OpenIcon/></ButtonControl>
-                        <ButtonControl
+
+                           {readingList.findIndex((item:ReadingListItem)=>item.entryDigest === entry.digest) === -1 
+                        ?    <ButtonControl
+                            selected={false}
+                           key={'reading control'}
                         label='to reading list'
+                        isHighlighted={(isHover || isFocused) ? true : false}
+                        onClick={()=>{
+                            setReadLater((prevState:ReadingListItem[])=>{
+                                //check for dublicates just in case 
+                               if(prevState.findIndex((item:ReadingListItem)=>item.entryDigest === entry.digest) !== -1) return prevState
+                               return [...prevState, {entryDigest:entry.digest, title:entry.title}]})
+                        }}>
+                            <AddIcon/>
+                        </ButtonControl>
+                        :    <ButtonControl
+                        selected={true}
+                        label='remove from the reading list'
                         isHighlighted={true}
-                        onClick={()=>router.push(`/article/${entry.digest}`)}><AddIcon/></ButtonControl>
-                        <ButtonControl
-                            label='unpin item'
-                            isHighlighted={true}
-                            onClick={()=>
-                            setPinnedItem((prevState:PinnedItem[])=>{
-                                const indexUnPin = prevState.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest)
+                        onClick={()=>{
+                            setReadLater((prevState:ReadingListItem[])=>{
+                                const indexUnPin = prevState.findIndex((item:ReadingListItem)=>item.entryDigest=== entry.digest)
                                 const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
                                 return newArray
                             })
-                            }><UnPinIcon/>
+                        }}>
+                            <SuccessMarkIcon/>
                         </ButtonControl>
-                        {/* <ButtonControl
-                        label='ignore this publication'
-                        isHighlighted={isFocused}
-                        onClick={()=>
-                        setIgnoredList((prevState:IgnoredPublication[])=>[...prevState, {ensLabel:entry.publication.ensLabel}])
-                        }><RemoveIcon/></ButtonControl> */}
-                        {/* <StyledHeader isHighlighted={isFocused}>
-                            <h5>{entry.publication.ensLabel}</h5>
-                        </StyledHeader> */}
-
-                    </StyledControls>
-                    <StyledBody isHighlighted={true} css={{padding:'0', margin:0}}>
-                        {/* <StyledMetadata> */}
-                            {/* <StyledLabel isHighlighted={isFocused}>{entry.author.displayName}</StyledLabel> */}
-                            {/* <StyledLabel isHighlighted={isFocused}>{dayjs.unix(entry.timestamp).fromNow() }</StyledLabel> */}
-                            {/* <StyledLabel isHighlighted={isFocused} css={{backgroundColor:'transparent', padding:'0 $1', cursor:'pointer'}} as='a' rel="noreferrer" href={`https://${entry.publication.ensLabel}.mirror.xyz/${entry.digest}`} target='_blank'><LinkIcon/></StyledLabel> */}
-                        {/* </StyledMetadata> */}
-                        <StyledTitle css={{padding:0, margin:0}} isHighlighted={isFocused}>
-                            <p style={{padding:0, margin:'16px 0px'}}>{entry.title}</p>
-                        </StyledTitle>
-                        {/* {processor.processSync(shorten(entry.body,2000)).result} */}
-                    </StyledBody>
-            </StyledContainer>
-        )}
-
-    return(
-            <StyledContainer 
-            isHighlighted={isFocused}
-            ref={ref}>
-                    <StyledControls>
-                        <ButtonControl
-                        isHighlighted={isFocused}
-                        label='open'
-                        onClick={()=>router.push(`/article/${entry.digest}`)}><OpenIcon/></ButtonControl>
-                        <ButtonControl
-                        label='to reading list'
-                        isHighlighted={isFocused}
-                        onClick={()=>router.push(`/article/${entry.digest}`)}><AddIcon/></ButtonControl>
+                        }
+                    
                         <br/>
                         <ButtonControl
                             label='pin on top'
-                            isHighlighted={isFocused}
+                            isHighlighted={(isHover || isFocused) ? true : false}
                             onClick={()=>
                             setPinnedItem((prevState:PinnedItem[])=>[...prevState, {entry:entry}])
                             }><PinIcon/>
                         </ButtonControl>
-                       
-                  
                         <ButtonControl
                         label='ignore this publication'
-                        isHighlighted={isFocused}
+                        isHighlighted={(isHover || isFocused) ? true : false}
                         onClick={()=>
                         setIgnoredList((prevState:IgnoredPublication[])=>[...prevState, {ensLabel:entry.publication.ensLabel}])
                         }><RemoveIcon/></ButtonControl>
@@ -304,13 +308,14 @@ const ArticlePreview = ({entry, pinned}:Props) => {
                         </StyledHeader>
 
                     </StyledControls>
-                    <StyledBody isHighlighted={isFocused}>
+        
+                    <StyledBody isHighlighted={(isHover || isFocused) ? true : false}>
                         <StyledMetadata>
-                            <StyledLabel isHighlighted={isFocused}>{entry.author.displayName}</StyledLabel>
-                            <StyledLabel isHighlighted={isFocused}>{dayjs.unix(entry.timestamp).fromNow() }</StyledLabel>
-                            <StyledLabel isHighlighted={isFocused} css={{backgroundColor:'transparent', padding:'0 $1', cursor:'pointer'}} as='a' rel="noreferrer" href={`https://${entry.publication.ensLabel}.mirror.xyz/${entry.digest}`} target='_blank'><LinkIcon/></StyledLabel>
+                            <StyledLabel isHighlighted={(isHover || isFocused) ? true : false}>{entry.author.displayName}</StyledLabel>
+                            <StyledLabel isHighlighted={(isHover || isFocused) ? true : false}>{dayjs.unix(entry.timestamp).fromNow() }</StyledLabel>
+                            <StyledLabel isHighlighted={(isHover || isFocused) ? true : false} css={{backgroundColor:'transparent', padding:'0 $1', cursor:'pointer'}} as='a' rel="noreferrer" href={`https://${entry.publication.ensLabel}.mirror.xyz/${entry.digest}`} target='_blank'><LinkIcon/></StyledLabel>
                         </StyledMetadata>
-                        <StyledTitle isHighlighted={isFocused}>
+                        <StyledTitle isHighlighted={(isHover || isFocused) ? true : false}>
                             <h1>{entry.title}</h1>
                         </StyledTitle>
                         {processor.processSync(shorten(entry.body,2000)).result}

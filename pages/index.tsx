@@ -9,7 +9,7 @@ import useOnScreen from 'hooks/useOnScreen'
 
 //global state
 import {ignoredPublication, pinnedItems, PinnedItem, IgnoredPublication, ReadingListItem} from 'contexts'
-import {useRecoilValue} from 'recoil'
+import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 
 const queryEntry = gql`
 query Entry($digest: String!) {
@@ -32,7 +32,7 @@ query Entry($digest: String!) {
 
 const query = gql`
 {
-		transactions(first:10, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
+		transactions(first:20, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
 			edges {
 				node {
 					id
@@ -80,11 +80,11 @@ type Props = {
 }
 
 
-const getKey = (pageIndex:any, previousPageData:any) => {
+const getKey = (_:any, previousPageData:any) => {
   if (previousPageData && !previousPageData.length) return null // reached the end
 
   return `{
-		transactions(first:10, ${previousPageData ? 'after:"'+previousPageData[1]+'"' : ''}, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
+		transactions(first:20, ${previousPageData ? 'after:"'+previousPageData[1]+'"' : ''}, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
 			edges {
 				node {
 					id
@@ -135,12 +135,11 @@ const Data = ({entries, lastCursor}:Props) =>{
     const entry = useOnScreen(ref, {})
     const isVisible = !!entry?.isIntersecting
 
-    const ignoredList = useRecoilValue(ignoredPublication)
-    const pinnedList = useRecoilValue(pinnedItems)
+    const ignoredList = useRecoilValueAfterMount(ignoredPublication, [])
+    const pinnedList = useRecoilValueAfterMount(pinnedItems, [])
 
 
-    // eslint-disable-next-line
-    const { data, error, isValidating, setSize } = useSWRInfinite(getKey, fetcher, {fallbackData: [[entries, lastCursor]]})
+    const { data, error, isValidating, setSize } = useSWRInfinite(getKey, fetcher, {fallbackData: [[entries, lastCursor]]}) // tslint:disable-line
     
 
     useEffect(()=>{
@@ -151,7 +150,7 @@ const Data = ({entries, lastCursor}:Props) =>{
 
     if(error) return <Layout>Error ocurred..</Layout>
     if (!data) return <Layout>Patience...</Layout>
-    
+
     return(
     <Layout>
         <Box layout='flexBoxColumn'>
@@ -162,7 +161,7 @@ const Data = ({entries, lastCursor}:Props) =>{
                     return;
                   } else {
                       return(
-                      <ArticlePreview pinned={false} key={entry.digest} entry={entry}/>
+                      <ArticlePreview key={entry.digest} entry={entry}/>
                       )
                   }
               } else {

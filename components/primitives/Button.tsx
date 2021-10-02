@@ -3,10 +3,10 @@ import { styled } from "../../stitches.config";
 const StyledButton = styled("button", {
     transition: "$background",
     userSelect: "none",
-    fontSize: "$p",
-    padding: "$1 $3",
+    fontSize: "$6",
+    padding: "$1 $2",
     width: "fit-content",
-    borderRadius: "$1",
+    borderRadius: "$2",
     display: "flex",
     cursor: "pointer",
     lineHeight: "130%",
@@ -17,7 +17,8 @@ const StyledButton = styled("button", {
     variants: {
         look: {
             default: {
-        
+                border:'1px solid $foreground',
+                color:'$foregroundText',
                 "&:focus": {
                     
                 },
@@ -25,10 +26,14 @@ const StyledButton = styled("button", {
                    
                 },
                 "&:hover": {
-                    
+                    color:'$background',
+                    backgroundColor:'$foregroundBronze',
+                    border:'1px solid $foregroundBronze'
                 },
                 "&:disabled": {
-                    
+                    color:'$background',
+                    backgroundColor:'$foregroundBronze',
+                    border:'1px solid $foregroundBronze'
                 },
             },
             outlined: {

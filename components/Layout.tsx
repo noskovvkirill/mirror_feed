@@ -2,16 +2,21 @@ import {styled} from 'stitches.config'
 import Box from '@/design-system/primitives/Box'
 import ArrowDownIcon from '@/design-system/icons/ArrowDown'
 import AddAllIcon from '@/design-system/icons/AddAll'
+import Nav from '@/design-system/Nav'
 
 import Head from 'next/head'
 import { ReactNode, useState, useEffect} from 'react'
 // import Input from '@/design-system/primitives/Input'
 import {useRouter} from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { pinnedItems, PinnedItem } from 'contexts'
-import { useRecoilState } from 'recoil'
+import { pinnedItems, PinnedItem, readLaterList, ReadingListItem} from 'contexts'
+import { useRecoilStateLoadable, useSetRecoilState } from 'recoil'
 import ArticlePreview from '@/design-system/ArticlePreview'
+import PinnedComponent  from '@/design-system/PinnedItem' 
 import ButtonControl from '@/design-system/primitives/ButtonControl'
+import * as ScrollArea from '@radix-ui/react-scroll-area';
+import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
+
 
 const StyledMain = styled('main', {
     backgroundColor: '$background',
@@ -34,19 +39,77 @@ const StyledHeader = styled('header', {
     width:'fit-content',
     maxWidth:'100%',
     boxSizing:'border-box',
-    overflowY:'scroll',
+    overflowY:'hidden',
     background:'none',
     backdropFilter:'opacity(0.25)',
     top:'0',
-    padding: '$2 $2 0 $4',
+    padding: '$2 0 0 $4',
     color: '$text',
     justifyContent: 'flex-start',
-    overflowX:'scroll',
+    overflowX:'hidden',
     display: 'flex',
     alignItems:'flex-start',
     flexDirection: 'row', 
     gap:'$2',
 })
+
+const StyledPinnedList = styled(ScrollArea.Root,{
+    width:'100%',
+    boxSizing:'border-box',
+    overflow:'hidden',
+    display:'block',
+})
+
+const StyledViewport = styled(ScrollArea.Viewport, {
+  width: '100%',
+  display:'flex',
+  flexDirection:'row',
+  gap:'$1',
+  height: 'fit-content',
+  boxSizing:'border-box',
+  borderRadius: '$2',
+});
+
+const StyledScrollbar = styled(ScrollArea.Scrollbar, {
+  display: 'flex',
+  // ensures no selection
+  userSelect: 'none',
+  // disable browser handling of all panning and zooming gestures on touch devices
+  touchAction: 'none',
+  position:'absolute',
+  top:0,
+  padding: '0',
+  background: '$backgroundBronze',
+  mixBlendMode:'multiply',
+  backdropFilter:'opacity(0.5)',
+  transition: '$all',
+  '&:hover': { background: '$foregroundBronze' },
+  '&[data-orientation="horizontal"]': {
+    flexDirection: 'column',
+    height:'calc($1 * 1.5)',
+  },
+});
+
+const StyledThumb = styled(ScrollArea.Thumb, {
+  flex: 1,
+  background: '$foregroundBronze',
+  mixBlendMode:'multiply',
+  backdropFilter:'opacity(0.5)',
+  borderRadius:'$round',
+  // increase target size for touch devices https://www.w3.org/WAI/WCAG21/Understanding/target-size.html
+  position: 'relative',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '100%',
+    height: '100%',
+    minWidth: 44,
+    minHeight: 44,
+  },
+});
 
 type Props = {
     children?: ReactNode;
@@ -58,14 +121,15 @@ export const history: Array<{
 }> = [];
 
 const Layout = ({children}:Props) =>{
+    const pinnedList =  useRecoilValueAfterMount(pinnedItems, [])
 
-    const [pinnedList, setPinnedList] = useRecoilState(pinnedItems)
+    const setPinnedList = useSetRecoilState(pinnedItems)
     const [isPinnedList, setIsPinnedList] = useState(false)
+    const setReadLater = useSetRecoilState(readLaterList)
 
     const router = useRouter()
 
     useEffect(()=>{
-        // setIsPinnedList(true)
         console.log('shaking animation when element is added')
     },[pinnedList])
 
@@ -86,53 +150,67 @@ const Layout = ({children}:Props) =>{
                     <link rel="icon" href="/favicon.ico" />
                 </Head>
 
-                <Box css={{position:'fixed', top:'$4', right:'$4'}}>
-                    SETTIGNS!@!!
-                </Box>
-
-
+                <Nav/>
                 <StyledHeader>
-                <Box layout='flexBoxColumn'
-                css={{margin:'$4',
-                alignItems:'center', 
-                justifyContent:'center', 
-                marginRight:'$1', 
-                background:'transparent',
-                }}
-                
-                >
-                <ButtonControl
-                isHighlighted={false}
-                label={isPinnedList ? 'hide pinned' : 'show pinned' }
-                onClick={()=>setIsPinnedList(!isPinnedList)}
-                >
-                    <Box css={{transform:isPinnedList ? 'rotate(180deg)' : ''}}> 
-                    <ArrowDownIcon/>
-                    </Box>
-                </ButtonControl>
+                    <Box layout='flexBoxColumn'
+                    css={{margin:'$4',
+                    alignItems:'center', 
+                    justifyContent:'center', 
+                    marginRight:'$1', 
+                    background:'transparent',
+                    }}
+                    
+                    >
+                    <ButtonControl
+                    isHighlighted={false}
+                    label={isPinnedList ? 'hide pinned' : 'show pinned' }
+                    onClick={()=>setIsPinnedList(!isPinnedList)}
+                    >
+                        <Box css={{
+                            pointerEvents:'none',
+                            transform:isPinnedList ? 'rotate(180deg)' : ''}}> 
+                        <ArrowDownIcon/>
+                        </Box>
+                    </ButtonControl>
 
-                <ButtonControl 
-                isHighlighted={false}
-                onClick={()=>{
-                    setPinnedList([])
-                }}
-                label='Add all to the reading list'>
-                    <AddAllIcon/>
-                </ButtonControl>
-                </Box>
+                    <ButtonControl 
+                    isHighlighted={false}
+                    onClick={()=>{
+                        setReadLater((prevState:ReadingListItem[])=>{
+                            const pinnedItemsToReadingList = pinnedList.map((item:PinnedItem)=>{
+                                return({entryDigest:item.entry.digest, title:item.entry.title})
+                            })
+                            return [...prevState, ...pinnedItemsToReadingList]
+                        })
+                        setPinnedList([])
+                    }}
+                    label='Add all to the reading list'>
+                        <AddAllIcon/>
+                    </ButtonControl>
+                    </Box>
 
                     {!isPinnedList && (
                         <Box layout='flexBoxRow' css={{margin:'calc($4 + 8px) $4 $4 -$2',  fontSize:'$6', color:'$foregroundText', alignItems:'center', justifyContent:'center'}}>{pinnedList.length}</Box>
                     )}
 
                     {isPinnedList && (
-                         <Box layout='flexBoxRow' css={{height:'fit-content'}}>
-                            {pinnedList.map((item:PinnedItem)=>{
-                                return(
-                                    <ArticlePreview key={item.entry.digest} pinned={true} entry={item.entry}/>
-                                )
-                            })}
-                        </Box>
+                        <StyledPinnedList type='scroll'>
+                        
+                         <StyledViewport asChild={false}>
+                             <Box layout='flexBoxRow' css={{paddingTop:'$2'}}>
+                                {pinnedList.map((item:PinnedItem)=>{
+                                    return(
+                                        <PinnedComponent key={item.entry.digest}  entry={item.entry}/>
+                                    )
+                                })}
+                            </Box>
+                        </StyledViewport>
+                        <StyledScrollbar orientation="horizontal">
+                            <StyledThumb/>
+                        </StyledScrollbar>
+                     
+            
+                        </StyledPinnedList>
                     )}
                      
                     {/* <Box as='ul' layout='flexBoxRow' css={{ boxShadow:'', border:'1px solid $foreground', padding:'$0',  borderRadius:'$round', listStyle:'none'}}>

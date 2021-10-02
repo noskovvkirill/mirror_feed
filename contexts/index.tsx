@@ -13,12 +13,13 @@ export type PinnedItem = {
 }
 
 export type ReadingListItem = {
+    title:string,
     entryDigest:string
 }
 
 
 const ignoredPublicationEffect = ():AtomEffect<IgnoredPublication[]> => ({setSelf, onSet, trigger}) => {
-    const loadPersisted = async() => {
+    const loadPersisted = () => {
         if(trigger === 'get' && typeof localStorage !== 'undefined'){
             const ignoredList = localStorage.getItem('mirror-ignored-publication')
             if(ignoredList){
@@ -51,11 +52,11 @@ export const ignoredPublication = atom({
 
 
 const pinnedItemsEffect = ():AtomEffect<PinnedItem[]> => ({setSelf, onSet, trigger}) => {
-    const loadPersisted = async() => {
+    const loadPersisted = () => {
         if(trigger === 'get' && typeof localStorage !== 'undefined'){
-            const ignoredList = localStorage.getItem('mirror-pinned-items')
-            if(ignoredList){
-                setSelf(JSON.parse(ignoredList))
+            const sessionList = sessionStorage.getItem('mirror-pinned-items')
+            if(sessionList){
+                setSelf(JSON.parse(sessionList))
             }
         }   
     }   
@@ -64,7 +65,7 @@ const pinnedItemsEffect = ():AtomEffect<PinnedItem[]> => ({setSelf, onSet, trigg
   
     onSet((newValue:PinnedItem[], oldValue:any) => {
         if(newValue instanceof Array){
-            localStorage.setItem('mirror-pinned-items', JSON.stringify(newValue))
+            sessionStorage.setItem('mirror-pinned-items', JSON.stringify(newValue))
             history.push({
                 label: `${JSON.stringify(oldValue)} -> ${JSON.stringify(newValue)}`,
                 undo: () => {
@@ -83,7 +84,7 @@ export const pinnedItems = atom({
 
 
 const readLaterEffect = ():AtomEffect<ReadingListItem[]> => ({setSelf, onSet, trigger}) => {
-    const loadPersisted = async() => {
+    const loadPersisted = () => {
         if(trigger === 'get' && typeof localStorage !== 'undefined'){
             const ignoredList = localStorage.getItem('mirror-read-later-items')
             if(ignoredList){

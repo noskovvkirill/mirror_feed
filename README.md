@@ -27,9 +27,12 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 - [x] Fetch the list of entries from Arweave and Mirror
 - [x] Infinite scroll
 - [] Basic layout design, all the basic components for correct Markdown rendering
+  — [] Publications pages
   — [] Embeds such us Twitter, Transistor.fm and etc.
 - [IN PROGRESS] Settings, toolbar, reading list, personal styling, typeface selection, multiple columns //save all the settings locally at the moment
+  — [] Actions History (Ctrl+Z, Cmd+Z), Keyboard navigation and article previews on spacebar
 - [] Link previews
+  — [] Replace Recoil with Zustand for simplicity
 
 ### First version
 
@@ -41,7 +44,7 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 - [] Favourites list, subscribtions & notifications //centralized, using supabase for indexing together with CRON jobs
 - [] Curated Lists
 - [] Search
-  — [] Screen split
+  — [] Screen split on drag
 - [] Custom CSS support (?)
 - [] Inline comments
 - [] Commandline

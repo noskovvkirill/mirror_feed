@@ -23,6 +23,11 @@ const StyledControl = styled(Button,{
                     background:'$foregroundBronze',
                     color:'$backgroundBronze'
                 },
+                "&:disabled": {
+                    background:'$foregroundBronze',
+                    color:'$backgroundBronze'
+                },
+
             },
             false:{
                   border:'1px solid $foreground', 
@@ -32,20 +37,47 @@ const StyledControl = styled(Button,{
                     color:'$background'
                 },
             }
+        },
+        selected:{
+            true:{
+            },
+            false:{
+            }
         }
     },
+    compoundVariants:[{
+        selected:true,
+        isHighlighted:true,
+        css:{
+              border:'1px solid $foregroundBronze', 
+              background:'$foregroundBronze',
+              color:'$backgroundBronze',
+              //transition changed to make it more visually pleasant when ArticlePreview appears. 
+              //default transition stands out and irritating for the eye 
+               transition:  "background",
+               transitionTimingFunction:'ease-in-out',
+               transitionDuration:'1.0s',
+              '&:hover':{
+                border:'1px solid $foregroundBronze', 
+                background:'$foregroundBronze',
+                color:'$backgroundBronze'
+              }
+        }
+    }],
      defaultVariants:{
-        isHighlighted:false
+        isHighlighted:false,
+        selected:false,
     }
 })
 
-const ButtonControl = ({children, label, isHighlighted, onClick}:{children:ReactChild,label:string, isHighlighted:boolean, onClick: () => void;}) => {
+const ButtonControl = ({children, selected, label, isHighlighted, onClick}:{children:ReactChild,label:string, selected?:boolean, isHighlighted:boolean, onClick: () => void;}) => {
     const [isHover, setIsHover] = useState(false)
     const [pos, setPos] = useState({x:-99999, y:-99999})
 
     return(
         <>
             <StyledControl
+            selected={selected}
             css={{position:'relative'}}
             onClick={onClick}
             onTouchStart={()=>setIsHover(true)} 
