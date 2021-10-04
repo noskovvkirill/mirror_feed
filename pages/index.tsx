@@ -170,7 +170,7 @@ const Data = ({entries, lastCursor}:Props) =>{
             })
           })}
       
-              <Box css={{padding:'$2 calc($4 * 4)', boxSizing:'border-box', height:'48px', transition:'$all', color:'$foregroundText'}}>
+              <Box css={{padding:'$2 calc($4 * 3.5)', boxSizing:'border-box', height:'48px', transition:'$all', color:'$foregroundText'}}>
                 {isValidating && (
                 <>Patience</>)}
               </Box>

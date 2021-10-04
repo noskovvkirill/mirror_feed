@@ -134,7 +134,6 @@ const StyledTitle = styled('div', {
     whiteSpace:'break-spaces',
     'h1':{
         fontSize:"$1",
-        marginBottom:'$4'
     },
      variants:{
         isHighlighted:{
@@ -151,10 +150,11 @@ const StyledTitle = styled('div', {
     }
 })
 
-const StyledBody = styled('div',{
+const StyledBody = styled('article',{
     overflow:'hidden',
     marginRight:'calc($4 * 1.5)',
     width:'100%',
+    maxWidth:'768px',
      variants:{
         isHighlighted:{
             true:{

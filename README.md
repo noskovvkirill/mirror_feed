@@ -28,23 +28,26 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 - [x] Infinite scroll
 - [] Basic layout design, all the basic components for correct Markdown rendering
   — [] Publications pages
-  — [] Embeds such us Twitter, Transistor.fm and etc.
+  — [IN PROGRESS] Embeds such us Twitter, Transistor.fm and etc. Special NFT Auction Embeds from Mirror
 - [IN PROGRESS] Settings, toolbar, reading list, personal styling, typeface selection, multiple columns //save all the settings locally at the moment
   — [] Actions History (Ctrl+Z, Cmd+Z), Keyboard navigation and article previews on spacebar
 - [] Link previews
   — [] Replace Recoil with Zustand for simplicity
+- [] Keyboard navigation (spacebar preview, enter to open, cmd+x to close (?))
 
 ### First version
 
 #### Social experience, curation, tripple E strategy (embrance, extend, extinguish: sort of)
 
 — [] Authentication
-— [] Highlights list
+— [] Highlighting (add into existing context menu? is it possible to augment it without an extension? Seems like it is https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/user_interface/Context_menu_items). Highlights list.
+— [] Speech Synthesis Native Browser API for the audio. Simple Audio inapp
 
-- [] Favourites list, subscribtions & notifications //centralized, using supabase for indexing together with CRON jobs
+- [] Favourites list, subscribtions & notifications //centralized, using supabase for indexing together with CRON jobs. Hopefully, once the-graph provides an Arweave support the app can use it instead
 - [] Curated Lists
-- [] Search
-  — [] Screen split on drag
+  — [] Proper handle of multiple columns to create a book like text handling (native css columns are useless, because they can be really tall and unreadable)
+- [] Search through articles (when thegraph + arweave is available)
+  — [] Screen split on drag (the cards on main page are draggable into open space to create the columns(?)
 - [] Custom CSS support (?)
 - [] Inline comments
 - [] Commandline

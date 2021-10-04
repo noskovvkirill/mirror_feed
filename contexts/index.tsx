@@ -3,7 +3,6 @@ import {history} from '@/design-system/Layout'
 import {Entry} from '@/design-system/ArticlePreview'
 
 
-
 export type IgnoredPublication = {
     ensLabel:string
 }
@@ -17,6 +16,12 @@ export type ReadingListItem = {
     entryDigest:string
 }
 
+export type ReadSettings = {
+    columns:number,
+    fontSize:number | "default",
+    fontColor: string | "default",
+    backgroundColor: string | "default"
+}
 
 const ignoredPublicationEffect = ():AtomEffect<IgnoredPublication[]> => ({setSelf, onSet, trigger}) => {
     const loadPersisted = () => {
@@ -112,4 +117,16 @@ export const readLaterList = atom({
     key:'readLaterList',
     default:[] as ReadingListItem[],
     effects_UNSTABLE: [readLaterEffect()]
+})
+
+
+
+export const readSettings = atom({
+    key:'readSettings',
+    default:{
+        columns:1,
+        fontSize:"default",
+        fontColor:"default",
+        backgroundColor:"default",
+    } as ReadSettings,
 })

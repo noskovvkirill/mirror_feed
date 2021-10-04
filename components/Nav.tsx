@@ -39,9 +39,22 @@ const StyledItem = styled(DropdownMenu.Item, {
     marginBottom:'$1',
     cursor:'pointer',
     transition:'$color',
+    position:'relative',
     '&:hover':{
           color:'$textBronze',
-    }
+    },
+    //expand the reach of the text 
+    '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '100%',
+    height: '100%',
+    minWidth: 44,
+    minHeight: 44,
+  },
 })
 
 const User = () =>{
@@ -54,6 +67,9 @@ const User = () =>{
             css={{padding:'$1 calc($1 * 1.5)', marginRight:'$2'}}><NotificationsIcon/></Button> */}
             <Button
             disabled={router.pathname === '/' ? true : false}
+            onClick={()=>{
+                router.push('/')
+            }}
             >Feed</Button>
             <DropdownMenu.Root>
                 <Button

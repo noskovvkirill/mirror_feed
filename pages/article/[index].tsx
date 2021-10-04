@@ -52,6 +52,8 @@ type Props = {
 }
 
 
+// revalidate: 10 * 60, 
+
 
 const Data = ({entry}:Props) =>{
     return(
