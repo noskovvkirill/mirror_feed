@@ -13,7 +13,7 @@ const StyledNav= styled(Box, {
     display:'flex',
     flexDirection:'row',
     gap:'$1',
-    position:'fixed', top:'calc($4 + $2)', right:'$4'
+    position:'fixed', top:'calc($4 + $2)', right:'calc($4 + $4)'
 })
 
 const StyledContent = styled(DropdownMenu.Content,{
@@ -28,7 +28,8 @@ const StyledContent = styled(DropdownMenu.Content,{
     display:'flex',
     flexDirection:'column',
     gap:'$1',
-    listStyle:'none'
+    listStyle:'none',
+    boxShadow:'$normal'
 })
 
 
@@ -87,7 +88,7 @@ const User = () =>{
                 >Reading List {readingList.length > 0 && (
                 <> ▾&#8201;{readingList.length}</>
                 )}</Button>
-                <StyledContent >
+                <StyledContent align='end'>
              
                     {readingList.map((item:ReadingListItem)=>{
                         return(

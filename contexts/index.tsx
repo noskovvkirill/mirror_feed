@@ -7,6 +7,11 @@ export type IgnoredPublication = {
     ensLabel:string
 }
 
+export type SubscribedPublication = {
+    ensLabel:string,
+    avatar?:string
+}
+
 export type PinnedItem = {
     entry:Entry
 }
@@ -117,6 +122,39 @@ export const readLaterList = atom({
     key:'readLaterList',
     default:[] as ReadingListItem[],
     effects_UNSTABLE: [readLaterEffect()]
+})
+
+
+
+const subscribedPublicationEffect = ():AtomEffect<SubscribedPublication[]> => ({setSelf, onSet, trigger}) => {
+    const loadPersisted = () => {
+        if(trigger === 'get' && typeof localStorage !== 'undefined'){
+            const ignoredList = localStorage.getItem('mirror-subscribed-publication-items')
+            if(ignoredList){
+                setSelf(JSON.parse(ignoredList))
+            }
+        }   
+    }   
+
+    loadPersisted();
+  
+    onSet((newValue:SubscribedPublication[], oldValue:any) => {
+        if(newValue instanceof Array){
+            localStorage.setItem('mirror-subscribed-publication-items', JSON.stringify(newValue))
+            history.push({
+                label: `${JSON.stringify(oldValue)} -> ${JSON.stringify(newValue)}`,
+                undo: () => {
+                    setSelf(oldValue);
+                },
+            });
+        }
+    })   
+}
+
+export const subscribeList = atom({
+    key:'subscribeList',
+    default:[] as SubscribedPublication[],
+    effects_UNSTABLE: [subscribedPublicationEffect()]
 })
 
 

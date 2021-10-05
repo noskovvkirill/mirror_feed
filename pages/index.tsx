@@ -21,6 +21,7 @@ query Entry($digest: String!) {
         timestamp
         title
         author{
+          address
           displayName
         }
         publication{
@@ -153,13 +154,13 @@ const Data = ({entries, lastCursor}:Props) =>{
 
     return(
     <Layout>
+      <Box layout='flexBoxRow' css={{width:'100%', justifyContent:'space-between'}}>
         <Box layout='flexBoxColumn'>
-
           {ignoredList !== null && pinnedList !== null && (
           <>
             {data.map((page:any)=>{
               return page[0].map((entry:any)=>{
-                if(ignoredList.findIndex((item:IgnoredPublication)=>entry.publication.ensLabel === item.ensLabel) === -1){
+                if(ignoredList.findIndex((item:IgnoredPublication)=>entry.publication?.ensLabel === item.ensLabel || entry.author.address === item.ensLabel) === -1){
                     if(pinnedList.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest) !== -1){
                       return;
                     } else {
@@ -180,6 +181,11 @@ const Data = ({entries, lastCursor}:Props) =>{
             <>Patience</>)}
           </Box>
           <div ref={ref}> &nbsp;</div>
+        </Box>
+          {/* <Box css={{padding:'$4', position:'sticky', top:'132px', height:'fit-content', opacity:0.5, transition:'$all', '&:hover':{opacity:1}}}>
+            <Box as='p'>Curation spaces</Box>
+            <Box css={{backgroundColor:'red', width:'48px', height:'48px', borderRadius:'$round'}}></Box>
+          </Box> */}
         </Box>
     </Layout>
     )

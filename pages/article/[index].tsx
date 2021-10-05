@@ -1,7 +1,7 @@
 import Layout from '@/design-system/Layout'
 import Box from '@/design-system/primitives/Box'
 import { request, gql } from 'graphql-request';
-import type { GetServerSideProps, GetStaticProps } from 'next'
+import type { GetServerSideProps } from 'next'
 import Article from '@/design-system/Article';
 
 
@@ -14,6 +14,7 @@ query Entry($digest: String!) {
         timestamp
         title
         author{
+          address
           displayName
         }
         publication{
@@ -39,15 +40,13 @@ type Props = {
 }
 
 
-
-
 const Data = ({entry}:Props) =>{
     return(
-    <Layout>
-        <Box layout='flexBoxColumn'>
-            <Article key={entry.digest} entry={entry} isPreview={false}/>
-        </Box>
-    </Layout>
+      <Layout>
+          <Box layout='flexBoxColumn'>
+              <Article key={entry.digest} entry={entry} isPreview={false}/>
+          </Box>
+      </Layout>
     )
 }
 

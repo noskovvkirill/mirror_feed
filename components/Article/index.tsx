@@ -25,7 +25,7 @@ import {ignoredPublication, pinnedItems, readLaterList, readSettings, ReadingLis
 import Container from '@/design-system/Article/Container'
 import Controls from '@/design-system/Article/Controls'
 import Body from '@/design-system/Article/Body'
-import {StyledImage, StyledH1, StyledH2, StyledH3, StyledH4, StyledH5, StyledLink, Embeds, StyledToc} from '@/design-system/text/TextParsing'
+import {StyledImage, StyledH1, StyledH2, StyledH3, StyledH4, StyledH5, StyledLink, Embeds, StyledToc, StyledList} from '@/design-system/text/TextParsing'
 
 
 
@@ -38,6 +38,7 @@ export type Entry = {
   digest:string,
   timestamp:number,
   author:{
+      address:string;
       displayName:string;
   },
   publication:{
@@ -89,6 +90,8 @@ const processorShort = unified()
       h3: StyledH3,
       h4: StyledH4,
       h5:StyledH5,
+    ul: StyledList,
+      ol: StyledList,
       a:StyledLink
   }})
 
@@ -105,6 +108,8 @@ const processorFull = unified()
       h3: StyledH3,
       h4: StyledH4,
       h5:StyledH5,
+      ul: StyledList,
+      ol: StyledList,
       a:Embeds,
       nav:TocPortalled
   }})
@@ -138,7 +143,7 @@ const Article= ({entry, isPreview=true}:Props) => {
             isReadingList={readingList.findIndex((item:ReadingListItem)=>item.entryDigest === entry.digest) === -1 ? false : true }
             setIsHover={(isHover:boolean)=>{
                 setIsHover(isHover)
-        }}>
+        }}> 
              <Controls 
                 isPreview={isPreview}
                 isFocused={isFocused}

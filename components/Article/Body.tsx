@@ -114,9 +114,14 @@ const BodyComponent = (
     <StyledBody isPreview={isPreview}>
         <StyledContents isHighlighted={(isHover || isFocused) ? true : false}>
             <StyledMetadata>
-                <StyledLabel isHighlighted={(isHover || isFocused) ? true : false}>{entry.author.displayName}</StyledLabel>
+                <StyledLabel isHighlighted={(isHover || isFocused) ? true : false}>{entry.author.displayName ? entry.author.displayName : entry.author?.address?.slice(0,8)}</StyledLabel>
                 <StyledLabel isHighlighted={(isHover || isFocused) ? true : false}>{dayjs.unix(entry.timestamp).fromNow() }</StyledLabel>
-                <StyledLabel isHighlighted={(isHover || isFocused) ? true : false} css={{backgroundColor:'transparent', padding:'0 $1', cursor:'pointer'}} as='a' rel="noreferrer" href={`https://${entry.publication.ensLabel}.mirror.xyz/${entry.digest}`} target='_blank'><LinkIcon/></StyledLabel>
+                {entry.publication?.ensLabel && (
+                     <StyledLabel isHighlighted={(isHover || isFocused) ? true : false} css={{backgroundColor:'transparent', padding:'0 $1', cursor:'pointer'}} as='a' rel="noreferrer" href={`https://${entry.publication?.ensLabel}.mirror.xyz/${entry.digest}`} target='_blank'><LinkIcon/></StyledLabel>
+                )}
+                {!entry.publication?.ensLabel && (
+                     <StyledLabel isHighlighted={(isHover || isFocused) ? true : false} css={{backgroundColor:'transparent', padding:'0 $1', cursor:'pointer'}} as='a' rel="noreferrer" href={`https://mirror.xyz/${entry.author.address}/${entry.digest}`} target='_blank'><LinkIcon/></StyledLabel>
+                )}
             </StyledMetadata>
             <StyledTitle isHighlighted={(isHover || isFocused) ? true : false}>
                 <h1 style={{cursor:'pointer'}} onClick={()=>{

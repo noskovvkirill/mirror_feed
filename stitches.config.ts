@@ -51,7 +51,7 @@ export const { styled, css, globalCss, getCssText, keyframes } = createStitches(
             4: "102%",
             5: "102%",
             6: "98%",
-            p: "140%;",
+            p: "156%;",
         },
         letterSpacings: {},
         sizes: {
@@ -116,6 +116,9 @@ export const globalStyles = globalCss({
     p: { fontSize: "$p", lineHeight: "$p",  margin:'$2 0', fontWeight: "300" },
     span: { fontSize: "$p", lineHeight: "$p", fontWeight: "300" },
     b: {
+        fontWeight: "500",
+    },
+    strong: {
         fontWeight: "500",
     },
     hr: {

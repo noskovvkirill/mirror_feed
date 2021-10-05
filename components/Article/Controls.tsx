@@ -120,7 +120,7 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                                     <BackIcon/>
                             </ButtonControl>
 
-                            <ButtonPopover icon={<ColumnsIcon/>}>
+                            {/* <ButtonPopover icon={<ColumnsIcon/>}>
                                 <button onClick={()=>{
                                     setSettings((settings:ReadSettings)=>{
                                         const newSettings = Object.assign({}, settings);
@@ -142,7 +142,7 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                                         return newSettings
                                     })
                                 }}>3</button>
-                            </ButtonPopover> 
+                            </ButtonPopover>  */}
             </StyledControls>
             
             <Box id='article-toc' css={{  
@@ -161,7 +161,7 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                 onClick={()=>Open(`/article/${entry.digest}`)}>
                     <OpenIcon/>
             </ButtonControl>
-            {isReadingList
+            {!isReadingList
                 ? <ButtonControl
                         selected={false}
                         key={'reading control'}
@@ -201,13 +201,16 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                     label='ignore this publication'
                     isHighlighted={(isHover || isFocused) ? true : false}
                     onClick={()=>
-                    setIgnoredList((prevState:IgnoredPublication[])=>[...prevState, {ensLabel:entry.publication.ensLabel}])
+                    setIgnoredList((prevState:IgnoredPublication[])=>[...prevState, {ensLabel:entry.publication?.ensLabel ?  entry.publication?.ensLabel : entry.author.address}])
                     }>
                         <RemoveIcon/>
                 </ButtonControl>
-                <StyledHeader isHighlighted={isFocused}>
-                    <h5>{entry.publication.ensLabel}</h5>
-                </StyledHeader>
+                {entry.publication?.ensLabel  && (
+                      <StyledHeader isHighlighted={isFocused}>
+                        <h5>{entry.publication.ensLabel}</h5>
+                    </StyledHeader>
+                )}
+              
         </StyledControls>
     )
 

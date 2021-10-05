@@ -19,7 +19,7 @@ const StyledContainer = styled('div',{
     minHeight:'448px',
     margin:'calc($4 * 1) 0',
     color:'$text',
-    width:'100%',
+    width:'100vw',
     boxSizing:'border-box',
     borderRadius:'$2',
     transition:'$background',
@@ -85,7 +85,7 @@ const Container = forwardRef<HTMLElement, Container>(
 
     return(
             <StyledContainerMotion 
-            initial={!isPreview ? {transform:`translateX(-956px)`, position:'relative'} : false}
+            initial={!isPreview ? {transform:`translateX(-10%)`} : false}
             animate={{opacity:1, position:'relative'}}
             exit={{opacity:0, position:'absolute'}}
             layout='position'

@@ -2,6 +2,26 @@ import {styled} from 'stitches.config'
 import { ReactPropTypes } from 'react'
 import Box from '@/design-system/primitives/Box'
 
+
+
+export const StyledList = styled('ul', {
+    listStyle:'circle',
+    color:'$foregroundBronzeText',
+    padding:'$2 0',
+    li:{    
+        color:'$foregroundBronzeText',
+        marginBottom:'$2'
+    },
+    strong:{
+        fontFamily:'Satoshi Variable',
+        fontWeight:'$max'
+    },
+    b:{
+        fontFamily:'Satoshi Variable',
+        fontWeight:'$max'
+    }
+})
+
 export const StyledImage = styled('img', {
     maxWidth:'100%',
     margin:'$2 0',
@@ -62,7 +82,10 @@ export const StyledH1 = styled('h1', {
     fontSize:'$1',
     maxWidth:'720px',
     whiteSpace:'break-spaces',
-   wordBreak:'break-all',
+    wordBreak:'break-all',
+    '&:target':{
+        backgroundColor:'$foregroundBronze'
+    },
      variants:{
         isHighlighted:{
             true:{
@@ -82,6 +105,9 @@ export const StyledH2 = styled('h2', {
     maxWidth:'720px',
     whiteSpace:'break-spaces',
     wordBreak:'break-all',
+    '&:target':{
+        backgroundColor:'$foregroundBronze'
+    },
      variants:{
         isHighlighted:{
             true:{
@@ -100,7 +126,10 @@ export const StyledH3 = styled('h3', {
     fontSize:'$3',
     maxWidth:'720px',
     whiteSpace:'break-spaces',
-   wordBreak:'break-all',
+    wordBreak:'break-all',
+    '&:target':{
+        backgroundColor:'$foregroundBronze'
+    },
      variants:{
         isHighlighted:{
             true:{
@@ -119,7 +148,10 @@ export const StyledH4 = styled('h4', {
     fontSize:'$4',
     maxWidth:'720px',
     whiteSpace:'break-spaces',
-   wordBreak:'break-all',
+    wordBreak:'break-all',
+    '&:target':{
+        backgroundColor:'$foregroundBronze'
+    },
      variants:{
         isHighlighted:{
             true:{
@@ -138,7 +170,10 @@ export const StyledH5 = styled('h5', {
     fontSize:'$5',
     maxWidth:'720px',
     whiteSpace:'break-spaces',
-   wordBreak:'break-all',
+    wordBreak:'break-all',
+    '&:target':{
+        backgroundColor:'$foregroundBronze'
+    },
      variants:{
         isHighlighted:{
             true:{
@@ -181,19 +216,30 @@ export const Embeds = (props:ReactPropTypes & {href:string, children:React.React
 }
 
 export const StyledToc = styled('nav', {
-    color:'red',
+    color:'$foregroundBronze',
     padding:'$2',
+    paddingLeft:'$2',
     top:'256px',
     position:'sticky',
+    listStyle:'inside',
     'a':{
+        userSelect:'none',
         color:'$foregroundBronze',
         fontSize:'$6',
-        marginBottom:'$2'
+        marginBottom:'$2',
+        marginLeft:'-$1',
+        '&:active':{
+        backgroundColor:'$foregroundBronze'
+        },
+    },
+    'ul':{
+         listStyle:'inside'
     },
     'ol':{
-        listStyle:'none'
+        listStyle:'inside'
     },
     'li':{
+        paddingLeft:'1px',
         marginBottom:'$2'
     }
 })
