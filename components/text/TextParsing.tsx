@@ -1,4 +1,6 @@
 import {styled} from 'stitches.config'
+import { ReactPropTypes } from 'react'
+import Box from '@/design-system/primitives/Box'
 
 export const StyledImage = styled('img', {
     maxWidth:'100%',
@@ -149,5 +151,49 @@ export const StyledH5 = styled('h5', {
     },
      defaultVariants:{
         isHighlighted:false
+    }
+})
+
+
+export const Embeds = (props:ReactPropTypes & {href:string, children:React.ReactNode}) => {
+    const myReg = `://`;
+    if(props?.href.split(myReg)[0] === 'auction'){
+        return(
+            <Box css={{padding:'$1 $1 $4 $1', opacity:0.5, borderRadius:'$2', backgroundColor:'LightBlue'}}>
+                <h5>AUCTION</h5>
+                {props.children}
+            </Box>
+        )
+    }
+
+    if(props?.href.split(myReg)[0] === 'ethereum'){
+        return(
+            <Box css={{padding:'$1 $1 $4 $1', opacity:0.5, borderRadius:'$2', backgroundColor:'LightBlue'}}>
+                <h5>ETHEREUM</h5>
+                {props.children}
+            </Box>
+        )
+    }
+
+    return(
+        <StyledLink {...props}/>
+    )
+}
+
+export const StyledToc = styled('nav', {
+    color:'red',
+    padding:'$2',
+    top:'256px',
+    position:'sticky',
+    'a':{
+        color:'$foregroundBronze',
+        fontSize:'$6',
+        marginBottom:'$2'
+    },
+    'ol':{
+        listStyle:'none'
+    },
+    'li':{
+        marginBottom:'$2'
     }
 })

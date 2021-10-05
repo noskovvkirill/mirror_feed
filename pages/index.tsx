@@ -2,14 +2,15 @@ import Layout from '@/design-system/Layout'
 import Box from '@/design-system/primitives/Box'
 import { request, gql } from 'graphql-request';
 import type { GetServerSideProps } from 'next'
-import ArticlePreview from '@/design-system/ArticlePreview';
 import useSWRInfinite from 'swr/infinite'
 import {useRef, useEffect} from 'react'
 import useOnScreen from 'hooks/useOnScreen'
+import Article from '@/design-system/Article'
 
 //global state
-import {ignoredPublication, pinnedItems, PinnedItem, IgnoredPublication, ReadingListItem} from 'contexts'
+import {ignoredPublication, pinnedItems, PinnedItem, IgnoredPublication} from 'contexts'
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
+
 
 const queryEntry = gql`
 query Entry($digest: String!) {
@@ -21,13 +22,11 @@ query Entry($digest: String!) {
         title
         author{
           displayName
-          id
         }
         publication{
           ensLabel
         }
     }
- __typename
 }`
 
 const query = gql`
@@ -63,7 +62,7 @@ const entries = await Promise.all([...new Set(content)].map(async (item:any) => 
        digest: item
     }).then((data) =>
       data.entry
-    ).catch(()=>{return})
+    ).catch((e)=>{console.log(e); return})
     )
   }))
 
@@ -76,7 +75,7 @@ const entries = await Promise.all([...new Set(content)].map(async (item:any) => 
 };
 type Props = {
     entries:any[]
-    lastCursor:string
+    lastCursor:string | undefined
 }
 
 
@@ -96,7 +95,7 @@ const getKey = (_:any, previousPageData:any) => {
         cursor
 			}
 		}
-	}`                    // SWR key
+	}`                  
 }
 
 const fetcher = async (query:string) => {
@@ -124,7 +123,7 @@ const fetcher = async (query:string) => {
    return element !== undefined;
 });
 
-return [entriesFiltered, lastCursor]
+return ([entriesFiltered, lastCursor as string | undefined])
 
 
 }
@@ -135,8 +134,8 @@ const Data = ({entries, lastCursor}:Props) =>{
     const entry = useOnScreen(ref, {})
     const isVisible = !!entry?.isIntersecting
 
-    const ignoredList = useRecoilValueAfterMount(ignoredPublication, [])
-    const pinnedList = useRecoilValueAfterMount(pinnedItems, [])
+    const ignoredList = useRecoilValueAfterMount(ignoredPublication, null) //we set the items to null to prevent initial rendering with empty values and waiting for the list to load
+    const pinnedList = useRecoilValueAfterMount(pinnedItems, null) //we set the items to null to prevent initial rendering with empty values and waiting for the list to load
 
 
     const { data, error, isValidating, setSize } = useSWRInfinite(getKey, fetcher, {fallbackData: [[entries, lastCursor]]}) // tslint:disable-line
@@ -148,33 +147,38 @@ const Data = ({entries, lastCursor}:Props) =>{
       }
     },[isVisible, setSize])
 
+  
     if(error) return <Layout>Error ocurred..</Layout>
     if (!data) return <Layout>Patience...</Layout>
 
     return(
     <Layout>
         <Box layout='flexBoxColumn'>
-          {data.map((page:any)=>{
-            return page[0].map((entry:any)=>{
-              if(ignoredList.findIndex((item:IgnoredPublication)=>entry.publication.ensLabel === item.ensLabel) === -1){
-                  if(pinnedList.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest) !== -1){
-                    return;
-                  } else {
-                      return(
-                      <ArticlePreview key={entry.digest} entry={entry}/>
-                      )
-                  }
-              } else {
-                return;
-              }
-            })
-          })}
-      
-              <Box css={{padding:'$2 calc($4 * 3.5)', boxSizing:'border-box', height:'48px', transition:'$all', color:'$foregroundText'}}>
-                {isValidating && (
-                <>Patience</>)}
-              </Box>
-       
+
+          {ignoredList !== null && pinnedList !== null && (
+          <>
+            {data.map((page:any)=>{
+              return page[0].map((entry:any)=>{
+                if(ignoredList.findIndex((item:IgnoredPublication)=>entry.publication.ensLabel === item.ensLabel) === -1){
+                    if(pinnedList.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest) !== -1){
+                      return;
+                    } else {
+                        return(
+                        <Article key={entry.digest} entry={entry}/>
+                        )
+                    }
+                } else {
+                  return;
+                }
+              })
+            })}
+            </>
+           )}
+    
+          <Box css={{padding:'$2 calc($4 * 4.5)', boxSizing:'border-box', height:'48px', transition:'$all', color:'$foregroundText'}}>
+            {isValidating && (
+            <>Patience</>)}
+          </Box>
           <div ref={ref}> &nbsp;</div>
         </Box>
     </Layout>

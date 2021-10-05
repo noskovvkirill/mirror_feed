@@ -6,10 +6,10 @@ Their team built a huge number of in-built components and tools for crowdfunding
 
 ## Goals and principles
 
-✦ Highly customizable
 ✦ Reading as a shared experience, conversation and exploration  
 ✦ Mirror as a protocol to build upon, not the
 parent project to look at
+✦ Highly customizable
 ✦ Spatial interface, focus on animation, interaction design. Design with Z axis in mind.
 ✦ Speed
 
@@ -27,27 +27,43 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 - [x] Fetch the list of entries from Arweave and Mirror
 - [x] Infinite scroll
 - [] Basic layout design, all the basic components for correct Markdown rendering
-  — [] Publications pages
-  — [IN PROGRESS] Embeds such us Twitter, Transistor.fm and etc. Special NFT Auction Embeds from Mirror
+- [] Publications pages
+- [IN PROGRESS] Embeds such us Twitter, Transistor.fm and etc. Special NFT Auction Embeds from Mirror
 - [IN PROGRESS] Settings, toolbar, reading list, personal styling, typeface selection, multiple columns //save all the settings locally at the moment
-  — [] Actions History (Ctrl+Z, Cmd+Z), Keyboard navigation and article previews on spacebar
+- [] Estimated reading time in Exploration mode
+- [] Actions History (Ctrl+Z, Cmd+Z), Keyboard navigation and article previews on spacebar
+- [] Reading List delete option
+- [] Image Full Screen
 - [] Link previews
-  — [] Replace Recoil with Zustand for simplicity
+- [] Replace Recoil with Zustand for simplicity
 - [] Keyboard navigation (spacebar preview, enter to open, cmd+x to close (?))
+- [] Highlighting (add into existing context menu? is it possible to augment it without an extension? Seems like it is https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/user_interface/Context_menu_items). Highlights list.
+
+#### TODO
+
+— [X] Fix useSWR types error and pages rendering
+— [IN PROGRESS] Merge Article and Article Preview component into one to later perform a correct layout animation
+— [X] Refactor Article &/or Article Preview components to follow Model-View paradigm.
+— [] Fix router to have a /publicationId/entryID for the correct Navigation
+— [] Change Nav component to display publications details when inside entryId
+— [] Reading list deletes, different colors
+— [] Individual publication pages
+— [] Start designing link embeds
+— [] Image full screen
+— [] Event Listener for Portalled Control Buttons (remove on scroll or scroll lock(?)
+— [] Patience loader text gradient :-)
 
 ### First version
 
 #### Social experience, curation, tripple E strategy (embrance, extend, extinguish: sort of)
 
-— [] Authentication
-— [] Highlighting (add into existing context menu? is it possible to augment it without an extension? Seems like it is https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/user_interface/Context_menu_items). Highlights list.
-— [] Speech Synthesis Native Browser API for the audio. Simple Audio inapp
-
+- [] Authentication
+- [] Speech Synthesis Native Browser API for the audio. Simple Audio inap
 - [] Favourites list, subscribtions & notifications //centralized, using supabase for indexing together with CRON jobs. Hopefully, once the-graph provides an Arweave support the app can use it instead
 - [] Curated Lists
-  — [] Proper handle of multiple columns to create a book like text handling (native css columns are useless, because they can be really tall and unreadable)
+- [] Proper handle of multiple columns to create a book like text handling (native css columns are useless, because they can be really tall and unreadable)
 - [] Search through articles (when thegraph + arweave is available)
-  — [] Screen split on drag (the cards on main page are draggable into open space to create the columns(?)
+- [] Screen split on drag (the cards on main page are draggable into open space to create the columns(?)
 - [] Custom CSS support (?)
 - [] Inline comments
 - [] Commandline

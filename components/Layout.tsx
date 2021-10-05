@@ -10,20 +10,23 @@ import { ReactNode, useState, useEffect} from 'react'
 import {useRouter} from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { pinnedItems, PinnedItem, readLaterList, ReadingListItem} from 'contexts'
-import { useRecoilStateLoadable, useSetRecoilState } from 'recoil'
-import ArticlePreview from '@/design-system/ArticlePreview'
+import {  useSetRecoilState } from 'recoil'
+
 import PinnedComponent  from '@/design-system/PinnedItem' 
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 
 
+
+
+
 const StyledMain = styled('main', {
     backgroundColor: '$background',
     height: 'auto',
     boxSizing: 'border-box',
-    overflowY: 'scroll',
-    overflowX: 'hidden',
+    // overflowY: 'scroll',
+    // overflowX: 'hidden',
     padding: '$2 $4',
     display: 'flex',
     flex: '1',
@@ -190,7 +193,7 @@ const Layout = ({children}:Props) =>{
                     </Box>
 
                     {!isPinnedList && (
-                        <Box layout='flexBoxRow' css={{margin:'calc($4 + 8px) $4 $4 -$2',  fontSize:'$6', color:'$foregroundText', alignItems:'center', justifyContent:'center'}}>{pinnedList.length}</Box>
+                        <Box layout='flexBoxRow' css={{margin:'calc($4 + 8px) $4 $4 -$2', userSelect:'none', fontSize:'$6', color:'$foregroundText', alignItems:'center', justifyContent:'center'}}>{pinnedList.length}</Box>
                     )}
 
                     {isPinnedList && (
@@ -229,7 +232,9 @@ const Layout = ({children}:Props) =>{
 
                 </StyledHeader>
                 <StyledMain>
+                    {/* <AnimatePresence> */}
                     {children}
+                    {/* </AnimatePresence> */}
                 </StyledMain>
                 {/* <StyledFooter>
                 </StyledFooter> */}

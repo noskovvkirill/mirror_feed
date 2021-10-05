@@ -1,6 +1,6 @@
 import {atom, AtomEffect} from 'recoil'
 import {history} from '@/design-system/Layout'
-import {Entry} from '@/design-system/ArticlePreview'
+import {Entry} from '@/design-system/Article'
 
 
 export type IgnoredPublication = {
