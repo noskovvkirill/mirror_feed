@@ -1,6 +1,7 @@
 import {styled} from 'stitches.config'
 //types
 import {Entry} from '@/design-system/Article'
+import {ReadingListItem} from 'contexts'
 //primitives
 import {StyledLabel} from '@/design-system/text/TextParsing'
 import Box from '@/design-system/primitives/Box'
@@ -16,10 +17,12 @@ export interface BodyExternal {}
 export interface BodyInternal extends BodyExternal {
     entry:Entry,
     body:React.ReactElement<unknown, string | React.JSXElementConstructor<any>>,
+    readingList:ReadingListItem[],
     isPreview?:boolean;
     isHover:boolean,
     isFocused:boolean;
     Open:(digest:string) => void;
+    setReadLater:(fn:(prevState:ReadingListItem[]) => ReadingListItem[]) => void;
 }
 
 
@@ -105,16 +108,18 @@ const BodyComponent = (
     {
         entry,
         body,
+        readingList,
         Open,
         isPreview=true,
         isHover,
+        setReadLater,
         isFocused
     }:BodyInternal
 ) => (
     <StyledBody isPreview={isPreview}>
         <StyledContents isHighlighted={(isHover || isFocused) ? true : false}>
             <StyledMetadata>
-                <StyledLabel isHighlighted={(isHover || isFocused) ? true : false}>{entry.author.displayName ? entry.author.displayName : entry.author?.address?.slice(0,8)}</StyledLabel>
+                <StyledLabel isHighlighted={(isHover || isFocused) ? true : false}>{entry.author?.displayName ? entry.author.displayName : entry.author?.address?.slice(0,8)}</StyledLabel>
                 <StyledLabel isHighlighted={(isHover || isFocused) ? true : false}>{dayjs.unix(entry.timestamp).fromNow() }</StyledLabel>
                 {entry.publication?.ensLabel && (
                      <StyledLabel isHighlighted={(isHover || isFocused) ? true : false} css={{backgroundColor:'transparent', padding:'0 $1', cursor:'pointer'}} as='a' rel="noreferrer" href={`https://${entry.publication?.ensLabel}.mirror.xyz/${entry.digest}`} target='_blank'><LinkIcon/></StyledLabel>
@@ -125,14 +130,36 @@ const BodyComponent = (
             </StyledMetadata>
             <StyledTitle isHighlighted={(isHover || isFocused) ? true : false}>
                 <h1 style={{cursor:'pointer'}} onClick={()=>{
-                    Open(`/article/${entry.digest}`)
+                      entry.publication?.ensLabel 
+                    ?  Open(`/${entry.publication?.ensLabel ? entry.publication?.ensLabel : entry.author.address}/${entry.digest}`)
+                    :  Open(`/${entry.author.address}/${entry.digest}`)
                 }}>{entry.title}</h1>
             </StyledTitle>
             {body}
             {!isPreview && (
                   <Box layout='flexBoxRow' css={{padding:'$2 0'}}>
-                                <Button>remove from the reading list</Button>
-                                <Button>Next: Bla-Bla</Button>
+                      {(readingList?.findIndex((item)=>item.entryDigest === entry.digest) !== -1) && (
+                          <Button 
+                                onClick={()=>{
+                                    setReadLater((prevState:ReadingListItem[])=>{
+                                    const indexUnPin = prevState.findIndex((itemPrev:ReadingListItem)=>itemPrev.entryDigest=== entry.digest)
+                                    const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
+                                    return newArray
+                                })}}
+                                >Remove from the reading list</Button>
+                      )}
+
+                    
+
+                      {/* {readingList && readingList[readingList?.findIndex((item)=>item.entryDigest === entry.digest) +1] 
+                      ?  <>hasMore</>
+                      :  <>has no more</>
+                      } */}
+
+                        {readingList.filter(item=>item.entryDigest !== entry.digest).length > 0 
+                        ? <Button>Next: {readingList.filter(item=>item.entryDigest !== entry.digest)[0]?.title}</Button>
+                        : <Box as='span' layout='flexBoxRow' css={{color:'$foregroundText', alignItems:'center', fontSize:'$6'}}>Your reading list is empty ✨</Box>
+                        }
                   </Box>
             )}
         </StyledContents>

@@ -6,7 +6,7 @@ import Article from '@/design-system/Article';
 import type {Entry} from '@/design-system/Article'
 import type {CurrentArticle} from 'contexts'
 import {Current} from 'contexts'
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
 
 const queryEntry = gql`
@@ -30,11 +30,11 @@ query Entry($digest: String!) {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
-const { index} = ctx.query;
+const { article, publication} = ctx.query;
 
-console.log('index', index)
+console.log('article', article, 'publication', publication)
 const entry = await request('https://mirror-api.com/graphql', queryEntry, {
-       digest: index
+       digest: article
     }).then((data) =>data.entry).catch(()=>{return { notFound:true}})
   return {
     props:{entry:entry},
@@ -46,21 +46,21 @@ type Props = {
 
 
 const Data = ({entry}:Props) =>{
-  const [currentArticle, setCurrentArticle] = useRecoilState(Current)
+    const setCurrentArticle = useSetRecoilState(Current)
 
   useEffect(()=>{
     setCurrentArticle({
       publication:{
-        ensLabel:entry.publication.ensLabel
+        ensLabel:entry.publication?.ensLabel || entry.author.displayName || entry.author.address
       },
-      digest: entry.digest,
-      title:entry.title
+      title:entry.title,
+      digest: entry.digest
     })
-  },[])
+  },[entry])
+
     return(
       <Layout>
           <Box layout='flexBoxColumn'>
-            {JSON.stringify(currentArticle)}
               <Article key={entry.digest} entry={entry} isPreview={false}/>
           </Box>
       </Layout>

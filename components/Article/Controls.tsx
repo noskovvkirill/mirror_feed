@@ -158,7 +158,11 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
             <ButtonControl
                 isHighlighted={(isHover || isFocused) ? true : false}
                 label='open'
-                onClick={()=>Open(`/article/${entry.digest}`)}>
+                onClick={()=>{
+                    entry.publication?.ensLabel 
+                    ?  Open(`/${entry.publication?.ensLabel ? entry.publication?.ensLabel : entry.author.address}/${entry.digest}`)
+                    :  Open(`/${entry.author.address}/${entry.digest}`)
+                    }}>
                     <OpenIcon/>
             </ButtonControl>
             {!isReadingList
@@ -171,7 +175,7 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                             setReadLater((prevState:ReadingListItem[])=>{
                                 //check for dublicates just in case 
                                 if(prevState.findIndex((item:ReadingListItem)=>item.entryDigest === entry.digest) !== -1) return prevState
-                            return [...prevState, {entryDigest:entry.digest, title:entry.title}]})
+                            return [...prevState, {entryDigest:entry.digest, title:entry.title, ensLabel: entry.publication?.ensLabel ? entry.publication.ensLabel : entry.author.address}]})
                         }}>
                         <AddIcon/>
                     </ButtonControl>

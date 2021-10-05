@@ -15,27 +15,16 @@ import rehypeTruncate from "rehype-truncate";
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 
 //global state
-//global state
+
 import { pinnedItems, readLaterList, PinnedItem,  ReadingListItem} from 'contexts'
 import { useSetRecoilState} from 'recoil'
 import {useRouter} from 'next/router'
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 
+import type {Entry} from '@/design-system/Article'
+
 interface Props {
     entry: Entry;
-}
-export type Entry = {
-  id:string,
-  digest:string,
-  timestamp:number,
-  author:{
-      displayName:string;
-  },
-  publication:{
-      ensLabel:string;
-  }
-  title:string,
-  body:any
 }
 
 
@@ -189,12 +178,16 @@ const PinnedComponent= ({entry}:Props) => {
                         <ButtonControl
                         isHighlighted={true}
                         label='open'
-                        onClick={()=>router.push(`/article/${entry.digest}`)}><OpenIcon/></ButtonControl>
+                        onClick={()=>{
+                                 entry.publication?.ensLabel 
+                                ?  router.push(`/${entry.publication?.ensLabel ? entry.publication?.ensLabel : entry.author.address}/${entry.digest}`)
+                                :  router.push(`/${entry.author.address}/${entry.digest}`)
+                        }}><OpenIcon/></ButtonControl>
                         {readingList.findIndex((item:ReadingListItem)=>item.entryDigest === entry.digest) === -1 
                         ? <ButtonControl
                         label='to reading list'
                         isHighlighted={true}
-                        onClick={()=>{setReadLater((prevState:ReadingListItem[])=>[...prevState, {entryDigest:entry.digest, title:entry.title}])}}><AddIcon/></ButtonControl>
+                        onClick={()=>{setReadLater((prevState:ReadingListItem[])=>[...prevState, {entryDigest:entry.digest, title:entry.title, ensLabel: entry.publication?.ensLabel ? entry.publication.ensLabel : entry.author.address }])}}><AddIcon/></ButtonControl>
                         : <ButtonControl
                         selected={true}
                         label='remove from the reading list'

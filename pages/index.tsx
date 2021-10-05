@@ -8,7 +8,7 @@ import useOnScreen from 'hooks/useOnScreen'
 import Article from '@/design-system/Article'
 
 //global state
-import {ignoredPublication, pinnedItems, PinnedItem, IgnoredPublication} from 'contexts'
+import {ignoredPublication, pinnedItems, PinnedItem, IgnoredPublication, curationItems, CurationList} from 'contexts'
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 
 
@@ -63,7 +63,7 @@ const entries = await Promise.all([...new Set(content)].map(async (item:any) => 
        digest: item
     }).then((data) =>
       data.entry
-    ).catch((e)=>{console.log(e); return})
+    ).catch((e)=>{return})
     )
   }))
 

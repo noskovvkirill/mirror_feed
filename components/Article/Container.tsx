@@ -37,7 +37,8 @@ const StyledContainer = styled('div',{
                 maxWidth:'1152px', 
             },
             false:{
-                maxWidth:'100%'
+                maxWidth:'100%',
+                minHeight:'640px'
             }
         }
     },

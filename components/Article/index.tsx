@@ -163,6 +163,8 @@ const Article= ({entry, isPreview=true}:Props) => {
                 setIsHover={setIsHover}
             />
              <Body
+                readingList={readingList}
+                setReadLater={setReadLater}
                 isPreview={isPreview}
                 entry={entry}
                 body={isPreview ? processorShort.processSync(shorten(entry.body,1200)).result : processorFull.processSync(entry.body).result}

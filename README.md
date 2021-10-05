@@ -26,13 +26,13 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 - [x] Fetch the list of publications from ENS
 - [x] Fetch the list of entries from Arweave and Mirror
 - [x] Infinite scroll
-- [] Basic layout design, all the basic components for correct Markdown rendering
-- [] Publications pages
+- [IN PROGRESS] Basic layout design, all the basic components for correct Markdown rendering
+- [x] Publications pages
 - [IN PROGRESS] Embeds such us Twitter, Transistor.fm and etc. Special NFT Auction Embeds from Mirror
 - [IN PROGRESS] Settings, toolbar, reading list, personal styling, typeface selection, multiple columns //save all the settings locally at the moment
 - [] Estimated reading time in Exploration mode
-- [] Actions History (Ctrl+Z, Cmd+Z), Keyboard navigation and article previews on spacebar
-- [] Reading List delete option
+- [] Actions History (Ctrl+Z, Cmd+Z), Keyboard navigation and Article previews on spacebar [optional]
+- [x] Reading List delete option
 - [] Image Full Screen
 - [] Link previews
 - [] Replace Recoil with Zustand for simplicity
@@ -42,25 +42,29 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 #### TODO
 
 — [X] Fix useSWR types error and pages rendering
-— [IN PROGRESS] Merge Article and Article Preview component into one to later perform a correct layout animation
+— [X] Merge Article and Article Preview component into one to later perform a correct layout animation
 — [X] Refactor Article &/or Article Preview components to follow Model-View paradigm.
-— [] Fix router to have a /publicationId/entryID for the correct Navigation
-— [] Change Nav component to display publications details when inside entryId
-— [] Reading list deletes, different colors
-— [] Individual publication pages
+— [IN PROGRESS] Fix router to have a /publicationId/entryID for the correct Navigation
+— [IN PROGRESS] Change Nav component to display publications details when inside entryId
+— [X] Reading list deletes
+— [X] Individual publication pages
+— [] Global state for selected article (to display pretty names and not the hashes :)
 — [] Start designing link embeds
+— [] Stitched Themes (Dark Mode, Black&White, Default)
 — [] Image full screen
 — [] Event Listener for Portalled Control Buttons (remove on scroll or scroll lock(?)
 — [] Patience loader text gradient :-)
+— [] Basic local curation lists
 
 ### First version
 
 #### Social experience, curation, tripple E strategy (embrance, extend, extinguish: sort of)
 
 - [] Authentication
+- [] Curated Lists (not sure where to store.. Textille? I like the way Ceramic works, but authentication is really messy)
 - [] Speech Synthesis Native Browser API for the audio. Simple Audio inap
-- [] Favourites list, subscribtions & notifications //centralized, using supabase for indexing together with CRON jobs. Hopefully, once the-graph provides an Arweave support the app can use it instead
-- [] Curated Lists
+- [] Move the app from Vercel to Sleek
+- [] Favourites list, subscribtions & notifications //centralized, using supabase for indexing together with CRON jobs. Hopefully, once the-graph provides an Arweave support the app can use it instead (?)
 - [] Proper handle of multiple columns to create a book like text handling (native css columns are useless, because they can be really tall and unreadable)
 - [] Search through articles (when thegraph + arweave is available)
 - [] Screen split on drag (the cards on main page are draggable into open space to create the columns(?)

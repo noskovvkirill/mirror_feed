@@ -3,8 +3,22 @@ import {history} from '@/design-system/Layout'
 import {Entry} from '@/design-system/Article'
 
 
+export type CurrentArticle = {
+    publication:{
+        ensLabel:string
+    },
+    title:string | null | undefined,
+    digest:string | null | undefined
+}
+
 export type IgnoredPublication = {
     ensLabel:string
+}
+
+export type CurationList = {
+   title:string,
+   avatar?:string,
+   publications:SubscribedPublication[]
 }
 
 export type SubscribedPublication = {
@@ -18,7 +32,8 @@ export type PinnedItem = {
 
 export type ReadingListItem = {
     title:string,
-    entryDigest:string
+    entryDigest:string,
+    ensLabel:string
 }
 
 export type ReadSettings = {
@@ -27,6 +42,14 @@ export type ReadSettings = {
     fontColor: string | "default",
     backgroundColor: string | "default"
 }
+
+
+export const Current = atom({
+    key:'currentArticle',
+    default:null as CurrentArticle | null,
+})
+
+
 
 const ignoredPublicationEffect = ():AtomEffect<IgnoredPublication[]> => ({setSelf, onSet, trigger}) => {
     const loadPersisted = () => {
@@ -126,21 +149,19 @@ export const readLaterList = atom({
 
 
 
-const subscribedPublicationEffect = ():AtomEffect<SubscribedPublication[]> => ({setSelf, onSet, trigger}) => {
+const CurrationEffect = ():AtomEffect<CurationList[]> => ({setSelf, onSet, trigger}) => {
     const loadPersisted = () => {
         if(trigger === 'get' && typeof localStorage !== 'undefined'){
-            const ignoredList = localStorage.getItem('mirror-subscribed-publication-items')
+            const ignoredList = localStorage.getItem('mirror-curated-publication-items')
             if(ignoredList){
                 setSelf(JSON.parse(ignoredList))
             }
         }   
     }   
-
     loadPersisted();
-  
-    onSet((newValue:SubscribedPublication[], oldValue:any) => {
+    onSet((newValue:CurationList[], oldValue:any) => {
         if(newValue instanceof Array){
-            localStorage.setItem('mirror-subscribed-publication-items', JSON.stringify(newValue))
+            localStorage.setItem('mirror-curated-publication-items', JSON.stringify(newValue))
             history.push({
                 label: `${JSON.stringify(oldValue)} -> ${JSON.stringify(newValue)}`,
                 undo: () => {
@@ -151,10 +172,10 @@ const subscribedPublicationEffect = ():AtomEffect<SubscribedPublication[]> => ({
     })   
 }
 
-export const subscribeList = atom({
-    key:'subscribeList',
-    default:[] as SubscribedPublication[],
-    effects_UNSTABLE: [subscribedPublicationEffect()]
+export const curationItems = atom({
+    key:'curationList',
+    default:[] as CurationList[],
+    effects_UNSTABLE: [CurrationEffect()]
 })
 
 
