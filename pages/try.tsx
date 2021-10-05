@@ -2,7 +2,7 @@ import { request, gql } from 'graphql-request';
 import Box from '@/design-system/primitives/Box'
 import type { GetServerSideProps } from 'next'
 import useSWRInfinite from 'swr/infinite'
-import ArticlePreview from '@/design-system/ArticlePreview';
+import Article from '@/design-system/Article';
 
 export type Entry = {
   id:string,
@@ -112,7 +112,7 @@ const Try = ({entries, lastCursor}:Props) =>{
               return page[0].map((entry:any)=>{
             
                         return(
-                        <ArticlePreview key={entry.digest} entry={entry}/>
+                        <Article key={entry.digest} entry={entry}/>
                         )
             })})}
             </>
