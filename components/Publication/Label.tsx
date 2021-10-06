@@ -1,6 +1,7 @@
 
 import {styled} from 'stitches.config'
 import Box from '@/design-system/primitives/Box'
+import Button from '@/design-system/primitives/Button'
 import AddIcon from '@/design-system/icons/Add'
 import React from 'react'
 import * as Popover from '@radix-ui/react-popover';
@@ -41,9 +42,12 @@ const StyledLabel = styled('div',{
 
 
 const StyledContent = styled(Popover.Content, {
+  display:'flex',
+  flexDirection:'column',
+  gap:'$1',
   marginTop:'$1',
   borderRadius: '$2',
-  padding: '$4',
+  padding: '$2',
   width: 128,
   backgroundColor: '$background',
   border:'1px solid $foreground',
@@ -73,12 +77,17 @@ const StyledCurationButton = styled(Popover.Trigger, {
     padding:'$1', 
     cursor:'pointer',
     '&:hover':{
-
+        color:'$background',
+        backgroundColor:'$foreground'
+    },
+    '&[data-state="open"]':{
+        color:'$background',
+        backgroundColor:'$foreground'
     }
 })
 
 
-const Label = ({publication, content}:{publication:string, content?:string}) => {
+const Label = ({publication, content, type, author}:{publication:string, content?:string, author?:string, type?:'ens' | 'personal'}) => {
     const router = useRouter()
     return(
         <Box layout='flexBoxRow' css={{alignItems:'center', color:'$foreground', userSelect:'none'}}>
@@ -88,12 +97,18 @@ const Label = ({publication, content}:{publication:string, content?:string}) => 
                 </StyledCurationButton>
                 <StyledContent align="center">
                     Spaces
+                    <Button 
+                    onClick={()=>{
+                        router.push('/')
+                    }}
+                    css={{width:'100%', borderColor:'transparent'}}>Main feed</Button>
+                    {/* <Box as='hr' css={{background:'$foreground'}}/> */}
                 </StyledContent>
             </Popover.Root>
              /
             <StyledLabel 
             onClick={()=>{
-                router.push(`/${publication}`)
+                router.push(`/${type === 'personal' ? author : publication}?type=${type}`)
             }}
             selected={content ? false : true}>
                {publication}

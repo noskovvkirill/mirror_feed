@@ -1,7 +1,7 @@
 import Box from "@/design-system/primitives/Box"
 import Button from "@/design-system/primitives/Button"
 import { styled } from "stitches.config"
-import NotificationsIcon from '@/design-system/icons/Notifications'
+// import NotificationsIcon from '@/design-system/icons/Notifications'
 import {useRouter} from 'next/router'
 import { useSetRecoilState } from "recoil"
 import { useRecoilValueAfterMount } from "hooks/useRecoilValueAfterMount"

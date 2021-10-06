@@ -5,7 +5,7 @@ import AddAllIcon from '@/design-system/icons/AddAll'
 import Nav from '@/design-system/Nav'
 
 import Head from 'next/head'
-import { ReactNode, useState, useEffect} from 'react'
+import { ReactNode, useState} from 'react'
 // import Input from '@/design-system/primitives/Input'
 import {useRouter} from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -18,7 +18,6 @@ import ButtonControl from '@/design-system/primitives/ButtonControl'
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 
-import type {CurrentArticle} from 'contexts'
 import { Current } from 'contexts'
 
 
@@ -243,6 +242,8 @@ const Layout = ({children}:Props) =>{
                     {router.query.publication && (
                         <Box css={{padding:'$4 $4 calc($4 * 2 + $1) $4'}}>
                             <PublicationLabel 
+                            type={currentArticle?.publication.type}
+                            author={currentArticle?.author}
                             content={
                                 currentArticle?.title || router.query.article?.toString()}
                             publication={

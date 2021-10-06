@@ -1,6 +1,6 @@
 import Button from '@/design-system/primitives/Button'
 import {styled} from 'stitches.config'
-import { ReactChild,ReactPropTypes,useState } from 'react'
+import { ReactChild,useState } from 'react'
 import * as Portal from '@radix-ui/react-portal';
 import {useRef, useEffect} from 'react';
 

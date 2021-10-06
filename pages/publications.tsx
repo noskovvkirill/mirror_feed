@@ -2,6 +2,7 @@ import type { GetServerSideProps } from 'next'
 import Layout from '@/design-system/Layout'
 import Box from '@/design-system/primitives/Box'
 import { request, gql } from 'graphql-request';
+import ExternalIcon from '@/design-system/icons/External'
 
 const query = gql`
  {

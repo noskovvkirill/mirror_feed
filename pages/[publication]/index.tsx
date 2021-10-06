@@ -7,24 +7,26 @@ import {Entry} from '@/design-system/Article'
 import { Current } from 'contexts';
 import { useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
-// const query = gql`
-// query Transaction($contributor:String!){
-// 		transactions(first:20, tags: [
-//       { name: "App-Name", values: ["MirrorXYZ"] },
-//       { name: "Contributor", values: $contributor}
-//     ]) {
-// 			edges {
-// 				node {
-// 					id
-// 					tags {
-// 						name
-// 						value
-// 					}
-// 				}
-//         cursor
-// 			}
-// 		}
-// 	}`
+
+
+const queryPersonal = gql`
+query Transaction($contributor:String!){
+		transactions(first:20, tags: [
+      { name: "App-Name", values: ["MirrorXYZ"] },
+      { name: "Contributor", values: [$contributor]}
+    ]) {
+			edges {
+				node {
+					id
+					tags {
+						name
+						value
+					}
+				}
+        cursor
+			}
+		}
+	}`
 
 // Publication Entries
 const queryPublication = gql`
@@ -59,13 +61,38 @@ query Entry($digest: String!) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 
-const {  publication} = ctx.query;
+const { publication, type} = ctx.query;
 
-// console.log('publication', publication)
 
-// const data = await request('https://arweave.net/graphql', query).then(({ transactions }) =>{
-//       return transactions.edges
-//   });
+if(type === 'personal') {
+  const entries = await request('https://arweave.net/graphql', queryPersonal, {contributor:publication}).then(({ transactions }) =>{
+          return transactions.edges
+  });
+
+  const content = entries.map(({node:{tags}}:{node:{tags:any}})=>{
+     return tags.find((c:any)=>c.name === 'Original-Content-Digest').value
+  })
+
+  const entriesData = await Promise.all([...new Set(content)].map(async (item:any) => {
+    return(await request('https://mirror-api.com/graphql', queryEntry, {
+       digest: item
+    }).then((data) =>
+      data.entry
+    ).catch((e)=>{return})
+    )
+  }))
+
+   const entrieFiltered = entriesData.filter(function( element:any ) {
+      return element !== undefined;
+    });
+    
+    return {
+    props:{entries:entrieFiltered},
+  }
+
+}
+
+
 
 
 const entries = await request('https://mirror-api.com/graphql', queryPublication, {
@@ -107,8 +134,10 @@ const Data = ({entries}:Props) =>{
   useEffect(()=>{
     setCurrentArticle({
       publication:{
+        type: entries[0].publication?.ensLabel ? 'ens' : 'personal',
         ensLabel:entries[0].publication?.ensLabel || entries[0].author.displayName || entries[0].author.address
       },
+      author: entries[0].author.address,   
       title:null,
       digest:null
     })

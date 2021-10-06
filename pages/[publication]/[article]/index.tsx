@@ -51,8 +51,10 @@ const Data = ({entry}:Props) =>{
   useEffect(()=>{
     setCurrentArticle({
       publication:{
-        ensLabel:entry.publication?.ensLabel || entry.author.displayName || entry.author.address
+        type: entry.publication?.ensLabel ? 'ens' : 'personal',
+        ensLabel:entry.publication?.ensLabel || entry.author.displayName 
       },
+      author: entry.author.address,                                                                                          
       title:entry.title,
       digest: entry.digest
     })

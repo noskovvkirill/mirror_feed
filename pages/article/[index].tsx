@@ -51,12 +51,15 @@ const Data = ({entry}:Props) =>{
   useEffect(()=>{
     setCurrentArticle({
       publication:{
+        type: entry.publication?.ensLabel ? 'ens' : 'personal',
         ensLabel:entry.publication.ensLabel
       },
+      author: entry.author.address,                                                                                          
       digest: entry.digest,
       title:entry.title
     })
-  },[])
+  },[entry])
+
     return(
       <Layout>
           <Box layout='flexBoxColumn'>

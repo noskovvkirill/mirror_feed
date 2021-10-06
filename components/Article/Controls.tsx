@@ -120,6 +120,34 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                                     <BackIcon/>
                             </ButtonControl>
 
+                            {!isReadingList
+                ? <ButtonControl
+                        selected={false}
+                        key={'reading control'}
+                        label='to reading list'
+                        isHighlighted={(isHover || isFocused) ? true : false}
+                        onClick={()=>{
+                            setReadLater((prevState:ReadingListItem[])=>{
+                                //check for dublicates just in case 
+                                if(prevState.findIndex((item:ReadingListItem)=>item.entryDigest === entry.digest) !== -1) return prevState
+                            return [...prevState, {entryDigest:entry.digest, title:entry.title, ensLabel: entry.publication?.ensLabel ? entry.publication.ensLabel : entry.author.address}]})
+                        }}>
+                        <AddIcon/>
+                    </ButtonControl>
+                :<ButtonControl
+                        selected={true}
+                        label='remove from the reading list'
+                        isHighlighted={true}
+                        onClick={()=>{
+                        setReadLater((prevState:ReadingListItem[])=>{
+                        const indexUnPin = prevState.findIndex((item:ReadingListItem)=>item.entryDigest=== entry.digest)
+                        const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
+                        return newArray
+                    })}}>
+                    <SuccessMarkIcon/>
+                </ButtonControl>
+            }
+
                             {/* <ButtonPopover icon={<ColumnsIcon/>}>
                                 <button onClick={()=>{
                                     setSettings((settings:ReadSettings)=>{

@@ -44,17 +44,22 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 — [X] Fix useSWR types error and pages rendering
 — [X] Merge Article and Article Preview component into one to later perform a correct layout animation
 — [X] Refactor Article &/or Article Preview components to follow Model-View paradigm.
-— [IN PROGRESS] Fix router to have a /publicationId/entryID for the correct Navigation
+— [X] Fix router to have a /publicationId/entryID for the correct Navigation
 — [IN PROGRESS] Change Nav component to display publications details when inside entryId
 — [X] Reading list deletes
 — [X] Individual publication pages
-— [] Global state for selected article (to display pretty names and not the hashes :)
-— [] Start designing link embeds
+— [X] Distinction between user pages and ensLabel pages
+— [X] Global state for selected article (to display pretty names and not the hashes :)
+— [IN PROGRESS] Start designing link embeds
 — [] Stitched Themes (Dark Mode, Black&White, Default)
 — [] Image full screen
 — [] Event Listener for Portalled Control Buttons (remove on scroll or scroll lock(?)
 — [] Patience loader text gradient :-)
 — [] Basic local curation lists
+— [] "Delete" button in the Reading List is weird and doesn't follow the Fitts law
+— [] Publication pages are too similar to the main feed, wrong sense of place for the user. Also, at the moment it is not quite clear how to get back from the publication page to the feed (it takes a couple seconds to realize that there is a menu button)
+— [] Pinned items don't work when inside the publication pages (no filtering)
+— [] Where can I place a logo to give a better identity to the website?
 
 ### First version
 

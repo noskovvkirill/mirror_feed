@@ -51,47 +51,47 @@ const StyledContainer = styled('div',{
     }
 })
 
-const StyledHeader = styled('div',{
-      display:'flex',
-      flexDirection:'column',
-      justifyContent:'center',
-      gap:'$1',
-      height:'100%',
-      maxHeight:'640px',
-      borderRadius:'$round',
-      padding:'0',
-      margin:'$2 $2 $2 0',
-      width:'32px',
-      color:'$foreground',
-      mixBlendMode:'multiply',
-     transition:'$all',
-      cursor:'pointer',
-      'h5':{
-          userSelect:'none',
-          whiteSpace:'nowrap',
-          fontWeight:'400',
-          transform:'rotate(-90deg)'
-      },
-       variants:{
-        isHighlighted:{
-            true:{
-                '&:hover':{
-                    backgroundColor:'$highlightBronze',
-                    color:'$foregroundTextBronze',
-                },
-            },
-            false:{
-                '&:hover':{
-                    backgroundColor:'$highlight',
-                    color:'$foregroundText'
-                },
-            }
-        }
-    },
-     defaultVariants:{
-        isHighlighted:false
-    }
-})
+// const StyledHeader = styled('div',{
+//       display:'flex',
+//       flexDirection:'column',
+//       justifyContent:'center',
+//       gap:'$1',
+//       height:'100%',
+//       maxHeight:'640px',
+//       borderRadius:'$round',
+//       padding:'0',
+//       margin:'$2 $2 $2 0',
+//       width:'32px',
+//       color:'$foreground',
+//       mixBlendMode:'multiply',
+//      transition:'$all',
+//       cursor:'pointer',
+//       'h5':{
+//           userSelect:'none',
+//           whiteSpace:'nowrap',
+//           fontWeight:'400',
+//           transform:'rotate(-90deg)'
+//       },
+//        variants:{
+//         isHighlighted:{
+//             true:{
+//                 '&:hover':{
+//                     backgroundColor:'$highlightBronze',
+//                     color:'$foregroundTextBronze',
+//                 },
+//             },
+//             false:{
+//                 '&:hover':{
+//                     backgroundColor:'$highlight',
+//                     color:'$foregroundText'
+//                 },
+//             }
+//         }
+//     },
+//      defaultVariants:{
+//         isHighlighted:false
+//     }
+// })
 
 
 

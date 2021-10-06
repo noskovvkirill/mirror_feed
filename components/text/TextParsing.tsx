@@ -1,8 +1,8 @@
 import {styled} from 'stitches.config'
 import { ReactPropTypes } from 'react'
 import Box from '@/design-system/primitives/Box'
-
-
+import Proposal from '@/design-system/text/Proposal'
+import Editions from '@/design-system/text/Editions'
 
 export const StyledList = styled('ul', {
     listStyle:'circle',
@@ -25,6 +25,7 @@ export const StyledList = styled('ul', {
 export const StyledImage = styled('img', {
     maxWidth:'100%',
     margin:'$2 0',
+    borderRadius:'$2',
     variants:{
         inline:{
             true:{
@@ -70,8 +71,9 @@ export const StyledLink = styled('a', {
    cursor:'pointer',
    transition:'$color',
    whiteSpace:'break-spaces',
-   wordBreak:'break-all',
-   textDecoration:'none',
+    hyphens:'auto',
+//    wordBreak:'break-all',
+//    textDecoration:'none',
    '&:hover':{
        textShadow:'$normal',
         color:'$foregroundText'
@@ -82,7 +84,8 @@ export const StyledH1 = styled('h1', {
     fontSize:'$1',
     maxWidth:'720px',
     whiteSpace:'break-spaces',
-    wordBreak:'break-all',
+    // wordBreak:'break-all',
+    hyphens:'auto',
     '&:target':{
         backgroundColor:'$foregroundBronze'
     },
@@ -104,7 +107,8 @@ export const StyledH2 = styled('h2', {
     fontSize:'$3',
     maxWidth:'720px',
     whiteSpace:'break-spaces',
-    wordBreak:'break-all',
+    // wordBreak:'break-all',
+    hyphens:'auto',
     '&:target':{
         backgroundColor:'$foregroundBronze'
     },
@@ -126,7 +130,8 @@ export const StyledH3 = styled('h3', {
     fontSize:'$3',
     maxWidth:'720px',
     whiteSpace:'break-spaces',
-    wordBreak:'break-all',
+    // wordBreak:'break-all',
+    hyphens:'auto',
     '&:target':{
         backgroundColor:'$foregroundBronze'
     },
@@ -148,7 +153,8 @@ export const StyledH4 = styled('h4', {
     fontSize:'$4',
     maxWidth:'720px',
     whiteSpace:'break-spaces',
-    wordBreak:'break-all',
+    // wordBreak:'break-all',
+    hyphens:'auto',
     '&:target':{
         backgroundColor:'$foregroundBronze'
     },
@@ -170,7 +176,8 @@ export const StyledH5 = styled('h5', {
     fontSize:'$5',
     maxWidth:'720px',
     whiteSpace:'break-spaces',
-    wordBreak:'break-all',
+    // wordBreak:'break-all',
+    hyphens:'auto',
     '&:target':{
         backgroundColor:'$foregroundBronze'
     },
@@ -190,6 +197,10 @@ export const StyledH5 = styled('h5', {
 })
 
 
+
+
+
+
 export const Embeds = (props:ReactPropTypes & {href:string, children:React.ReactNode}) => {
     const myReg = `://`;
     if(props?.href.split(myReg)[0] === 'auction'){
@@ -197,8 +208,24 @@ export const Embeds = (props:ReactPropTypes & {href:string, children:React.React
             <Box css={{padding:'$1 $1 $4 $1', opacity:0.5, borderRadius:'$2', backgroundColor:'LightBlue'}}>
                 <h5>AUCTION</h5>
                 {props.children}
+         
             </Box>
         )
+    }
+
+    if(props?.href.split(myReg)[0] === 'proposal'){
+        return(<Proposal cid={props?.href.split(myReg)[1]}/>)
+    }
+
+
+    if(props?.href.split(myReg)[0] === 'edition'){
+        const editions = new URLSearchParams(props?.href.split(myReg)[1].split('?')[1]).get('editionId')
+        const contract = props?.href.split(myReg)[1].split('?')[0]
+        return(
+            // <></>
+           <Editions editionId={Number(editions)} editionContractAddress={contract}/>
+        )
+        // return(<Editions cid={props?.href.split(myReg)[1]}/>)
     }
 
     if(props?.href.split(myReg)[0] === 'ethereum'){
@@ -228,6 +255,18 @@ export const StyledToc = styled('nav', {
         fontSize:'$6',
         marginBottom:'$2',
         marginLeft:'-$1',
+        // expand the reach of the text 
+        //     '&::before': {
+        //     content: '""',
+        //     position: 'absolute',
+        //     top: '50%',
+        //     left: '50%',
+        //     transform: 'translate(-50%, -50%)',
+        //     width: '100%',
+        //     height: '100%',
+        //     minWidth: 44,
+        //     minHeight: 44,
+        // },
         '&:active':{
         backgroundColor:'$foregroundBronze'
         },

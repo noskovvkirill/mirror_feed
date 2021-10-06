@@ -5,10 +5,12 @@ import {Entry} from '@/design-system/Article'
 
 export type CurrentArticle = {
     publication:{
+        type: 'personal' | 'ens',
         ensLabel:string
     },
     title:string | null | undefined,
-    digest:string | null | undefined
+    digest:string | null | undefined,
+    author: string 
 }
 
 export type IgnoredPublication = {

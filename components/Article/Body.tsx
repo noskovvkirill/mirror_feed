@@ -137,7 +137,9 @@ const BodyComponent = (
             </StyledTitle>
             {body}
             {!isPreview && (
-                  <Box layout='flexBoxRow' css={{padding:'$2 0'}}>
+                  <Box layout='flexBoxRow' css={{padding:'$4 0', 
+                  background:'inherit',
+                  marginTop:'$4', borderTop:'1px solid $foregroundBronze'}}>
                       {(readingList?.findIndex((item)=>item.entryDigest === entry.digest) !== -1) && (
                           <Button 
                                 onClick={()=>{
@@ -148,16 +150,13 @@ const BodyComponent = (
                                 })}}
                                 >Remove from the reading list</Button>
                       )}
-
-                    
-
-                      {/* {readingList && readingList[readingList?.findIndex((item)=>item.entryDigest === entry.digest) +1] 
-                      ?  <>hasMore</>
-                      :  <>has no more</>
-                      } */}
-
+                
                         {readingList.filter(item=>item.entryDigest !== entry.digest).length > 0 
-                        ? <Button>Next: {readingList.filter(item=>item.entryDigest !== entry.digest)[0]?.title}</Button>
+                        ? <Button
+                            onClick={()=>{
+                                Open(`/${readingList.filter(item=>item.entryDigest !== entry.digest)[0].ensLabel + '/' + readingList.filter(item=>item.entryDigest !== entry.digest)[0].entryDigest }`)
+                            }}
+                        >Next: {readingList.filter(item=>item.entryDigest !== entry.digest)[0]?.title.slice(0,48)+'...'}</Button>
                         : <Box as='span' layout='flexBoxRow' css={{color:'$foregroundText', alignItems:'center', fontSize:'$6'}}>Your reading list is empty ✨</Box>
                         }
                   </Box>
