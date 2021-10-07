@@ -125,7 +125,7 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                         selected={false}
                         key={'reading control'}
                         label='to reading list'
-                        isHighlighted={(isHover || isFocused) ? true : false}
+                        isHighlighted={true}
                         onClick={()=>{
                             setReadLater((prevState:ReadingListItem[])=>{
                                 //check for dublicates just in case 

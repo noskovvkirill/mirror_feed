@@ -42,7 +42,11 @@ export type ReadSettings = {
     columns:number,
     fontSize:number | "default",
     fontColor: string | "default",
-    backgroundColor: string | "default"
+    backgroundColor: string | "default",
+    isEditions:boolean,
+    isCrowdfund:boolean,
+    isProposal:boolean,
+    isAuction:boolean,
 }
 
 
@@ -181,13 +185,40 @@ export const curationItems = atom({
 })
 
 
+const SettingsEffect = ():AtomEffect<ReadSettings> => ({setSelf, onSet, trigger}) => {
+    const loadPersisted = () => {
+        if(trigger === 'get' && typeof localStorage !== 'undefined'){
+            const ignoredList = localStorage.getItem('mirror-read-settings')
+            if(ignoredList){
+                setSelf(JSON.parse(ignoredList))
+            }
+        }   
+    }   
+    loadPersisted();
+    onSet((newValue:ReadSettings, oldValue:any) => {
+            localStorage.setItem('mirror-read-settings', JSON.stringify(newValue))
+            history.push({
+                label: `${JSON.stringify(oldValue)} -> ${JSON.stringify(newValue)}`,
+                undo: () => {
+                    setSelf(oldValue);
+                },
+            });
+    })   
+}
 
-export const readSettings = atom({
-    key:'readSettings',
-    default:{
+export const readSettingsDefault: ReadSettings= {
         columns:1,
         fontSize:"default",
         fontColor:"default",
         backgroundColor:"default",
-    } as ReadSettings,
+        isEditions:true,
+        isProposal:true,
+        isCrowdfund:true,
+        isAuction:true
+}
+
+export const readSettings = atom({
+    key:'readSettings',
+    default:readSettingsDefault as ReadSettings,
+    effects_UNSTABLE: [SettingsEffect()]
 })

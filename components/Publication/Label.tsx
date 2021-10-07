@@ -14,7 +14,7 @@ const StyledLabel = styled('div',{
     backgroundColor:'none',
     color:'$foregroundText',
     padding:'$1 $2',
-    borderRadius:'$2',
+    borderRadius:'$round',
     boxSizing:'border-box',
     fontSize:'$6',
     cursor:'pointer',

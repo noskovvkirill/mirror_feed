@@ -91,9 +91,55 @@ query Edition($editionId: Int!, $editionContractAddress: String!) {
   edition(editionId: $editionId, editionContractAddress: $editionContractAddress) {
     id
     title   
+    quantity
+    price
+    allocation
+    fundingRecipient
+    version
+    mediaURL
+    editionContractAddress
+    events {
+      event
+      transactionHash
+      avatarURL
+      twitterUsername
+      serialNumber
+      collectorAddress
+      tokenId
+    }
+    publication{
+         id
+        avatarURL
+        displayName
+        ensLabel
+    }
+     primaryMedia {
+       mimetype
+       sizes{
+           og {
+             src
+            height
+            width
+            }
+            lg {
+              src
+              height
+               width
+            }
+            md {
+                src
+                height
+                width
+            }
+            sm {
+             src
+             height
+             width
+         }
+       }
+    }
   }
 }
-
 `
 
 

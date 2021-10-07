@@ -67,6 +67,7 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 
 - [] Authentication
 - [] Curated Lists (not sure where to store.. Textille? I like the way Ceramic works, but authentication is really messy)
+- [] Full version of Embeded crypto blocks (Editions and etc.)
 - [] Speech Synthesis Native Browser API for the audio. Simple Audio inap
 - [] Move the app from Vercel to Sleek
 - [] Favourites list, subscribtions & notifications //centralized, using supabase for indexing together with CRON jobs. Hopefully, once the-graph provides an Arweave support the app can use it instead (?)

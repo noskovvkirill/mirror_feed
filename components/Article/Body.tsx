@@ -88,12 +88,12 @@ const StyledContents = styled('article',{
         isHighlighted:{
             true:{
                 '*':{
-                   color:'$textBronze', 
+                //    color:'$textBronze', 
                 }
             },
             false:{
                   '*':{
-                   color:'$textBronze', 
+                //    color:'$textBronze', 
                 }
             }
         }
@@ -129,7 +129,7 @@ const BodyComponent = (
                 )}
             </StyledMetadata>
             <StyledTitle isHighlighted={(isHover || isFocused) ? true : false}>
-                <h1 style={{cursor:'pointer'}} onClick={()=>{
+                <h1 style={{cursor:isPreview ? 'pointer' : 'auto'}} onClick={()=>{
                       entry.publication?.ensLabel 
                     ?  Open(`/${entry.publication?.ensLabel ? entry.publication?.ensLabel : entry.author.address}/${entry.digest}`)
                     :  Open(`/${entry.author.address}/${entry.digest}`)
@@ -138,7 +138,8 @@ const BodyComponent = (
             {body}
             {!isPreview && (
                   <Box layout='flexBoxRow' css={{padding:'$4 0', 
-                  background:'inherit',
+                  gap:'$1', flexWrap:'wrap',
+                  background:'$highlightBronze',
                   marginTop:'$4', borderTop:'1px solid $foregroundBronze'}}>
                       {(readingList?.findIndex((item)=>item.entryDigest === entry.digest) !== -1) && (
                           <Button 

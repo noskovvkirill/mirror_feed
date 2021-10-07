@@ -41,7 +41,7 @@ const StyledLabel = styled('p',{
     borderRadius:'$round',
     padding:'$0 $2',
     backgroundColor:'$highlight',
-    color:'$foreground'
+    color:'$foregroundText',
 })
 
 const getProposal =  async (cid:string) => await request('https://mirror-api.com/graphql', queryProposal, {cid:cid})
