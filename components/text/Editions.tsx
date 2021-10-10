@@ -1,7 +1,7 @@
 import Box from '@/design-system/primitives/Box'
 import RemoveIcon from '@/design-system/icons/Remove'
 import ButtonControl from '@/design-system/primitives/ButtonControl'
-import ExternalIcon from '@/design-system/icons/External'
+// import ExternalIcon from '@/design-system/icons/External'
 import {styled} from 'stitches.config'
 import {request} from 'graphql-request'
 import useSWR from 'swr'
@@ -71,10 +71,10 @@ const StyledLabel = styled('p',{
     color:'$foregroundText',
 })
 
-type EditionsProps = {
-    editionId:number,
-    editionContractAddress:string
-}
+// type EditionsProps = {
+//     editionId:number,
+//     editionContractAddress:string
+// }
 
 const getEditions =  async (editionId:number, editionContractAddress:string) => {
     return await request('https://mirror-api.com/graphql', queryEditions, {editionId:editionId, editionContractAddress:editionContractAddress})

@@ -3,11 +3,11 @@ import { ReactPropTypes } from 'react'
 import Box from '@/design-system/primitives/Box'
 import Proposal from '@/design-system/text/Proposal'
 import Editions from '@/design-system/text/Editions'
-import LinkPreview from '@/design-system/text/LinkPreview'
+// import LinkPreview from '@/design-system/text/LinkPreview'
 import Nft from '@/design-system/text/Nft'
 
 export const StyledList = styled('ul', {
-    listStyle:'circle',
+    listStyle:'inside',
     color:'$foregroundBronzeText',
     padding:'$2 0',
     li:{    

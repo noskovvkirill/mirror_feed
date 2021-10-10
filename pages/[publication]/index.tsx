@@ -1,61 +1,19 @@
 import Layout from '@/design-system/Layout'
 import Box from '@/design-system/primitives/Box'
-import { request, gql } from 'graphql-request';
+import { request } from 'graphql-request';
 import type { GetServerSideProps } from 'next'
+import type { SubscribedPublication} from 'contexts';
 import Article from '@/design-system/Article';
-import {Entry} from '@/design-system/Article'
+import type {Entry} from '@/design-system/Article'
 import { Current, PinnedItem,pinnedItems } from 'contexts';
 import { useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
-
-const queryPersonal = gql`
-query Transaction($contributor:String!){
-		transactions(first:20, tags: [
-      { name: "App-Name", values: ["MirrorXYZ"] },
-      { name: "Contributor", values: [$contributor]}
-    ]) {
-			edges {
-				node {
-					id
-					tags {
-						name
-						value
-					}
-				}
-        cursor
-			}
-		}
-	}`
-
-// Publication Entries
-const queryPublication = gql`
-query Publication($ensLabel: String!) {
-  publication(ensLabel: $ensLabel) {
-       entries{
-         id
-         digest
-       }
-    }
-}`
-
-const queryEntry = gql`
-query Entry($digest: String!) {
-  entry(digest: $digest) {
-       id
-        body
-        digest
-        timestamp
-        title
-        author{
-          address
-          displayName
-        }
-        publication{
-          ensLabel
-        }
-    }
-}`
+import  { User } from '@/design-system/primitives/Profile';
+import { queryPersonal, queryEntry, queryPublication } from 'src/queries';
+import { getContributorsListAvatars} from 'src/publication-contents'
+import Contributors from '@/design-system/Contributors';
+import {useRouter} from 'next/router'
 
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -63,11 +21,21 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const { publication, type} = ctx.query;
 
+if(!publication) {
+  return {notFound:true}
+}
 
 if(type === 'personal') {
   const entries = await request('https://arweave.net/graphql', queryPersonal, {contributor:publication}).then(({ transactions }) =>{
           return transactions.edges
   });
+
+  const pbl:SubscribedPublication = {
+    ensLabel:publication.toString(),
+    type:'personal'
+  }
+
+  const profiles:User[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
 
   const content = entries.map(({node:{tags}}:{node:{tags:any}})=>{
      return tags.find((c:any)=>c.name === 'Original-Content-Digest').value
@@ -78,7 +46,7 @@ if(type === 'personal') {
        digest: item
     }).then((data) =>
       data.entry
-    ).catch((e)=>{return})
+    ).catch(()=>{return})
     )
   }))
 
@@ -87,11 +55,10 @@ if(type === 'personal') {
     });
     
     return {
-    props:{entries:entrieFiltered},
+    props:{entries:entrieFiltered, profiles:profiles},
   }
 
 }
-
 
 
 
@@ -103,6 +70,13 @@ const entries = await request('https://mirror-api.com/graphql', queryPublication
     return { notFound:true}
   }
 
+  const pbl:SubscribedPublication = {
+    ensLabel:publication.toString(),
+    type:'ens'
+  }
+
+  const profiles:User[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
+
   const content = entries.map((item:any)=>item.digest)
    
   const entriesData = await Promise.all([...new Set(content)].map(async (item:any) => {
@@ -110,7 +84,7 @@ const entries = await request('https://mirror-api.com/graphql', queryPublication
        digest: item
     }).then((data) =>
       data.entry
-    ).catch((e)=>{return})
+    ).catch(()=>{return})
     )
   }))
 
@@ -119,19 +93,21 @@ const entries = await request('https://mirror-api.com/graphql', queryPublication
     });
     
     return {
-    props:{entries:entrieFiltered},
+    props:{entries:entrieFiltered, profiles:profiles},
   }
 };
+
 type Props = {
     entries:any;
+    profiles:User[] | SubscribedPublication[];
 }
 
 
-const Data = ({entries}:Props) =>{
+const Data = ({entries, profiles}:Props) =>{
 
   const setCurrentArticle = useSetRecoilState(Current)
   const pinnedList = useRecoilValueAfterMount(pinnedItems, null) //we set the items to null to prevent initial rendering with empty values and waiting for the list to load
-
+  const router = useRouter()
 
   useEffect(()=>{
     setCurrentArticle({
@@ -143,29 +119,43 @@ const Data = ({entries}:Props) =>{
       title:null,
       digest:null
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[entries])
 
     return(
       <Layout>
-          <Box layout='flexBoxColumn'>
-            {entries.length === 0 && (
-              <p>There is nothing just yet</p>
+          <Box layout='flexBoxRow' css={{width:'100%', justifyContent:'space-between'}}>
+            <Box layout='flexBoxColumn'>
+              {entries.length === 0 && (
+                <p>There is nothing just yet</p>
+              )}
+  
+              {pinnedList !== null && (
+                <>
+                {entries.map((entry:Entry)=>{
+                    if(pinnedList.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest) !== -1){
+                      return;
+                    } else {
+                        return(
+                        <Article key={entry.digest} entry={entry}/>
+                        )
+                    }
+                })}
+              </>
             )}
- 
-            {pinnedList !== null && (
-              <>
-              {entries.map((entry:Entry)=>{
-                  if(pinnedList.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest) !== -1){
-                    return;
-                  } else {
-                      return(
-                      <Article key={entry.digest} entry={entry}/>
-                      )
-                  }
-              })}
-            </>
-           )}
-
+            </Box>
+             <Box 
+              layout='flexBoxColumn'
+              css={{
+              marginTop:'calc($4 + $1)',  
+              padding:'$2 $4', 
+              width:'fit-content',
+              height:'fit-content',
+              alignItems:'flex-end',
+              borderRadius:'$2',
+              }}>
+              <Contributors data={profiles} Open={(route:string)=>router.push(route)}/>
+            </Box>
           </Box>
       </Layout>
     )

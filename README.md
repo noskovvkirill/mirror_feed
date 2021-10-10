@@ -50,9 +50,11 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 — [X] Global state for selected article (to display pretty names and not the hashes :)
 — [IN PROGRESS] Start designing link embeds
 — [] Fix the rotation of labels
+– [] Links push to the top of the page (Next reading list item)
+— [X] Safari custom focus outline for the Reading List
+— [] Contributors list in the publication
 — [] Stitched Themes (Dark Mode, Black&White, Default)
 — [] Image full screen
-— [] Rename the Spaces
 — [X] Event Listener for Portalled Control Buttons (remove on scroll or scroll lock(?) // solved with proper positioning
 — [] Patience loader text gradient :-)
 — [IN PROGRESS] Basic local curation lists
@@ -63,6 +65,7 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 — [] Decide where to place the logo to give a better identity to the website?
 — [] Click on avatar to remove from the Space
 — [] Add Verifiend accounts to the Search to check the accounts names
+— [] Fuzzy search instead of 1 to 1 precise search
 
 ### First version
 

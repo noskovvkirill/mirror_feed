@@ -1,7 +1,7 @@
 import {styled} from 'stitches.config'
 import Box from '@/design-system/primitives/Box'
 import Button from '@/design-system/primitives/Button'
-import Input from '@/design-system/primitives/Input'
+// import Input from '@/design-system/primitives/Input'
 import AddIcon from '@/design-system/icons/Add'
 import React from 'react'
 import * as Popover from '@radix-ui/react-popover';

@@ -23,12 +23,12 @@ export const getContributorsAvatar = async(publication:IList) => {
 }
 
 export const getContributorsListAvatars = async(list:IList[]) => {
-    console.log('list avatars', list)
+    // console.log('list avatars', list)
     const items = list.map(async (publication:IList)=>{
         return await getContributorsAvatar(publication)
     })
     const addresses = await Promise.all(items)
-        console.log('list avatars itmems',addresses)
+        // console.log('list avatars itmems',addresses)
 
     return addresses.flat()
 }
@@ -52,7 +52,7 @@ export const getContributors = async(publication:IList) => {
 }
 
 export const getContributorsList = async(list:IList[]) => {
-    console.log('list', list)
+    // console.log('list', list)
     const items = list.map(async (publication:IList)=>{
         return await getContributors(publication)
     })

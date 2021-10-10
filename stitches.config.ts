@@ -111,17 +111,17 @@ export const globalStyles = globalCss({
     },
     "body, html, #__next": { minHeight: "100%", height: "100%" },
     h1: { fontSize: "$1",  letterSpacing:'-1px', fontKerning:'normal', fontStretch:'semi-condensed', fontOpticalSizing:'auto', WebkitFontSmoothing:'antialiased', lineHeight: "$6", fontWeight: "700",  margin:'calc($4 * 1) 0 $3 0', fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif' },
-    h2: { fontSize: "$2", lineHeight: "$5", fontWeight: "500", margin:'calc($4 * 1.5) 0 $2 0',fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'calc($2 * 1.5) 0 $2 0'} },
+    h2: { fontSize: "$2", lineHeight: "$5", fontWeight: "700", margin:'calc($4 * 1.5) 0 $2 0',fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'calc($2 * 1.5) 0 $2 0'} },
     h3: { fontSize: "$3", lineHeight: "$4", margin:'$4 0 $2 0', fontWeight: "700",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'} },
     h4: { fontSize: "$4", lineHeight: "$3",   margin:'$4 0 $2 0', fontWeight: "700",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'}},
     h5: { fontSize: "$5", lineHeight: "$2",  margin:'$4 0 $2 0', fontWeight: "700",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'} },
     p: { fontSize: "$p", lineHeight: "$p",  margin:'$2 0', fontWeight: "300" },
     span: { fontSize: "$p", lineHeight: "$p", fontWeight: "300" },
     b: {
-        fontWeight: "500",
+        fontWeight: "700",
     },
     strong: {
-        fontWeight: "500",
+        fontWeight: "700",
     },
     hr: {
         border: 0,

@@ -169,7 +169,7 @@ const Article= ({entry, isPreview=true}:Props) => {
                 entry={entry}
                 body={isPreview ? processorShort.processSync(shorten(entry.body,1200)).result : processorFull.processSync(entry.body).result}
                 Open={(digest:string)=>{
-                    router.push(digest)
+                    router.push(digest, undefined, {scroll:true})
                 }}
                 isHover={isHover}
                 isFocused={isFocused}

@@ -95,6 +95,14 @@ const StyledScrollbar = styled(ScrollArea.Scrollbar, {
   },
 });
 
+const StyledFooter = styled('footer', {
+    position:'fixed',
+    bottom:'$2',
+    right:'calc($4 + $4)',
+    fontSize:'$6',
+    color:'$foregroundText'
+})
+
 const StyledThumb = styled(ScrollArea.Thumb, {
   flex: 1,
   background: '$foregroundBronze',
@@ -273,6 +281,10 @@ const Layout = ({children}:Props) =>{
                 <StyledMain>
                     {children}
                 </StyledMain>
+
+                <StyledFooter>
+                    MIRROR MIRROR
+                </StyledFooter>
             </Box>
     )
 }

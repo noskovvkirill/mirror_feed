@@ -12,7 +12,9 @@ const StyledButton = styled("button", {
     lineHeight: "130%",
     height: "fit-content",
     whiteSpace: "nowrap",
-    backgroundColor: "transparent",
+    backgroundColor: "rgba(255,255,255,0.75)",
+    mixBlendMode:'multiply',
+    backdropFilter:'opacity(0.75)',
     border: "0",
     variants: {
         look: {

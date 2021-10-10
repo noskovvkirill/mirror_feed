@@ -48,6 +48,10 @@ const StyledItem = styled(DropdownMenu.Item, {
     '&:hover':{
           color:'$textBronze',
     },
+    '&:focus': {
+    outline:' 3px solid $foregroundBronze',
+    borderRadius:'$2',
+    },
     // expand the reach of the text 
     '&::before': {
     content: '""',
@@ -111,7 +115,7 @@ const Nav = () =>{
                 <> ▾&#8201;{readingList.length}</>
                 )}</Button>
                 <StyledContent align='end'>
-                    <Box layout='flexBoxColumn' css={{padding:'$2'}}>
+                    <Box layout='flexBoxColumn' css={{padding:'$2', paddingBottom:'$0'}}>
                         {readingList.length === 0 && (
                             <Box as='p' css={{fontSize:'$6', color:'$foregroundTextBronze', margin:'0', textAlign:'center'}}>Nothing here yet&nbsp; 🔭</Box>
                         )}

@@ -29,21 +29,33 @@ const StyledAvatar = styled(Avatar.Root, {
            og:{
                 width: 'calc($4 * 3)',
                 height: 'calc($4 * 3)',
+                '&:hover':{
+                    outline:'4px solid $foreground',
+                },
            },
             lg:{
                 outline:'3px solid $foreground',
                 width: 'calc($4 * 1.5)',
                 height: 'calc($4 * 1.5)',
+                '&:hover':{
+                    outline:'4px solid $foreground',
+                },
             },
              md:{
                 outline:'3px solid $foreground',
                 width: '$4',
                 height: '$4',
+                '&:hover':{
+                    outline:'4px solid $foreground',
+                },
              },
              sm:{
                 outline:'3px solid $foreground',
                 width: 'calc($4 * 0.8)',
                 height: 'calc($4 * 0.8)',
+                '&:hover':{
+                    outline:'4px solid $foreground',
+                },
              }
       }
   },
@@ -73,21 +85,33 @@ const StyledFallback = styled(Avatar.Fallback, {
            og:{
                 width: 'calc($4 * 3)',
                 height: 'calc($4 * 3)',
+                '&:hover':{
+                    outline:'4px solid $foreground',
+                },
            },
             lg:{
                 outline:'3px solid $foreground',
                 width: 'calc($4 * 1.5)',
                 height: 'calc($4 * 1.5)',
+                '&:hover':{
+                    outline:'4px solid $foreground',
+                },
             },
              md:{
                 outline:'3px solid $foreground',
                 width: '$4',
                 height: '$4',
+                '&:hover':{
+                    outline:'4px solid $foreground',
+                },
              },
              sm:{
                 outline:'3px solid $foreground',
                 width: 'calc($4 * 0.8)',
                 height: 'calc($4 * 0.8)',
+                '&:hover':{
+                    outline:'4px solid $foreground',
+                },
              }
       }
   },
@@ -113,8 +137,8 @@ const StyledTrigger = styled(Tooltip.Trigger, {
     border:'0px'
 })
 
-const isUser = (x: any): x is User => x && x.address;
-const isPublication = (x: any): x is SubscribedPublication => x && x.ensLabel;
+export const isUser = (x: any): x is User => x && x.address;
+export const isPublication = (x: any): x is SubscribedPublication => x && x.ensLabel;
 
 
 const Profile = ({profile, size='md'}:IProfile) => {
