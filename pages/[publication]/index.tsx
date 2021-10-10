@@ -4,10 +4,10 @@ import { request, gql } from 'graphql-request';
 import type { GetServerSideProps } from 'next'
 import Article from '@/design-system/Article';
 import {Entry} from '@/design-system/Article'
-import { Current } from 'contexts';
+import { Current, PinnedItem,pinnedItems } from 'contexts';
 import { useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
-
+import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 
 const queryPersonal = gql`
 query Transaction($contributor:String!){
@@ -130,6 +130,8 @@ type Props = {
 const Data = ({entries}:Props) =>{
 
   const setCurrentArticle = useSetRecoilState(Current)
+  const pinnedList = useRecoilValueAfterMount(pinnedItems, null) //we set the items to null to prevent initial rendering with empty values and waiting for the list to load
+
 
   useEffect(()=>{
     setCurrentArticle({
@@ -149,12 +151,21 @@ const Data = ({entries}:Props) =>{
             {entries.length === 0 && (
               <p>There is nothing just yet</p>
             )}
-
+ 
+            {pinnedList !== null && (
+              <>
               {entries.map((entry:Entry)=>{
-                return(
-                 <Article key={entry.digest} entry={entry} isPreview={true}/>
-                )
+                  if(pinnedList.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest) !== -1){
+                    return;
+                  } else {
+                      return(
+                      <Article key={entry.digest} entry={entry}/>
+                      )
+                  }
               })}
+            </>
+           )}
+
           </Box>
       </Layout>
     )

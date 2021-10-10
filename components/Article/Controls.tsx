@@ -9,11 +9,11 @@ import OpenIcon from '@/design-system/icons/Open'
 import PinIcon from '@/design-system/icons/Pin'
 import RemoveIcon from '@/design-system/icons/Remove'
 import BackIcon from '@/design-system/icons/Back'
-import ColumnsIcon from '@/design-system/icons/Columns'
 //components
 import ButtonControl from '@/design-system/primitives/ButtonControl'
-import ButtonPopover from '@/design-system/primitives/ButtonPopover'
 import Box from '@/design-system/primitives/Box'
+import { AddressPrettyPrint } from 'src/utils';
+
 
 export interface ControlsExternal {}
 
@@ -51,7 +51,14 @@ const StyledHeader = styled('div',{
           userSelect:'none',
           whiteSpace:'nowrap',
           fontWeight:'400',
-          transform:'rotate(-90deg) translateX(-25%)'
+          width:'100%',
+          transform:'rotate(-90deg) translateX(-50%)',
+          '&:after':{
+              display:'inline-block',
+              content:"",
+            //   height:'100%',
+              width:'100%'
+          }
       },
        variants:{
         isHighlighted:{
@@ -76,14 +83,26 @@ const StyledHeader = styled('div',{
 
 const StyledControls = styled('div',{
     display:'flex',
-    flexDirection:'column',
     gap:'$1',
     padding:'0 $2 $1 $2',
-    marginRight:'calc($4 + $1)',
-    width:'fit-content',
+    //it's getting squezed in some cases currently, figure out why and remove the hardcoded value
+    width:'80px',
     boxSizing:'border-box',
     // overflow:'hidden',
+    flexDirection:'column',
+    marginRight:'calc($4 + $1)',
     transition:'$all',
+    '@bp1':{
+        flexDirection:'row',
+    },
+    '@bp2':{
+        flexDirection:'row',
+        marginRight:'$2',
+    },
+     '@bp3':{
+        flexDirection:'column',
+         marginRight:'calc($4 + $1)',
+    },
     variants:{
         isVisible:{
             true:{
@@ -94,12 +113,8 @@ const StyledControls = styled('div',{
             }
         },
         isPreview:{
-            true:{
-
-            },
-            false:{
-
-            }
+            true:{},
+            false:{}
         }
     },
     defaultVariants:{
@@ -147,36 +162,21 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                     <SuccessMarkIcon/>
                 </ButtonControl>
             }
-
-                            {/* <ButtonPopover icon={<ColumnsIcon/>}>
-                                <button onClick={()=>{
-                                    setSettings((settings:ReadSettings)=>{
-                                        const newSettings = Object.assign({}, settings);
-                                        newSettings.columns=1
-                                        return newSettings
-                                    })
-                                }}>1</button>
-                                <button onClick={()=>{
-                                    setSettings((settings:ReadSettings)=>{
-                                        const newSettings = Object.assign({}, settings);
-                                        newSettings.columns=2
-                                        return newSettings
-                                    })
-                                }}>2</button>
-                                <button onClick={()=>{
-                                    setSettings((settings:ReadSettings)=>{
-                                        const newSettings = Object.assign({}, settings);
-                                        newSettings.columns=3
-                                        return newSettings
-                                    })
-                                }}>3</button>
-                            </ButtonPopover>  */}
             </StyledControls>
             
             <Box id='article-toc' css={{  
                                 height:'100%',
-                                width:'256px',
-                                maxWidth:'256px',
+                                '@bp1':{
+                                display:'none'
+                                },
+                                '@bp2':{
+                                    width:'128px',
+                                    maxWidth:'128px',
+                                },
+                                '@bp3':{
+                                    width:'256px',
+                                    maxWidth:'256px',
+                                },
             }}/>        
          </Box>
     )
@@ -237,11 +237,21 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                     }>
                         <RemoveIcon/>
                 </ButtonControl>
-                {entry.publication?.ensLabel  && (
-                      <StyledHeader isHighlighted={isFocused}>
+                {entry.publication?.ensLabel 
+                ? <StyledHeader
+                onClick={()=>Open(`/${entry.publication.ensLabel}`)}
+                isHighlighted={isFocused}>
                         <h5>{entry.publication.ensLabel}</h5>
-                    </StyledHeader>
-                )}
+                </StyledHeader>
+                : <StyledHeader 
+                onClick={()=>Open(`/${entry.author.address}?type=personal`)}
+                isHighlighted={isFocused}>
+                    <h5>
+                        {entry.author.displayName ? entry.author.displayName : <>{AddressPrettyPrint(entry.author.address, 6)}</>}
+                    </h5> 
+                 </StyledHeader>
+                }
+              
               
         </StyledControls>
     )

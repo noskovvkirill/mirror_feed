@@ -90,18 +90,18 @@ const processorShort = unified()
       h3: StyledH3,
       h4: StyledH4,
       h5:StyledH5,
-    ul: StyledList,
+      ul: StyledList,
       ol: StyledList,
       a:StyledLink
   }})
 
 const processorFull = unified()
-   .use(remarkParse)
+  .use(remarkParse)
   .use(remarkGfm)
   .use(remarkRehype)
   .use(slug)
   .use(toc)
-  .use(rehypeReact, {createElement: React.createElement, Fragment:React.Fragment, components:{
+  .use(rehypeReact, {options:{passNode:true}, createElement: React.createElement, Fragment:React.Fragment, components:{
       img: StyledImageFull,
       h1: StyledH1,
       h2: StyledH2,
@@ -154,7 +154,7 @@ const Article= ({entry, isPreview=true}:Props) => {
                     router.push(digest)
                 }}
                 Close={()=>{
-                router.push('/')
+                router.back()
                 }}
                 setSettings={setSettings}
                 setIgnoredList={setIgnoredList}

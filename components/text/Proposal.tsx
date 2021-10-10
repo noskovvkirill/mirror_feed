@@ -13,6 +13,7 @@ import { Current } from 'contexts'
 import {useRecoilValue} from 'recoil'
 
 const StyledProposal = styled('div', {
+    display:'inline-block',
     width:'100%',
     maxWidth:'640px',
     height:'fit-content',

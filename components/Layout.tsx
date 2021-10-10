@@ -12,7 +12,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { pinnedItems, PinnedItem, readLaterList, ReadingListItem} from 'contexts'
 import {  useSetRecoilState, useRecoilValue } from 'recoil'
 
-import PublicationLabel from '@/design-system/Publication/Label'
+import PublicationLabel from '@/design-system/Spaces/SpacesSelector'
 import PinnedComponent  from '@/design-system/PinnedItem' 
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 import * as ScrollArea from '@radix-ui/react-scroll-area';
@@ -138,49 +138,58 @@ interface IPinnedList {
 const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater}:IPinnedList) => {
      const pinnedList =  useRecoilValueAfterMount(pinnedItems, [])
      const setPinnedList = useSetRecoilState(pinnedItems)
-     
+     const currentArticle = useRecoilValue(Current)
+
     return(
     <>
         <Box layout='flexBoxColumn'
-                    css={{margin:'$4',
-                    alignItems:'center', 
-                    justifyContent:'center', 
-                    marginRight:'$1', 
-                    background:'transparent',
-                    }}
-                    
-                    >
-                    <ButtonControl
-                    isHighlighted={false}
-                    label={isPinnedList ? 'hide pinned' : 'show pinned' }
-                    onClick={()=>setIsPinnedList(!isPinnedList)}
-                    >
-                        <Box css={{
-                            pointerEvents:'none',
-                            transform:isPinnedList ? 'rotate(180deg)' : ''}}> 
+            css={{margin:'$4',
+            alignItems:'flex-start', 
+            justifyContent:'center', 
+            marginRight:'$1', 
+            background:'transparent',
+            }}
+            >
+           
+           <Box layout='flexBoxRow'>
+                <ButtonControl
+                isHighlighted={false}
+                label={isPinnedList ? 'hide pinned' : 'show pinned' }
+                onClick={()=>setIsPinnedList(!isPinnedList)}
+                >
+                    <Box css={{
+                        pointerEvents:'none',
+                        transform:isPinnedList ? 'rotate(180deg)' : ''}}> 
                         <ArrowDownIcon/>
-                        </Box>
-                    </ButtonControl>
-
-                    <ButtonControl 
-                    isHighlighted={false}
-                    onClick={()=>{
-                        setReadLater((prevState:ReadingListItem[])=>{
-                            const pinnedItemsToReadingList = pinnedList.map((item:PinnedItem)=>{
-                                return({entryDigest:item.entry.digest, title:item.entry.title, ensLabel: item.entry.publication?.ensLabel ? item.entry.publication.ensLabel : item.entry.author.address})
-                            })
-                            return [...prevState, ...pinnedItemsToReadingList]
-                        })
-                        setPinnedList([])
-                    }}
-                    label='Add all to the reading list'>
-                        <AddAllIcon/>
-                    </ButtonControl>
                     </Box>
+                </ButtonControl>
+                {!isPinnedList && (
+                            <Box layout='flexBoxRow' css={{userSelect:'none', fontSize:'$6', color:'$foregroundText', alignItems:'center', justifyContent:'center'}}>{pinnedList.length}</Box>
+                )}
+            </Box>
 
-                    {!isPinnedList && (
-                        <Box layout='flexBoxRow' css={{margin:'calc($4 + 8px) $4 $4 -$2', userSelect:'none', fontSize:'$6', color:'$foregroundText', alignItems:'center', justifyContent:'center'}}>{pinnedList.length}</Box>
-                    )}
+            <ButtonControl 
+            isHighlighted={false}
+            onClick={()=>{
+                setReadLater((prevState:ReadingListItem[])=>{
+                    const pinnedItemsToReadingList = pinnedList.map((item:PinnedItem)=>{
+                        return({entryDigest:item.entry.digest, title:item.entry.title, ensLabel: item.entry.publication?.ensLabel ? item.entry.publication.ensLabel : item.entry.author.address})
+                    })
+                    return [...prevState, ...pinnedItemsToReadingList]
+                })
+                setPinnedList([])
+            }}
+            label='Add all to the reading list'>
+                <AddAllIcon/>
+            </ButtonControl>
+
+            <PublicationLabel  type={currentArticle?.publication.type}
+            ></PublicationLabel>
+   
+
+        </Box>
+
+                  
 
                     {isPinnedList && (
                         <StyledPinnedList type='scroll'>
@@ -228,7 +237,7 @@ const Layout = ({children}:Props) =>{
     },[history]);
 
     return(
-            <Box css={{height:'100vh', width:'100vw', overflowX:'hidden', overflowY:'scroll'}}>
+            <Box>
                 <Head>
                     <title>Mirror feed</title>
                     <meta name="description" content="Generated by create next app" />
@@ -251,9 +260,11 @@ const Layout = ({children}:Props) =>{
                             }></PublicationLabel>
                         </Box>
                     ) }
-
+                   
+                
                     {!router.query.publication && (
-                        <PinnedList isPinnedList={isPinnedList} setIsPinnedList={setIsPinnedList} setReadLater={setReadLater}/>
+                        <PinnedList 
+                        isPinnedList={isPinnedList} setIsPinnedList={setIsPinnedList} setReadLater={setReadLater}/>
                     )}
            
         

@@ -7,12 +7,19 @@ import {useRef, useEffect} from 'react';
 const StyledControl = styled(Button,{
     border:'1px solid $foreground', 
     color:'$foregroundText', 
+    //this is rude, but for some reason simple height:33px doesn't work in Safari 
+    height:'auto',
+    minHeight:'33px',
+    maxHeight:'33px',
     borderRadius:'$round', 
+    transformOrigin:'center center',
     padding:'$1', 
     display:'flex',
     gap:'$0',
+    overflow:'hidden',
     alignItems:'center',
     fontSize:'$6',
+    boxSizing:'border-box',
     lineHeight:'$6',
     variants:{
         isHighlighted:{
@@ -70,12 +77,51 @@ const StyledControl = styled(Button,{
     }
 })
 
+const Control = ({children, direction, label, pos}:{
+    children:ReactChild,label:string, pos:{
+        x:number, y:number
+    },  direction?:'right' | 'left'
+}) => {
+
+
+    return(
+        <Portal.Root>
+                <StyledControl
+                css={{
+                position:'absolute', 
+                background:'$foregroundBronze',
+                color:'$backgroundBronze',
+                pointerEvents:'none', top:0, left:direction === 'right' ? 0 : '-100%',
+                transform:`translate(${pos.x}px, ${pos.y}px) translateX(${direction === 'right' ? 0 : -100}%)`
+            }}
+                isHighlighted={true}
+                >   
+                {direction === 'right' && (
+                    <>
+                    {children}
+                    {label}
+                    </>
+                )}
+                 {direction === 'left' && (
+                    <>
+                    {label}
+                     {children}
+                    </>
+                )}
+                    
+                </StyledControl>
+         </Portal.Root>
+    )
+}
+
 const ButtonControl = (
-    {children, selected, label, isHighlighted, onClick}:{children:ReactChild,label:string, selected?:boolean, isHighlighted:boolean, onClick?: () => void;
+    {children, selected, 
+    direction='right',
+    label, isHighlighted, onClick}:{children:ReactChild,label:string, direction?:'right' | 'left',selected?:boolean, isHighlighted:boolean, onClick?: () => void;
     }) => {
     const [isHover, setIsHover] = useState(false)
     const [pos, setPos] = useState({x:-99999, y:-99999})
-
+    
     return(
         <>
             <StyledControl
@@ -87,9 +133,15 @@ const ButtonControl = (
             onMouseEnter={(e)=>{
                 setIsHover(true)
                  const target = e.target as HTMLElement;
-                const coord = target.getBoundingClientRect()
-                setPos({x:coord.x+window.scrollX, y:coord.y+window.scrollY})
-            
+                 const coord = target.getBoundingClientRect()
+                 if(direction === 'right'){
+                 setPos({x:coord.x+window.scrollX, y:coord.y+window.scrollY})
+                 } else {
+                     setPos({x:coord.x+window.scrollX+coord.width, y:coord.y+window.scrollY})
+                 }
+                //  const eventL = window.addEventListener('scroll', (e)=>console.log('scroll'))
+                // console.log('eventL', eventL)
+                
             }}
             onMouseLeave={()=>{
                 setIsHover(false)
@@ -99,20 +151,21 @@ const ButtonControl = (
                 {children}
             </StyledControl>
             {isHover && (
-             <Portal.Root>
-                <StyledControl
-                css={{
-                position:'absolute', 
-                background:'$foregroundBronze',
-                color:'$backgroundBronze',
-                pointerEvents:'none', top:0, left:0,
-                transform:`translate(${pos.x}px, ${pos.y}px)`}}
-                isHighlighted={true}
-                >
-                    {children}
-                    {label}
-                </StyledControl>
-            </Portal.Root>
+                <Control direction={direction} label={label} pos={pos}>{children}</Control>
+            //  <Portal.Root>
+            //     <StyledControl
+            //     css={{
+            //     position:'absolute', 
+            //     background:'$foregroundBronze',
+            //     color:'$backgroundBronze',
+            //     pointerEvents:'none', top:0, left:0,
+            //     transform:`translate(${pos.x}px, ${pos.y}px)`}}
+            //     isHighlighted={true}
+            //     >
+            //         {children}
+            //         {label}
+            //     </StyledControl>
+            // </Portal.Root>
             )}
         </>
     )

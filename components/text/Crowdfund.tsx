@@ -1,6 +1,6 @@
 const Auction = () =>{
     return(
-        <div>
+        <div style={{display:'inline-block'}}>
 
         </div>
     )

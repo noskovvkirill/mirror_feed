@@ -41,6 +41,7 @@ const StyledTitle = styled('div', {
     display:'flex',
     gap:'$1',
     alignItems:'center',
+    width:'100%',
     maxWidth:'720px',
     whiteSpace:'break-spaces',
     'h1':{
@@ -83,7 +84,15 @@ const StyledBody = styled('div', {
 const StyledContents = styled('article',{
     overflow:'hidden',
     marginRight:'calc($4 * 1.5)',
-    width:'768px',
+    '@bp1':{
+         width:'480px',
+    },
+    '@bp2':{
+         width:'640px',
+    },
+    '@bp3':{
+        width:'700px',
+    },
      variants:{
         isHighlighted:{
             true:{
@@ -140,7 +149,7 @@ const BodyComponent = (
                   <Box layout='flexBoxRow' css={{padding:'$4 0', 
                   gap:'$1', flexWrap:'wrap',
                   background:'$highlightBronze',
-                  marginTop:'$4', borderTop:'1px solid $foregroundBronze'}}>
+                  marginTop:'$4',}}>
                       {(readingList?.findIndex((item)=>item.entryDigest === entry.digest) !== -1) && (
                           <Button 
                                 onClick={()=>{

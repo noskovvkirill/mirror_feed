@@ -1,10 +1,12 @@
 import { styled } from "stitches.config";
 
 const Input = styled("input", {
-    padding: "$0 $2",
-    borderRadius: "$1",
-    border: "1px solid lightgray",
-    color: "black",
+    padding: "$1 $2",
+    borderRadius: "$2",
+    border: "1px solid $foregroundBorder",
+    color: "$foregroundText",
+    fontSize:'$6', 
+    boxSizing:'border-box',
     variants: {
         state: {
             error: {
@@ -12,7 +14,7 @@ const Input = styled("input", {
                 color: "black",
             },
             normal: {
-                border: "1px solid lightgray",
+                border: "1px solid $foregroundBorder",
                 color: "black",
             },
         },

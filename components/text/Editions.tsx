@@ -16,7 +16,7 @@ import {useRecoilValue, useSetRecoilState} from 'recoil'
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
 
 const StyledSection = styled('section',{
-    display:'flex',
+    display:'flex-inline',
     flexDirection:'row',
     alignItems:'flex-start',
     margin:'$4 0',
@@ -37,11 +37,27 @@ const StyledProposal = styled('div', {
     'h3':{
         margin:'$2 0',
     },
+    'h5':{
+        margin:'$2 0',
+    },
     'p':{
         maxWidth:'95%',
         fontSize:'$6'
     },
     boxShadow:'$normal',
+    variants:{
+        displayed:{
+            true:{
+                mixBlendMode:'normal'
+            },
+            false:{
+                mixBlendMode:'multiply'
+            }
+        }
+    },
+    defaultVariants:{
+        displayed:false
+    }
     // mixBlendMode:'multiply'
     // wordBreak:'break-all'
 })
@@ -71,7 +87,7 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
     const setSettings = useSetRecoilState(readSettings)
     const settings = useRecoilValueAfterMount(readSettings, readSettingsDefault)
     const {data, error} = useSWR([editionId, editionContractAddress],getEditions, {
-        onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+        onErrorRetry: (error, _, __, ___, { retryCount }) => {
             if (error.status === 404) return
              if (retryCount >= 2) return
         }
@@ -82,7 +98,7 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
 
     if(!data){
        return(
-            <StyledProposal>
+            <StyledProposal displayed={false}>
                 Loading...
             </StyledProposal>
         )
@@ -90,8 +106,8 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
 
     if(error){
        return(
-            <StyledProposal>
-                Something went wrong...
+            <StyledProposal displayed={true}>
+                Something went wrong loading Editions...
             </StyledProposal>
         )
     } 
@@ -100,7 +116,7 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
     return(
         <StyledSection>
             {settings.isEditions && (
-                <StyledProposal>
+                <StyledProposal  displayed={true}>
                     <Box layout='flexBoxRow' css={{alignItems:'center', justifyContent:'space-between'}}>
                         <h3>{data.title}</h3>
                         <Box layout='flexBoxRow' css={{alignItems:'center'}}>
@@ -143,7 +159,7 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
             )}
 
             {!settings.isEditions && (
-                <StyledProposal>
+                <StyledProposal displayed={false}>
                      <h5>EDITIONS: {data.title}</h5>
                 </StyledProposal>
             )}

@@ -3,6 +3,8 @@ import { ReactPropTypes } from 'react'
 import Box from '@/design-system/primitives/Box'
 import Proposal from '@/design-system/text/Proposal'
 import Editions from '@/design-system/text/Editions'
+import LinkPreview from '@/design-system/text/LinkPreview'
+import Nft from '@/design-system/text/Nft'
 
 export const StyledList = styled('ul', {
     listStyle:'circle',
@@ -201,11 +203,13 @@ export const StyledH5 = styled('h5', {
 
 
 
+
+
 export const Embeds = (props:ReactPropTypes & {href:string, children:React.ReactNode}) => {
     const myReg = `://`;
     if(props?.href.split(myReg)[0] === 'auction'){
         return(
-            <Box css={{padding:'$1 $1 $4 $1', opacity:0.5, borderRadius:'$2', backgroundColor:'LightBlue'}}>
+            <Box css={{padding:'$1 $1 $4 $1', display:'inline-flex', opacity:0.5, borderRadius:'$2', backgroundColor:'LightBlue'}}>
                 <h5>AUCTION</h5>
                 {props.children}
          
@@ -229,13 +233,16 @@ export const Embeds = (props:ReactPropTypes & {href:string, children:React.React
     }
 
     if(props?.href.split(myReg)[0] === 'ethereum'){
+        const links = props?.href.split(myReg)[1].split('/')
         return(
-            <Box css={{padding:'$1 $1 $4 $1', opacity:0.5, borderRadius:'$2', backgroundColor:'LightBlue'}}>
-                <h5>ETHEREUM</h5>
-                {props.children}
-            </Box>
+            <Nft contract={links[0]} tokenId={links[1]}/> 
         )
     }
+
+    // if(props?.href.slice)
+    // return(
+    //     <LinkPreview {...props}/>
+    // )
 
     return(
         <StyledLink {...props}/>
