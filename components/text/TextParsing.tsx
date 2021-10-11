@@ -254,6 +254,7 @@ export const StyledToc = styled('nav', {
     padding:'$2',
     paddingLeft:'$2',
     top:'256px',
+    height:'fit-content',
     position:'sticky',
     listStyle:'inside',
     'a':{

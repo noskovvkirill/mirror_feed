@@ -100,7 +100,7 @@ const StyledContent = styled('p', {
 })
 
 //the reason to  separate the components is to have a bodylockscroll working only after the first step 
-const Steps = ({step, setStep}:{step:number, setStep:(fn:(prevState:number) => number) => void}) => {
+const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevState:number) => number) => void, setIsOnboarded:(newState:boolean) => void}) => {
       useLockBodyScroll()
       useLayoutEffect(()=>{
           window.scrollTo(0,0)
@@ -115,12 +115,12 @@ const Steps = ({step, setStep}:{step:number, setStep:(fn:(prevState:number) => n
             <StyledBody>
                 <StyledHeader>
                     <h5>Reading List</h5>
-                    <CloseButton onClick={()=>localStorage.setItem('mirror-feed-onboarding-state', "true")}><Remove/></CloseButton>
+                    <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                 </StyledHeader>
                 <StyledContent>All saved items are accessible from one place.</StyledContent>
                 <StyledFooter>
                     <Button onClick={()=>setStep(prevStep=>prevStep-=1)}>Prev</Button>
-                    <Button onClick={()=>localStorage.setItem('mirror-feed-onboarding-state', "true")}>Finish</Button>
+                    <Button onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"); setIsOnboarded(true)}}>Finish</Button>
                 </StyledFooter>
             </StyledBody>
         </StyledToast>
@@ -137,7 +137,7 @@ const Steps = ({step, setStep}:{step:number, setStep:(fn:(prevState:number) => n
             <StyledBody>
                 <StyledHeader>
                     <h5>Control Panel</h5>
-                    <CloseButton onClick={()=>localStorage.setItem('mirror-feed-onboarding-state', "true")}><Remove/></CloseButton>
+                    <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                 </StyledHeader>
                 <StyledContent>Add items to the reading list, pin to keep them around while you scroll, ignore publications that you don&apos;t want to see.</StyledContent>
                 <StyledFooter>
@@ -159,7 +159,7 @@ const Steps = ({step, setStep}:{step:number, setStep:(fn:(prevState:number) => n
                 <StyledBody>
                     <StyledHeader>
                         <h5>Curation Spaces</h5>
-                        <CloseButton onClick={()=>localStorage.setItem('mirror-feed-onboarding-state', "true")}><Remove/></CloseButton>
+                    <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                     </StyledHeader>
                     <StyledContent>
                         Create your personalized feed by adding favorite authors & publications to the Spaces. Click the Portal Icon to add the Space or move around.
@@ -190,7 +190,10 @@ const OnBoarding = () => {
         const onbooardingState = localStorage.getItem('mirror-feed-onboarding-state')
         if(onbooardingState || onbooardingState === "true") setIsOnboarded(true)
         if(onbooardingState === "false") setIsOnboarded(false)
-        if(!onbooardingState) localStorage.setItem('mirror-feed-onboarding-state', "false")
+        if(!onbooardingState) {
+            localStorage.setItem('mirror-feed-onboarding-state', "false")
+            setIsOnboarded(false)
+        }
     },[router])
 
 
@@ -200,7 +203,7 @@ const OnBoarding = () => {
 
     if(step!==1){
         return(
-            <Steps step={step} setStep={setStep}/>
+            <Steps step={step} setIsOnboarded={setIsOnboarded} setStep={setStep}/>
         )
     }
   
@@ -212,7 +215,7 @@ const OnBoarding = () => {
             <StyledBody>
                 <StyledHeader>
                     <h5>Welcome to MirrorFeed</h5>
-                    <CloseButton onClick={()=>localStorage.setItem('mirror-feed-onboarding-state', "true")}><Remove/></CloseButton>
+                    <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                 </StyledHeader>
                 <StyledContent>An alternative reading client for the decentralized publishing platform Mirror.xyz. Our focus is <b>discovery, curation, and reading experience.</b></StyledContent>
                 <StyledFooter>
