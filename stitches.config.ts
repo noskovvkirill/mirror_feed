@@ -119,9 +119,14 @@ export const globalStyles = globalCss({
     span: { fontSize: "$p", lineHeight: "$p", fontWeight: "300" },
     b: {
         fontWeight: "700",
+        fontSize:'inherit'
+    },
+    i:{
+        fontSize:'inherit'
     },
     strong: {
         fontWeight: "700",
+        fontSize:'inherit'
     },
     hr: {
         border: 0,

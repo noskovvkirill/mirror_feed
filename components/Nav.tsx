@@ -129,7 +129,7 @@ const Nav = () =>{
                                     router.push(`/${item.ensLabel}/${item.entryDigest}`)
                                     }}
                                 >
-                                        <>✦&#8201;{item.title}</>                            
+                                        <>{item.title}</>                            
                                     </StyledItem>
 
                                     <StyledDelete
@@ -167,7 +167,7 @@ const Nav = () =>{
                             css={{
                             backgroundColor:'$highlightBronze',
                             bottom:'0',
-                            border:'0',
+                            border:'1px solid transparent',
                             // borderTop:'1px dashed $foregroundTextBronze',borderRadius:'0',
                             borderBottom:'1px solid transparent',
                             width:'100%', justifyContent:'center',

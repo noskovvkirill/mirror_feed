@@ -11,6 +11,7 @@ import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
 import { useSetRecoilState } from 'recoil'
 import CreateSpace from '@/design-system/Spaces/CreateSpace'
 import {AddressPrettyPrint} from 'src/utils'
+import Arc from '@/design-system/icons/Arc'
 
 const StyledLabel = styled('div',{
     display:'flex',
@@ -96,11 +97,18 @@ const StyledCurationButton = styled(Popover.Trigger, {
     cursor:'pointer',
     '&:hover':{
         color:'$background',
-        backgroundColor:'$foreground'
+        background: 'radial-gradient(50% 50% at 50% 50%, #E0CEC7 48.96%, #FFFFFF 100%)',
+        fill:'white',
+        'path':{
+            fill:'white'
+        }
     },
     '&[data-state="open"]':{
         color:'$background',
-        backgroundColor:'$foreground'
+        background: 'radial-gradient(50% 50% at 50% 50%, #E0CEC7 48.96%, #FFFFFF 100%)',
+         'path':{
+            fill:'white'
+        }
     }
 })
 
@@ -116,7 +124,8 @@ const SpacesSelector = ({publication, content, type, author}:{publication?:strin
         <Box layout='flexBoxRow' css={{alignItems:'center', color:'$foreground', userSelect:'none'}}>
             <Popover.Root>
                 <StyledCurationButton>
-                    <SpacesIcon/>
+                    {/* <SpacesIcon/> */}
+                    <Arc/>
                 </StyledCurationButton>
                 {/* <Box css={{fontSize:'$6'}}>
                     {router.pathname === '/spaces/[index]' ? router.query.index?.toString() : undefined}
@@ -189,6 +198,7 @@ const SpacesSelector = ({publication, content, type, author}:{publication?:strin
                 selected={content ? false : true}>
                 {AddressPrettyPrint(publication)}
                 </StyledLabel>
+                {/* <Button>Add</Button> */} 
                 {content && (
                     <>
                     /

@@ -52,13 +52,8 @@ const StyledHeader = styled('div',{
           whiteSpace:'nowrap',
           fontWeight:'400',
           width:'100%',
-          transform:'rotate(-90deg) translateX(-50%)',
-          '&:after':{
-              display:'inline-block',
-              content:"",
-            //   height:'100%',
-              width:'100%'
-          }
+          transform:'rotate(180deg) translateX(-10%)',
+          writingMode: 'vertical-rl',
       },
        variants:{
         isHighlighted:{

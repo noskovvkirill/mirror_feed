@@ -158,7 +158,7 @@ const Profile = ({profile, size='md'}:IProfile) => {
                             <>
                             {profile.displayName 
                             ? <>{profile?.displayName.match(/(\b\S)?/g)?.join("")?.match(/(^\S|\S$)?/g)?.join("").toUpperCase()} </>
-                            : <>{AddressPrettyPrint(profile.address)}</>
+                            : <>{AddressPrettyPrint(profile.address, 4)}</>
                             }
                             </>
                         )}

@@ -92,7 +92,7 @@ const processorShort = unified()
       h5:StyledH5,
       ul: StyledList,
       ol: StyledList,
-      a:StyledLink
+      a:Embeds
   }})
 
 const processorFull = unified()

@@ -128,7 +128,6 @@ const Contributors = ({list}:{list:SubscribedPublication[]}) =>{
             {data?.map((contributor, index)=>{
                 return(
                 <Box 
-                // I woud like to give an abiility 
                 onClick={()=>{
                     contributor.publications[0] 
                     ? router.push(`/${encodeURIComponent(contributor.publications[0].ensLabel)}`)
@@ -162,7 +161,6 @@ const Spaces = ({index}:{index:string}) => {
                             width:'fit-content',
                             height:'fit-content',
                             alignItems:'flex-end',
-                            // boxShadow:'$normal',
                             borderRadius:'$2',
                             }}>
                             <Box layout='flexBoxRow' css={{alignItems:'center'}}> 
