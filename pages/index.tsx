@@ -55,7 +55,7 @@ const getKey = (_:any, previousPageData:any) => {
   if (previousPageData && !previousPageData.length) return null // reached the end
 
   return `{
-		transactions(first:20, ${previousPageData ? 'after:"'+previousPageData[1]+'"' : ''}, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
+		transactions(first:10, ${previousPageData ? 'after:"'+previousPageData[1]+'"' : ''}, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
 			edges {
 				node {
 					id

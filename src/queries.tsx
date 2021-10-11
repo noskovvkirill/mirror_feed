@@ -72,7 +72,7 @@ query Transaction($contributor:String!){
 
 export const queryAll = gql`
 {
-		transactions(first:20, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
+		transactions(first:10, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
 			edges {
 				node {
 					id
