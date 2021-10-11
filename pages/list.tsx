@@ -10,6 +10,8 @@ import { request } from 'graphql-request';
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount';
 import {queryEntry} from 'src/queries'
 import useSWR from 'swr';
+import {pinnedItems} from 'contexts'
+import type {PinnedItem} from 'contexts'
 
 const fetcher = async (digest:string) => await request('https://mirror-api.com/graphql', queryEntry, {digest:digest})
 
@@ -24,7 +26,9 @@ const EntryList = ({digest}:{digest:string}) =>{
 
 const List = () => {
     const readingList = useRecoilValueAfterMount(readLaterList, null)
-    if(!readingList){
+    const pinnedList = useRecoilValueAfterMount(pinnedItems, null) //we set the items to null to prevent initial rendering with empty values and waiting for the list to load
+
+    if(!readingList || !pinnedList){
         return(
             <Layout>
                 <Box css={{padding:'$2 calc($4 * 4 + $1)', boxSizing:'border-box', height:'48px', transition:'$all', color:'$foregroundText'}}>
@@ -36,7 +40,11 @@ const List = () => {
     return(
         <Layout>
             {readingList.map((item:ReadingListItem)=>{
-               return <EntryList digest={item.entryDigest} key={'readinglist'+item.entryDigest}/>
+                 if(pinnedList.findIndex((itemP:PinnedItem)=>item.entryDigest === itemP.entry.digest) !== -1){
+                      return;
+                    } else {
+                    return <EntryList digest={item.entryDigest} key={'readinglist'+item.entryDigest}/>
+                }
             })}
         </Layout>
     )
