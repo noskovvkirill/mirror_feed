@@ -209,10 +209,9 @@ export const Embeds = (props:ReactPropTypes & {href:string, children:React.React
     const myReg = `://`;
     if(props?.href.split(myReg)[0] === 'auction'){
         return(
-            <Box css={{padding:'$1 $1 $4 $1', display:'inline-flex', opacity:0.5, borderRadius:'$2', backgroundColor:'LightBlue'}}>
-                <h5>AUCTION</h5>
-                {props.children}
-         
+            <Box layout='flexBoxColumn' css={{padding:'$1 $2', opacity:0.5, borderRadius:'$2', backgroundColor:'$foreground'}}>
+                <p>This is Mirror.xyz auction. They aren&apos;t support yet. Please, visit the source publication.</p>
+                {/* {props.children} */}
             </Box>
         )
     }
