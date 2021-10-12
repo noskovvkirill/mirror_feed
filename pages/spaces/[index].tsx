@@ -38,7 +38,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const Space = ({list}:{list:SubscribedPublication[]}) => {
     const {data, error, setSize, isValidating} = useSWRInfinite((_, previousPageData)=>{
-        if (!previousPageData) return [list] // reached the end
+        if(previousPageData && !previousPageData[1]) return null // reached the end
+        if (!previousPageData) return [list] // first query
         return [list, previousPageData[1]]
     }, getMergedPublication)
     const pinnedList = useRecoilValueAfterMount(pinnedItems, null) //we set the items to null to prevent initial rendering with empty values and waiting for the list to loa

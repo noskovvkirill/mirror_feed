@@ -61,6 +61,7 @@ export const getContributorsList = async(list:IList[]) => {
 }
 
 export const getMergedPublication = async (list:IList[], cursor?:string) => {
+    // console.log('cursor', cursor)
     const addresses = await getContributorsList(list)
 
    const data = await request('https://arweave.net/graphql', queryMultiple, {

@@ -34,33 +34,34 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 
 #### TODO
 
- - [x] Fix useSWR types error and pages rendering
- - [x] Merge Article and Article Preview component into one to later perform a correct layout animation
- - [x] Refactor Article &/or Article Preview components to follow Model-View paradigm.
- - [x] Fix router to have a /publicationId/entryID for the correct Navigation
- - [x] Change Nav component to display publications details when inside entryId
- - [x] Reading list deletes
- - [x] Individual publication pages
- - [x] Distinction between user pages and ensLabel pages
- - [x] Global state for selected article (to display pretty names and not the hashes :)
- - [ ] Start designing link embeds
- - [x] Fix the rotation of labels
- - [x] Links push to the top of the page (Next reading list item)
- - [x] Safari custom focus outline for the Reading List
- - [x] Contributors list in the publication
- - [ ] Stitched Themes (Dark Mode, Black&White, Default)
- - [ ] Image full screen
- - [x] Event Listener for Portalled Control Buttons (remove on scroll or scroll lock(?) // solved with proper positioning
- - [x] Patience loader text gradient :-)
- - [x] Basic local curation lists
- - [ ] Search for the Curation Lists
- - [ ] "Delete" button in the Reading List is weird and doesn't follow the Fitts law
- - [ ] Publication pages are too similar to the main feed, wrong sense of place for the user
- - [x] Pinned items don't work when inside the publication pages (no filtering)
- - [x] Decide where to place the logo to give a better identity to the website?
- - [ ] Click on avatar to remove from the Space
- - [ ] Add Verifiend accounts to the Search to check the accounts names
- - [ ] Fuzzy search instead of 1 to 1 precise search
+- [x] Fix useSWR types error and pages rendering
+- [x] Merge Article and Article Preview component into one to later perform a correct layout animation
+- [x] Refactor Article &/or Article Preview components to follow Model-View paradigm.
+- [x] Fix router to have a /publicationId/entryID for the correct Navigation
+- [x] Change Nav component to display publications details when inside entryId
+- [x] Reading list deletes
+- [x] Individual publication pages
+- [x] Distinction between user pages and ensLabel pages
+- [x] Global state for selected article (to display pretty names and not the hashes :)
+- [ ] Feed is replicating itself on curation spaces. Investigate and fix
+- [ ] Start designing link embeds
+- [x] Fix the rotation of labels
+- [x] Links push to the top of the page (Next reading list item)
+- [x] Safari custom focus outline for the Reading List
+- [x] Contributors list in the publication
+- [ ] Stitched Themes (Dark Mode, Black&White, Default)
+- [ ] Image full screen
+- [x] Event Listener for Portalled Control Buttons (remove on scroll or scroll lock(?) // solved with proper positioning
+- [x] Patience loader text gradient :-)
+- [x] Basic local curation lists
+- [ ] Search for the Curation Lists
+- [ ] "Delete" button in the Reading List is weird and doesn't follow the Fitts law
+- [ ] Publication pages are too similar to the main feed, wrong sense of place for the user
+- [x] Pinned items don't work when inside the publication pages (no filtering)
+- [x] Decide where to place the logo to give a better identity to the website?
+- [ ] Click on avatar to remove from the Space
+- [ ] Add Verifiend accounts to the Search to check the accounts names
+- [ ] Fuzzy search instead of 1 to 1 precise search
 
 ### First version
 
