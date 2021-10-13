@@ -34,7 +34,7 @@ const entries = await Promise.all([...new Set(content)].map(async (item:any) => 
        digest: item
     }).then((data) =>
       data.entry
-    ).catch((e)=>{return})
+    ).catch(()=>{return})
     )
   }))
 
@@ -55,7 +55,7 @@ const getKey = (_:any, previousPageData:any) => {
   if (previousPageData && !previousPageData.length) return null // reached the end
 
   return `{
-		transactions(first:10, ${previousPageData ? 'after:"'+previousPageData[1]+'"' : ''}, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
+		transactions(first:5, ${previousPageData ? 'after:"'+previousPageData[1]+'"' : ''}, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
 			edges {
 				node {
 					id

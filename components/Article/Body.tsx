@@ -144,11 +144,19 @@ const BodyComponent = (
                     :  Open(`/${entry.author.address}/${entry.digest}`)
                 }}>{entry.title}</h1>
             </StyledTitle>
-            {body}
+            {isPreview 
+            ? 
+            <>
+                {body}
+            </>
+            : <>
+             {body}
+              </>
+            }
+            
             {!isPreview && (
                   <Box layout='flexBoxRow' css={{padding:'$4 0', 
                   gap:'$1', flexWrap:'wrap',
-                  background:'$highlightBronze',
                   marginTop:'$4',}}>
                       {(readingList?.findIndex((item)=>item.entryDigest === entry.digest) !== -1) && (
                           <Button 

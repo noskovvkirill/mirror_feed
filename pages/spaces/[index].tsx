@@ -6,7 +6,7 @@ import { useSetRecoilState } from 'recoil'
 import {GetServerSideProps} from 'next'
 
 //data
-import {getMergedPublication, getContributorsListAvatars} from 'src/publication-contents'
+import {getContributorsList, getMergedPublication, getContributorsListAvatars} from 'src/publication-contents'
 import useSWRInfinite from 'swr/infinite'
 import useSWR from 'swr'
 
@@ -25,6 +25,8 @@ import StyledButton from '@/design-system/primitives/Button'
 import {useRouter} from 'next/router'
 import SpaceAdd from '@/design-system/Spaces/SpaceAdd'
 
+
+
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const {index} = ctx.query
     return {
@@ -35,12 +37,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 }
 
 
-
-const Space = ({list}:{list:SubscribedPublication[]}) => {
+const Space = ({contributors}:{contributors:string[]}) => {
     const {data, error, setSize, isValidating} = useSWRInfinite((_, previousPageData)=>{
         if(previousPageData && !previousPageData[1]) return null // reached the end
-        if (!previousPageData) return [list] // first query
-        return [list, previousPageData[1]]
+        if (!previousPageData) return [contributors] // first query
+        return [contributors, previousPageData[1]]
     }, getMergedPublication)
     const pinnedList = useRecoilValueAfterMount(pinnedItems, null) //we set the items to null to prevent initial rendering with empty values and waiting for the list to loa
     const ref = useRef<HTMLDivElement | null>(null)
@@ -54,25 +55,8 @@ const Space = ({list}:{list:SubscribedPublication[]}) => {
     },[isVisible, setSize])
 
 
-    //JUST in case, sometimes it happens... I investigate 
-    if(typeof list === 'number' || typeof list === 'string'){
-        return(
-             <Box css={{width:'100%', padding:'$4', color:'$foregroundTextBronze'}}>
-                List is corrupted :-(())
-                <br/>
-                Please, delete item (right sidebar)
-            </Box> 
-        )
-    }
-
-    if(list.length === 0) {
-        return(
-            <Box css={{width:'100%', padding:'$4', color:'$foregroundTextBronze'}}>
-                List is empty. Add the publication to the list to see the content :-)      
-            </Box>
-        )
-    }
-
+  
+ 
     if(error){
         return(
             <Box css={{width:'100%', padding:'$4', color:'$foregroundTextBronze'}}>
@@ -84,6 +68,7 @@ const Space = ({list}:{list:SubscribedPublication[]}) => {
     return(
         <Box layout='flexBoxRow' css={{width:'100%', justifyContent:'space-between'}}>
             <Box layout='flexBoxColumn'>
+                {console.log('data data', data)}
             {(data && pinnedList !== null )&&(
                 <>
                     {data.map((page)=>{
@@ -110,10 +95,11 @@ const Space = ({list}:{list:SubscribedPublication[]}) => {
 
 
 const Contributors = ({list}:{list:SubscribedPublication[]}) =>{
-    const {data, error, isValidating} = useSWR([list], getContributorsListAvatars, {
+    const {data} = useSWR([list], getContributorsListAvatars, {
          revalidateIfStale: true,
          revalidateOnFocus: false,
-         revalidateOnReconnect: true
+         revalidateOnReconnect: true,
+        //  loadingTimeout:3000
     })
     const router = useRouter()
     if(!data) {
@@ -125,7 +111,6 @@ const Contributors = ({list}:{list:SubscribedPublication[]}) =>{
     }
     return(
         <Box layout='flexBoxColumn' css={{flexWrap:'wrap'}}>
-            
             {data?.map((contributor, index)=>{
                 return(
                 <Box 
@@ -146,14 +131,20 @@ const Spaces = ({index}:{index:string}) => {
     const curated = useRecoilValueAfterMount(curationItems, null)
     const setCurated = useSetRecoilState(curationItems)
     const router = useRouter()
+    const {data:contributors} = useSWR(
+        curated?.find((i:CurationList)=>i.title === index)? [curated?.find((i:CurationList)=>i.title === index)?.publications, 123] //123 is just a random key for useSWR to work on one page, can be deleted once code is splitted in diff modules
+        : null
+    , getContributorsList, {
+    onErrorRetry: (error, _, __, ___, { retryCount }) => {
+    if (error.status === 404 || error.status === 403) return
+    if (retryCount >= 2) return}})
+ 
     if(curated){
         return(
             <Layout>
-                 {curated.find((i:CurationList)=>i.title === index)?.publications && (
+                 {(curated.find((i:CurationList)=>i.title === index)?.publications && contributors) && (
                      <Box layout='flexBoxRow'>
-                        <Space list={
-                            curated.find((i:CurationList)=>i.title === index)?.publications || []
-                        }/>
+                        <Space contributors={contributors}/>
                         <Box 
                             layout='flexBoxColumn'
                             css={{

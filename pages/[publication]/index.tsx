@@ -55,7 +55,7 @@ if(type === 'personal') {
     });
     
     return {
-    props:{entries:entrieFiltered, profiles:profiles},
+    props:{pbl, entries:entrieFiltered, profiles:profiles},
   }
 
 }
@@ -93,17 +93,18 @@ const entries = await request('https://mirror-api.com/graphql', queryPublication
     });
     
     return {
-    props:{entries:entrieFiltered, profiles:profiles},
+    props:{pbl:pbl, entries:entrieFiltered, profiles:profiles},
   }
 };
 
 type Props = {
+    pbl: SubscribedPublication,
     entries:any;
     profiles:User[] | SubscribedPublication[];
 }
 
 
-const Data = ({entries, profiles}:Props) =>{
+const Data = ({pbl, entries, profiles}:Props) =>{
 
   const setCurrentArticle = useSetRecoilState(Current)
   const pinnedList = useRecoilValueAfterMount(pinnedItems, null) //we set the items to null to prevent initial rendering with empty values and waiting for the list to load
@@ -112,10 +113,10 @@ const Data = ({entries, profiles}:Props) =>{
   useEffect(()=>{
     setCurrentArticle({
       publication:{
-        type: entries[0].publication?.ensLabel ? 'ens' : 'personal',
-        ensLabel:entries[0].publication?.ensLabel || entries[0].author.displayName || entries[0].author.address
+        type: pbl.type || entries[0]?.publication?.ensLabel ? 'ens' : 'personal',
+        ensLabel:pbl.ensLabel || entries[0]?.publication?.ensLabel || entries[0]?.author.displayName || entries[0]?.author.address
       },
-      author: entries[0].author.address,   
+      author: entries[0]?.author.address,   
       title:null,
       digest:null
     })

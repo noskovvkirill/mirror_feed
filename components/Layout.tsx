@@ -6,7 +6,6 @@ import Nav from '@/design-system/Nav'
 
 import Head from 'next/head'
 import { ReactNode, useState} from 'react'
-// import Input from '@/design-system/primitives/Input'
 import {useRouter} from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { pinnedItems, PinnedItem, readLaterList, ReadingListItem} from 'contexts'
@@ -96,13 +95,7 @@ const StyledScrollbar = styled(ScrollArea.Scrollbar, {
   },
 });
 
-const StyledFooter = styled('footer', {
-    position:'fixed',
-    bottom:'$2',
-    right:'calc($4 + $4)',
-    fontSize:'$6',
-    color:'$foregroundText'
-})
+
 
 const StyledThumb = styled(ScrollArea.Thumb, {
   flex: 1,
@@ -136,11 +129,9 @@ export const history: Array<{
 
 
 interface IPinnedList {
-    // pinnedList:PinnedItem[];
     isPinnedList:boolean;
     setIsPinnedList:(newState:boolean) => void;
     setReadLater:(fn:(prevState:ReadingListItem[]) => ReadingListItem[]) => void;
-    // setPinnedList:(fn:(prevState:PinnedItem[] | []) => PinnedItem[] | []) => void;
 }
 
 
@@ -229,12 +220,7 @@ const Layout = ({children}:Props) =>{
     const [isPinnedList, setIsPinnedList] = useState(false)
     const setReadLater = useSetRecoilState(readLaterList)
     const currentArticle = useRecoilValue(Current)
-
     const router = useRouter()
-
-    // useEffect(()=>{
-    //     console.log('shaking animation when element is added')
-    // },[pinnedList])
 
     useHotkeys('cmd+z, ctrl+z', () => {
         if(history.length>0){
@@ -255,8 +241,6 @@ const Layout = ({children}:Props) =>{
                 <OnBoarding/>
                 <Nav/>
                 <StyledHeader css={!router.query.publication ? {position:'sticky'} : {position:'static'}}>
-
-
                     {router.query.publication && (
                         <Box css={{padding:'$4 $4 calc($4 * 2 + $1) $4'}}>
                             <PublicationLabel 
@@ -269,23 +253,14 @@ const Layout = ({children}:Props) =>{
                             }></PublicationLabel>
                         </Box>
                     ) }
-                   
-                
                     {!router.query.publication && (
                         <PinnedList 
                         isPinnedList={isPinnedList} setIsPinnedList={setIsPinnedList} setReadLater={setReadLater}/>
                     )}
-           
-        
-              
                 </StyledHeader>
                 <StyledMain>
                     {children}
                 </StyledMain>
-
-                {/* <StyledFooter>
-                    MIRROR MIRROR
-                </StyledFooter> */}
             </Box>
     )
 }

@@ -124,13 +124,8 @@ const SpacesSelector = ({publication, content, type, author}:{publication?:strin
         <Box layout='flexBoxRow' css={{alignItems:'center', color:'$foreground', userSelect:'none'}}>
             <Popover.Root>
                 <StyledCurationButton>
-                    {/* <SpacesIcon/> */}
                     <Arc/>
                 </StyledCurationButton>
-                {/* <Box css={{fontSize:'$6'}}>
-                    {router.pathname === '/spaces/[index]' ? router.query.index?.toString() : undefined}
-                </Box> */}
-
         
                 <StyledContent align="center">
                     <Box layout='flexBoxRow' css={{justifyContent:'space-between', alignItems:'center'}}>
@@ -151,7 +146,6 @@ const SpacesSelector = ({publication, content, type, author}:{publication?:strin
                     
                     >Main feed</Button>
                     {curated.map((list:CurationList, i:number)=>{
-                       
                         if(router.query.index?.toString() === list.title){ 
                           return(
                             <Button 
@@ -178,6 +172,14 @@ const SpacesSelector = ({publication, content, type, author}:{publication?:strin
                         )
                     })}
 
+                    <Button 
+                      onClick={()=>{
+                                router.push(`/explore`)
+                            }}
+                    css={{width:'100%', display:'flex', borderRadius:'0', border:'0', borderTop:'1px solid $foreground', justifyContent:'center'}}>
+                        Explore
+                    </Button>
+
                     
                          {/* <Button 
                     onClick={()=>{
@@ -203,7 +205,7 @@ const SpacesSelector = ({publication, content, type, author}:{publication?:strin
                     <>
                     /
                     <StyledLabel selected={true}>
-                        {content}
+                        {content.length <=30 ? content : content.slice(0,27)+'...' }
                     </StyledLabel>
                     </>
                 )}

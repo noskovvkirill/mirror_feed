@@ -6,8 +6,8 @@ import { useSetRecoilState} from 'recoil'
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 import {useRouter} from 'next/router'
 import useOnScreen from 'hooks/useOnScreen'
-import {useRef, useState, useEffect, ReactPropTypes} from 'react'
-
+import {useRef, useState, ReactPropTypes, useLayoutEffect} from 'react'
+// import remarkOembed from 'remark-oembed'
 // @ts-ignore
 import rehypeTruncate from "rehype-truncate";
 import remarkGfm from 'remark-gfm'
@@ -17,15 +17,25 @@ import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import slug from 'rehype-slug'
 import toc from "@jsdevtools/rehype-toc"
-
+import unwrapLinks from 'src/unwrapLinks'
 //types
 import {ignoredPublication, pinnedItems, readLaterList, readSettings, ReadingListItem} from 'contexts'
+import remarkUnwrapImages from 'remark-unwrap-images'
 
 //components
 import Container from '@/design-system/Article/Container'
 import Controls from '@/design-system/Article/Controls'
 import Body from '@/design-system/Article/Body'
-import {StyledImage, StyledH1, StyledH2, StyledH3, StyledH4, StyledH5, StyledLink, Embeds, StyledToc, StyledList} from '@/design-system/text/TextParsing'
+
+import dynamic from 'next/dynamic'
+const DynamicEmbed = dynamic(() =>
+  import('@/design-system/text/Embeds'), { 
+      loading: () => <p style={{width:'100%', height:'256px'}}></p>,
+    }
+)
+// import Embeds from '@/design-system/text/Embeds'
+
+import {StyledImage, StyledH1, StyledH2, StyledH3, StyledH4, StyledH5,  StyledToc, StyledList} from '@/design-system/text/TextParsing'
 
 
 
@@ -54,14 +64,14 @@ const StyledImageHidden = styled(StyledImage,{
     display:'none'
 })
 
-const StyledImageFull = (props:ReactPropTypes) => (<StyledImage {...props} inline={false}/>)
+const StyledImageFull = (props:ReactPropTypes) => (<StyledImage loading='lazy' {...props} inline={false}/>)
 
 
 
 //this is really ugly solution, but works for now 
 const TocPortalled = (props:ReactPropTypes) => {
     const [container, setContainer] = useState<Element | null>(null)
-    useEffect(()=>{
+    useLayoutEffect(()=>{
         if(document){
             const element = document.querySelector('#article-toc')
             if(element){
@@ -92,16 +102,25 @@ const processorShort = unified()
       h5:StyledH5,
       ul: StyledList,
       ol: StyledList,
-      a:Embeds
+      a:DynamicEmbed
   }})
+
+
+
+
+
 
 const processorFull = unified()
   .use(remarkParse)
   .use(remarkGfm)
+  .use(remarkUnwrapImages)
+  .use(unwrapLinks)
   .use(remarkRehype)
   .use(slug)
   .use(toc)
-  .use(rehypeReact, {options:{passNode:true}, createElement: React.createElement, Fragment:React.Fragment, components:{
+  .use(rehypeReact, 
+    {options:{passNode:false}, createElement: React.createElement, Fragment:React.Fragment, 
+    components:{
       img: StyledImageFull,
       h1: StyledH1,
       h2: StyledH2,
@@ -110,15 +129,17 @@ const processorFull = unified()
       h5:StyledH5,
       ul: StyledList,
       ol: StyledList,
-      a:Embeds,
+      a:DynamicEmbed,
       nav:TocPortalled
-  }})
+  }
+}
+)
 
 
-function shorten(str:string, maxLen:number, separator = ' ') {
-  if (str.length <= maxLen) return str;
-  return str.substr(0, str.lastIndexOf(separator, maxLen));
-} //that is a weird way to shorten the text, because I do that to markdown and may touch the styling symbols
+// function shorten(str:string, maxLen:number, separator = ' ') {
+//   if (str.length <= maxLen) return str;
+//   return str.substr(0, str.lastIndexOf(separator, maxLen));
+// } //that is a weird way to shorten the text, because I do that to markdown and may touch the styling symbols
 
 
 const Article= ({entry, isPreview=true}:Props) => {
@@ -132,7 +153,7 @@ const Article= ({entry, isPreview=true}:Props) => {
     const readingList = useRecoilValueAfterMount(readLaterList, [])
     const setSettings = useSetRecoilState(readSettings)
     const [isHover, setIsHover] = useState(false)
-    
+
     return(
         <Container
             ref={ref}
@@ -162,12 +183,14 @@ const Article= ({entry, isPreview=true}:Props) => {
                 setReadLater={setReadLater}
                 setIsHover={setIsHover}
             />
+
+
              <Body
                 readingList={readingList}
                 setReadLater={setReadLater}
                 isPreview={isPreview}
                 entry={entry}
-                body={isPreview ? processorShort.processSync(shorten(entry.body,1200)).result : processorFull.processSync(entry.body).result}
+                body={isPreview ? processorShort.processSync(entry.body).result : processorFull.processSync(entry.body).result}
                 Open={(digest:string)=>{
                     router.push(digest, undefined, {scroll:true})
                 }}

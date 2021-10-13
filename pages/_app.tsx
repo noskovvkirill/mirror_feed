@@ -3,6 +3,10 @@ import type { AppProps /* , AppContext */ } from "next/app";
 import { IdProvider } from "@radix-ui/react-id";
 import { globalStyles } from "../stitches.config";
 import {RecoilRoot} from 'recoil'
+import { LazyMotion } from "framer-motion"
+// import dynamic from 'next/dynamic'
+const loadFeatures = () =>
+  import("src/animation-features").then(res => res.default)
 
 function MyApp({ Component, pageProps }: AppProps) {
 
@@ -10,9 +14,11 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
       <RecoilRoot>
+         <LazyMotion features={loadFeatures} strict>
           <IdProvider>
             <Component {...pageProps} />
           </IdProvider>
+        </LazyMotion>
       </RecoilRoot>
   );
 }

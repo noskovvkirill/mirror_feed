@@ -2,7 +2,6 @@ import Button from '@/design-system/primitives/Button'
 import {styled} from 'stitches.config'
 import { ReactChild,useState } from 'react'
 import * as Portal from '@radix-ui/react-portal';
-import {useRef, useEffect} from 'react';
 
 const StyledControl = styled(Button,{
     border:'1px solid $foreground', 
@@ -139,9 +138,6 @@ const ButtonControl = (
                  } else {
                      setPos({x:coord.x+window.scrollX+coord.width, y:coord.y+window.scrollY})
                  }
-                //  const eventL = window.addEventListener('scroll', (e)=>console.log('scroll'))
-                // console.log('eventL', eventL)
-                
             }}
             onMouseLeave={()=>{
                 setIsHover(false)
@@ -152,20 +148,6 @@ const ButtonControl = (
             </StyledControl>
             {isHover && (
                 <Control direction={direction} label={label} pos={pos}>{children}</Control>
-            //  <Portal.Root>
-            //     <StyledControl
-            //     css={{
-            //     position:'absolute', 
-            //     background:'$foregroundBronze',
-            //     color:'$backgroundBronze',
-            //     pointerEvents:'none', top:0, left:0,
-            //     transform:`translate(${pos.x}px, ${pos.y}px)`}}
-            //     isHighlighted={true}
-            //     >
-            //         {children}
-            //         {label}
-            //     </StyledControl>
-            // </Portal.Root>
             )}
         </>
     )

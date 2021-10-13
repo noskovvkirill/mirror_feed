@@ -14,7 +14,7 @@ export const getContributorsAvatar = async(publication:IList) => {
             })
             .catch((e) => {
                 console.log('error', e)
-                return e
+                throw e
             })
         } else {
             return await request('https://mirror-api.com/graphql', queryContributor, {address:publication.ensLabel})
@@ -52,7 +52,7 @@ export const getContributors = async(publication:IList) => {
 }
 
 export const getContributorsList = async(list:IList[]) => {
-    // console.log('list', list)
+    // console.log('get contributors list', list)
     const items = list.map(async (publication:IList)=>{
         return await getContributors(publication)
     })
@@ -60,10 +60,10 @@ export const getContributorsList = async(list:IList[]) => {
     return addresses.flat()
 }
 
-export const getMergedPublication = async (list:IList[], cursor?:string) => {
-    // console.log('cursor', cursor)
-    const addresses = await getContributorsList(list)
-
+export const getMergedPublication = async (addresses:string[], cursor?:string) => {
+    // console.log('getting merged publication', addresses)
+    // const addresses = await getContributorsList(list)
+    
    const data = await request('https://arweave.net/graphql', queryMultiple, {
         contributors:addresses,
         after:cursor ? cursor : ""

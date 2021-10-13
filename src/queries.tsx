@@ -33,7 +33,7 @@ query Publication($ensLabel: String!) {
 //all publication from the list of Authors on arweave
 export const queryMultiple = gql`
 query Transaction($contributors:[String!]!, $after:String!){
-		transactions(first:20, after:$after, tags: [
+		transactions(first:5, after:$after, tags: [
       { name: "App-Name", values: ["MirrorXYZ"] },
       { name: "Contributor", values: $contributors}
     ]) {
@@ -72,7 +72,7 @@ query Transaction($contributor:String!){
 
 export const queryAll = gql`
 {
-		transactions(first:10, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
+		transactions(first:5, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
 			edges {
 				node {
 					id

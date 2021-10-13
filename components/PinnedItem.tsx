@@ -6,7 +6,6 @@ import SuccessMarkIcon from '@/design-system/icons/Success'
 
 import UnPinIcon from '@/design-system/icons/UnPin'
 
-
 import * as dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
@@ -15,7 +14,6 @@ import rehypeTruncate from "rehype-truncate";
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 
 //global state
-
 import { pinnedItems, readLaterList, PinnedItem,  ReadingListItem} from 'contexts'
 import { useSetRecoilState} from 'recoil'
 import {useRouter} from 'next/router'
@@ -51,47 +49,6 @@ const StyledContainer = styled('div',{
     }
 })
 
-// const StyledHeader = styled('div',{
-//       display:'flex',
-//       flexDirection:'column',
-//       justifyContent:'center',
-//       gap:'$1',
-//       height:'100%',
-//       maxHeight:'640px',
-//       borderRadius:'$round',
-//       padding:'0',
-//       margin:'$2 $2 $2 0',
-//       width:'32px',
-//       color:'$foreground',
-//       mixBlendMode:'multiply',
-//      transition:'$all',
-//       cursor:'pointer',
-//       'h5':{
-//           userSelect:'none',
-//           whiteSpace:'nowrap',
-//           fontWeight:'400',
-//           transform:'rotate(-90deg)'
-//       },
-//        variants:{
-//         isHighlighted:{
-//             true:{
-//                 '&:hover':{
-//                     backgroundColor:'$highlightBronze',
-//                     color:'$foregroundTextBronze',
-//                 },
-//             },
-//             false:{
-//                 '&:hover':{
-//                     backgroundColor:'$highlight',
-//                     color:'$foregroundText'
-//                 },
-//             }
-//         }
-//     },
-//      defaultVariants:{
-//         isHighlighted:false
-//     }
-// })
 
 
 
@@ -216,27 +173,11 @@ const PinnedComponent= ({entry}:Props) => {
                             })
                             }><UnPinIcon/>
                         </ButtonControl>
-                        {/* <ButtonControl
-                        label='ignore this publication'
-                        isHighlighted={isFocused}
-                        onClick={()=>
-                        setIgnoredList((prevState:IgnoredPublication[])=>[...prevState, {ensLabel:entry.publication.ensLabel}])
-                        }><RemoveIcon/></ButtonControl> */}
-                        {/* <StyledHeader isHighlighted={isFocused}>
-                            <h5>{entry.publication.ensLabel}</h5>
-                        </StyledHeader> */}
-
                     </StyledControls>
                     <StyledBody isHighlighted={true}>
-                        {/* <StyledMetadata> */}
-                            {/* <StyledLabel isHighlighted={isFocused}>{entry.author.displayName}</StyledLabel> */}
-                            {/* <StyledLabel isHighlighted={isFocused}>{dayjs.unix(entry.timestamp).fromNow() }</StyledLabel> */}
-                            {/* <StyledLabel isHighlighted={isFocused} css={{backgroundColor:'transparent', padding:'0 $1', cursor:'pointer'}} as='a' rel="noreferrer" href={`https://${entry.publication.ensLabel}.mirror.xyz/${entry.digest}`} target='_blank'><LinkIcon/></StyledLabel> */}
-                        {/* </StyledMetadata> */}
                         <StyledTitle isHighlighted={true}>
                             <b style={{padding:0, margin:'16px 0px'}}>{entry.title}</b>
                         </StyledTitle>
-                        {/* {processor.processSync(shorten(entry.body,2000)).result} */}
                     </StyledBody>
             </StyledContainer>
     )

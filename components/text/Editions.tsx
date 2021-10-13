@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Box from '@/design-system/primitives/Box'
 import RemoveIcon from '@/design-system/icons/Remove'
 import ButtonControl from '@/design-system/primitives/ButtonControl'
@@ -71,10 +72,6 @@ const StyledLabel = styled('p',{
     color:'$foregroundText',
 })
 
-// type EditionsProps = {
-//     editionId:number,
-//     editionContractAddress:string
-// }
 
 const getEditions =  async (editionId:number, editionContractAddress:string) => {
     return await request('https://mirror-api.com/graphql', queryEditions, {editionId:editionId, editionContractAddress:editionContractAddress})
@@ -90,7 +87,8 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
         onErrorRetry: (error, _, __, ___, { retryCount }) => {
             if (error.status === 404) return
              if (retryCount >= 2) return
-        }
+        },
+        loadingTimeout:3000
     })
 
     const currentArticle = useRecoilValue(Current)
@@ -151,7 +149,7 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
                         <Box css={{display:'flex', alignItems:'center'}}>
                             {/* {data.publication.ensLabel} */}
                             <Box css={{width:'$4', height:'$4', borderRadius:'$round', overflow:'hidden'}}>
-                                <img src={data.publication.avatarURL} width='100%' height='100%' style={{objectFit:'cover'}}/>
+                                <img alt='user-avatar' src={data.publication.avatarURL} width='100%' height='100%' style={{objectFit:'cover'}}/>
                             </Box>
                         </Box>
                     </Box>

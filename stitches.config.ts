@@ -13,7 +13,7 @@ export const { styled, css, globalCss, getCssText, keyframes } = createStitches(
             backgroundBronze: bronze.bronze1,
             foreground: sand.sand7,
             foregroundBorder: sand.sand8,
-            foregroundBronze: bronze.bronze7,
+            foregroundBronze: bronze.bronze6,
             highlight: sand.sand3,
             highlightBronze:bronze.bronze3,
             foregroundText: sand.sand9,
