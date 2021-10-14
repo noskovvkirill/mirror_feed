@@ -138,7 +138,7 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
                     {data.primaryMedia.mimetype !== 'video/mp4' && (
                         <Box as='img'
                         css={{objectFit:'cover', borderRadius:'$2', boxShadow:'$normal'}}
-                        src={data.primaryMedia.sizes.md.src}/>
+                        src={data.primaryMedia.sizes.md? data.primaryMedia.sizes.md.src : data.primaryMedia.sizes.og?.src}/>
                     )}
                     </Box>
                     
