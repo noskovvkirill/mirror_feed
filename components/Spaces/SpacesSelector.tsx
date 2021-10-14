@@ -16,6 +16,7 @@ import Arc from '@/design-system/icons/Arc'
 const StyledLabel = styled('div',{
     display:'flex',
     alignItems:'center',
+    whiteSpace:'nowrap',
     justifyContent:'center',
     backgroundColor:'none',
     color:'$foregroundText',

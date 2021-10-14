@@ -220,7 +220,7 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                     label='pin on top'
                     isHighlighted={(isHover || isFocused) ? true : false}
                     onClick={()=>
-                    setPinnedItem((prevState:PinnedItem[])=>[...prevState, {entry:entry}])
+                    setPinnedItem((prevState:PinnedItem[])=>[...prevState, {id:prevState.length > 0 ? prevState[prevState.length-1].id + 1 : 0,type:'entry', item:entry}])
                     }>
                         <PinIcon/>
                 </ButtonControl>

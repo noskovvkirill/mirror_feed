@@ -116,7 +116,7 @@ const Control = ({children, direction, label, pos}:{
 const ButtonControl = (
     {children, selected, 
     direction='right',
-    label, isHighlighted, onClick}:{children:ReactChild,label:string, direction?:'right' | 'left',selected?:boolean, isHighlighted:boolean, onClick?: () => void;
+    label, isHighlighted, onClick}:{children:ReactChild,label:string, direction?:'right' | 'left',selected?:boolean, isHighlighted:boolean, onClick?: (e:React.MouseEvent<HTMLButtonElement> | never) => void;
     }) => {
     const [isHover, setIsHover] = useState(false)
     const [pos, setPos] = useState({x:-99999, y:-99999})

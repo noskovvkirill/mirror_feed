@@ -74,7 +74,7 @@ const Space = ({contributors}:{contributors:string[]}) => {
                     {data.map((page)=>{
                         if(page[0]) { 
                             return page[0].map((entry)=>{
-                                if(pinnedList.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest) !== -1){
+                                if(pinnedList.findIndex((item:PinnedItem)=>item.type === 'entry' && item.item.digest === entry.digest) !== -1){
                                     return;
                                 } else {
                                     return(<Article entry={entry} key={entry.digest}/>)

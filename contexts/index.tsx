@@ -28,9 +28,32 @@ export type SubscribedPublication  =  Publication & {
     avatarURL?:string
 }
 
-export type PinnedItem = {
-    entry:Entry
+
+export type Attachment = {
+    mimeType:string
+    url:string
 }
+
+type PinnedItemEntry = {
+    id:number
+    type:'entry'
+    item:Entry
+}
+
+type PinnedItemPublication = {
+    id:number
+    type:'publication'
+    item:Publication
+}
+
+type PinnedItemAttachment = {
+    id:number
+    type:'attachment'
+    item: Attachment
+}
+
+export type PinnedItem = PinnedItemEntry | PinnedItemAttachment | PinnedItemPublication 
+
 
 export type ReadingListItem = {
     title:string,

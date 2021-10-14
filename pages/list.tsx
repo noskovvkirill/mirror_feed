@@ -40,7 +40,7 @@ const List = () => {
     return(
         <Layout>
             {readingList.map((item:ReadingListItem)=>{
-                 if(pinnedList.findIndex((itemP:PinnedItem)=>item.entryDigest === itemP.entry.digest) !== -1){
+                 if(pinnedList.findIndex((itemP:PinnedItem)=>itemP.type === 'entry' && item.entryDigest === itemP.item.digest) !== -1){
                       return;
                     } else {
                     return <EntryList digest={item.entryDigest} key={'readinglist'+item.entryDigest}/>

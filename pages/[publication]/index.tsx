@@ -16,6 +16,7 @@ import Contributors from '@/design-system/Contributors';
 import {useRouter} from 'next/router'
 
 
+
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 
@@ -134,7 +135,7 @@ const Data = ({pbl, entries, profiles}:Props) =>{
               {pinnedList !== null && (
                 <>
                 {entries.map((entry:Entry)=>{
-                    if(pinnedList.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest) !== -1){
+                    if(pinnedList.findIndex((item:PinnedItem)=>item.type === 'entry' && item.item.digest === entry.digest) !== -1){
                       return;
                     } else {
                         return(

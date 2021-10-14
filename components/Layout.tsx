@@ -132,10 +132,11 @@ interface IPinnedList {
     isPinnedList:boolean;
     setIsPinnedList:(newState:boolean) => void;
     setReadLater:(fn:(prevState:ReadingListItem[]) => ReadingListItem[]) => void;
+    routerQuery:any
 }
 
 
-const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater}:IPinnedList) => {
+const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater, routerQuery}:IPinnedList) => {
      const pinnedList =  useRecoilValueAfterMount(pinnedItems, [])
      const setPinnedList = useSetRecoilState(pinnedItems)
      const currentArticle = useRecoilValue(Current)
@@ -164,26 +165,36 @@ const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater}:IPinnedList)
                     </Box>
                 </ButtonControl>
                 {!isPinnedList && (
-                            <Box layout='flexBoxRow' css={{userSelect:'none', fontSize:'$6', color:'$foregroundText', alignItems:'center', justifyContent:'center'}}>{pinnedList.length}</Box>
+                    <Box layout='flexBoxRow' css={{userSelect:'none', fontSize:'$6', color:'$foregroundText', alignItems:'center', justifyContent:'center'}}>{pinnedList.length}</Box>
                 )}
             </Box>
 
             <ButtonControl 
             isHighlighted={false}
             onClick={()=>{
+                //Transform all the Entries to the reading list items and remove them from the list
                 setReadLater((prevState:ReadingListItem[])=>{
                     const pinnedItemsToReadingList = pinnedList.map((item:PinnedItem)=>{
-                        return({entryDigest:item.entry.digest, title:item.entry.title, ensLabel: item.entry.publication?.ensLabel ? item.entry.publication.ensLabel : item.entry.author.address})
+                        if(item.type === 'entry')
+                        return({entryDigest:item.item.digest, title:item.item.title, ensLabel: item.item.publication?.ensLabel ? item.item.publication.ensLabel : item.item.author.address})
+                        else return null
                     })
-                    return [...prevState, ...pinnedItemsToReadingList]
+                    const pinnedItemsToReadingListFiltered:ReadingListItem[] = [...pinnedItemsToReadingList].filter((item):item is ReadingListItem=>item !== null)
+                    return [...prevState, ...pinnedItemsToReadingListFiltered]
                 })
-                setPinnedList([])
+                setPinnedList((prevState:PinnedItem[])=>{
+                    return [...prevState].filter(item=>item.type === 'entry')
+                })
             }}
             label='Add all to the reading list'>
                 <AddAllIcon/>
             </ButtonControl>
 
-            <PublicationLabel  type={currentArticle?.publication.type}
+            <PublicationLabel  
+            type={currentArticle?.publication.type}
+            author={currentArticle?.author}
+            content={currentArticle?.title || routerQuery.article?.toString()}
+            publication={ currentArticle?.publication.ensLabel || routerQuery.publication?.toString()}
             ></PublicationLabel>
    
 
@@ -198,7 +209,7 @@ const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater}:IPinnedList)
                              <Box layout='flexBoxRow' css={{paddingTop:'$2'}}>
                                 {pinnedList.map((item:PinnedItem)=>{
                                     return(
-                                        <PinnedComponent key={item.entry.digest}  entry={item.entry}/>
+                                        <PinnedComponent key={'pinned item' + item.id} item={item}/>
                                     )
                                 })}
                             </Box>
@@ -241,7 +252,7 @@ const Layout = ({children}:Props) =>{
                 <OnBoarding/>
                 <Nav/>
                 <StyledHeader css={!router.query.publication ? {position:'sticky'} : {position:'static'}}>
-                    {router.query.publication && (
+                    {/* {router.query.publication && (
                         <Box css={{padding:'$4 $4 calc($4 * 2 + $1) $4'}}>
                             <PublicationLabel 
                             type={currentArticle?.publication.type}
@@ -252,11 +263,12 @@ const Layout = ({children}:Props) =>{
                                 currentArticle?.publication.ensLabel || router.query.publication.toString()
                             }></PublicationLabel>
                         </Box>
-                    ) }
-                    {!router.query.publication && (
+                    ) } */}
+                    {/* {!router.query.publication && ( */}
                         <PinnedList 
+                        routerQuery={router.query}
                         isPinnedList={isPinnedList} setIsPinnedList={setIsPinnedList} setReadLater={setReadLater}/>
-                    )}
+                    {/* )} */}
                 </StyledHeader>
                 <StyledMain>
                     {children}

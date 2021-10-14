@@ -1,5 +1,7 @@
 //state
 import {styled} from 'stitches.config'
+import Box from '@/design-system/primitives/Box'
+import Button from '@/design-system/primitives/Button'
 import React from 'react'
 import * as ReactDOM from 'react-dom'
 import { useSetRecoilState} from 'recoil'
@@ -36,7 +38,7 @@ const DynamicEmbed = dynamic(() =>
 // import Embeds from '@/design-system/text/Embeds'
 
 import {StyledImage, StyledH1, StyledH2, StyledH3, StyledH4, StyledH5,  StyledToc, StyledList} from '@/design-system/text/TextParsing'
-
+import ImageFull from '@/design-system/text/Image'
 
 
 interface Props {
@@ -64,7 +66,12 @@ const StyledImageHidden = styled(StyledImage,{
     display:'none'
 })
 
-const StyledImageFull = (props:ReactPropTypes) => (<StyledImage loading='lazy' {...props} inline={false}/>)
+const StyledImageFull = (props:ReactPropTypes) => (
+    <Box>
+        <Button>Add to the pinned items</Button>
+        <StyledImage loading='lazy' {...props} inline={false}/>
+    </Box>
+)
 
 
 
@@ -121,7 +128,7 @@ const processorFull = unified()
   .use(rehypeReact, 
     {options:{passNode:false}, createElement: React.createElement, Fragment:React.Fragment, 
     components:{
-      img: StyledImageFull,
+      img: ImageFull,
       h1: StyledH1,
       h2: StyledH2,
       h3: StyledH3,

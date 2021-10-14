@@ -134,7 +134,7 @@ const Data = ({entries, lastCursor}:Props) =>{
             {data.map((page:any)=>{
               return page[0].map((entry:any)=>{
                 if(ignoredList.findIndex((item:IgnoredPublication)=>entry.publication?.ensLabel === item.ensLabel || entry.author.address === item.ensLabel) === -1){
-                    if(pinnedList.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest) !== -1){
+                    if(pinnedList.findIndex((item:PinnedItem)=>item.type === 'entry' && item.item.digest === entry.digest) !== -1){
                       return;
                     } else {
                         return(

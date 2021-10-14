@@ -20,7 +20,6 @@ export const { styled, css, globalCss, getCssText, keyframes } = createStitches(
             foregroundTextBronze: bronze.bronze9,
             text: sand.sand12,
             textBronze: bronze.bronze12
-
         },
         space: {
             0: "4px",
