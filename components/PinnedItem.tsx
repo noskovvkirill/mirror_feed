@@ -153,15 +153,7 @@ const PinnedComponent= ({item}:Props) => {
 
     if(item.type==='entry'){
     return(
-        <StyledContainer 
-            // onClick={()=>{
-            //     if(document){
-            //         document.getElementById(`preview-${entry.digest}`)?.scrollIntoView();
-            //     }
-            // }} 
-            // would be cool to navigate to the object, but it disappear on page reload :C 
-            isHighlighted={true}
-            >
+        <StyledContainer isHighlighted={true}>
                     <StyledControls>
                         <ButtonControl
                         isHighlighted={true}
@@ -221,4 +213,5 @@ const PinnedComponent= ({item}:Props) => {
     )
 }
 
-export default PinnedComponent
+
+export default React.memo(PinnedComponent)

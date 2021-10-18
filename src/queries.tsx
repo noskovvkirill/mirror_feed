@@ -1,6 +1,36 @@
 import { gql } from 'graphql-request';
 
 
+//publications from Mirror.xyz that are registered through ENS 
+export const queryPublicationsEns = gql`
+ query PublicationsEns($skip: Int!) {
+  domain(id:"0x1aaf79d9b3323ad0212f6a2f34f8c627d8d45e45a55c774d080e3077334bfad9") {
+    id
+    name
+    subdomains(first:10, skip: $skip, orderBy:labelName) {
+      name
+      labelName
+    }
+  }
+}
+`;
+
+
+//ensAddress 
+export const queryEnsAddress = gql`
+query Contributor($name: String!) {
+     domains(where: {name:$name}) {
+      id
+      name
+      labelName
+      labelhash
+      owner{
+        id
+      }
+    }
+  }
+`
+
 //contributor 
 export const queryContributor = gql`
 query Contributor($address: String!) {
@@ -12,6 +42,23 @@ query Contributor($address: String!) {
     }
 `
 
+//contributor 
+export const queryPublicationContributor = gql`
+query PublicationContributor($address: String!) {
+    contributor(address: $address) {
+        address
+        id
+        displayName
+        avatarURL
+        publications {
+          id
+          ensLabel
+          displayName
+          avatarURL
+        }
+      }
+    }
+`
 
 // Publication contributors
 export const queryPublicationContributors = gql`
@@ -122,6 +169,16 @@ query Entry($digest: String!) {
         digest
         timestamp
         title
+        featuredImage {
+          mimetype
+          sizes {
+            og {
+                src
+                height
+                width
+            }
+          }
+        }
         author{
           address
           displayName
@@ -137,7 +194,7 @@ query Entry($digest: String!) {
 export const queryProposal = gql`
 query GetProposal($cid: String) {
   proposal(cid: $cid) {
-      cid
+    cid
     description
     endDate
     erc20Address

@@ -6,6 +6,17 @@ import { useSetRecoilState } from "recoil"
 import { useRecoilValueAfterMount } from "hooks/useRecoilValueAfterMount"
 import {readLaterList, ReadingListItem} from 'contexts'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import ButtonPopover from "@/design-system/primitives/ButtonPopover"
+import {useStore} from 'pages/_app'
+import {createTheme} from 'stitches.config'
+import { useTheme } from 'next-themes'
+import {useEffect, useReducer} from 'react'
+
+import AdjustIcon from '@/design-system/icons/Adjust'
+import ColorPicker from '@/design-system/primitives/ColorPicker'
+import { toColor} from "react-color-palette";
+import React from 'react'
+
 
 const StyledNav= styled(Box, {
     zIndex:'1000',
@@ -81,10 +92,111 @@ const StyledDelete = styled('button', {
  
 })
 
+
+export interface Color {
+    readonly hex: string;
+    readonly rgb: ColorRGB;
+    readonly hsv: ColorHSV;
+}
+interface ColorRGB {
+    readonly r: number;
+    readonly g: number;
+    readonly b: number;
+    readonly a?: number;
+}
+interface ColorHSV {
+    readonly h: number;
+    readonly s: number;
+    readonly v: number;
+    readonly a?: number;
+}
+
+const reducer = (state:ThemeTokens, action:{color:string, value:Color}) => {
+      return { ...state, [action.color]: action.value }
+}
+
+type ThemeTokens = {
+        background: Color,
+        tinted:Color,
+        foreground: Color,
+        foregroundBorder: Color,
+        highlight: Color,
+        foregroundText: Color,
+        text: Color,
+        backgroundBronze:Color,
+        foregroundBronze:Color,
+        highlightBronze:Color,
+        foregroundTextBronze:Color,
+        textBronze: Color,
+        [U: string]: Color
+}
+
+
+ 
 const Nav = () =>{
     const router = useRouter();
     const readingList = useRecoilValueAfterMount(readLaterList, [])
     const setReadLater = useSetRecoilState(readLaterList) 
+    const { changeTheme} = useStore()
+    const { setTheme } = useTheme()
+    
+    useEffect(()=>{
+        let custom = localStorage.getItem('custom-theme') 
+        if(custom){
+            const data  = JSON.parse(custom)
+            const newColors:{[U: string]: string} = {}
+                for (const key in colors) {
+                    if (colors.hasOwnProperty(key)) {
+                        newColors[key] = data[key].hex
+                    }
+            }
+            const newName = 'custom'+Math.floor(Math.random()*1000).toString()
+            const themeN = createTheme(newName, {
+                colors: newColors
+             });
+            changeTheme({theme:themeN, name:newName})
+            setTheme(newName)
+            Object.keys(data).map((key)=>dispatch({color:key, value:data[key]}))
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[setTheme, changeTheme])
+
+    const initialValue:ThemeTokens = {
+            background: toColor("hex", "#121212"),
+            tinted:toColor("hex", "#121212"),
+            foreground: toColor("hex", "#121212"),
+            foregroundBorder: toColor("hex", "#121212"),
+            highlight: toColor("hex", "#121212"),
+            foregroundText: toColor("hex", "#121212"),
+            text:toColor("hex", "#121212"),
+            backgroundBronze: toColor("hex", "#121212"),
+            foregroundBronze: toColor("hex", "#121212"),
+            highlightBronze:toColor("hex", "#121212"),
+            foregroundTextBronze: toColor("hex", "#121212"),
+            textBronze: toColor("hex", "#121212"),
+    }
+    const [colors, dispatch] = useReducer(reducer, initialValue)
+
+
+    const UpdateTheme = async () => {
+       const newName = 'custom'+Math.floor(Math.random()*1000).toString()
+       const newColors:{[U: string]: string} = {}
+       for (const key in colors) {
+            if (colors.hasOwnProperty(key)) {
+                newColors[key] = colors[key].hex
+            }
+       }
+       const themeN = createTheme(newName, {
+            colors: newColors
+       });
+    
+        changeTheme({theme:themeN, name:newName})
+        setTheme(newName)
+
+        localStorage.setItem('custom-theme', JSON.stringify(colors))
+    }
+
+    
 
     return(
         <StyledNav>
@@ -165,12 +277,31 @@ const Nav = () =>{
                         </Button>
                     </Box>
                     )}
-      
-                   
                 </StyledContent>
             </DropdownMenu.Root>
+
+            <ButtonPopover icon={<AdjustIcon/>} label='change' isHighlighted={true}>
+                <p>Theme settings</p>
+                <Box css={{width:'100%', overflow:'hidden'}}>
+                    {colors && (
+                        <>
+                          {Object.keys(colors).map((key:string)=>{
+                            return(
+                                 <Box layout='flexBoxRow' key={'theme_color'+key} css={{padding:'0 $2', justifyContent:'space-between', fontSize:'$6'}}>
+                                     {key} {colors[key].hex}
+                                     <ColorPicker color={colors[key]} setColor={(newValue:Color)=>{dispatch({color:key, value:newValue})}}/>
+                                  </Box>
+                            )
+                          })}
+                        </>
+                    )}
+                </Box>
+                <Button onClick={UpdateTheme}>Update theme 1 </Button>
+            </ButtonPopover>
+
+
         </StyledNav> 
     )
 }
 
-export default Nav
+export default React.memo(Nav)

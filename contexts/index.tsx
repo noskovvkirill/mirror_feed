@@ -3,6 +3,7 @@ import {history} from '@/design-system/Layout'
 import {Entry} from '@/design-system/Article'
 
 
+
 export type Publication = {
      type: 'personal' | 'ens',
      ensLabel:string
@@ -46,7 +47,7 @@ type PinnedItemPublication = {
     item:Publication
 }
 
-type PinnedItemAttachment = {
+export type PinnedItemAttachment = {
     id:number
     type:'attachment'
     item: Attachment
@@ -78,6 +79,12 @@ export const Current = atom({
     default:null as CurrentArticle | null,
 })
 
+
+//controls open/close of the navigation (aka portal)
+export const portalState = atom({
+    key:'isPortal',
+    default:false
+})
 
 
 const ignoredPublicationEffect = ():AtomEffect<IgnoredPublication[]> => ({setSelf, onSet, trigger}) => {

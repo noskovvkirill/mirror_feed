@@ -1,6 +1,6 @@
 import Button from '@/design-system/primitives/Button'
 import {styled} from 'stitches.config'
-import { ReactChild,useState } from 'react'
+import { ReactChild,useState, memo} from 'react'
 import * as Portal from '@radix-ui/react-portal';
 
 const StyledControl = styled(Button,{
@@ -134,7 +134,7 @@ const ButtonControl = (
                  const target = e.target as HTMLElement;
                  const coord = target.getBoundingClientRect()
                  if(direction === 'right'){
-                 setPos({x:coord.x+window.scrollX, y:coord.y+window.scrollY})
+                    setPos({x:coord.x+window.scrollX, y:coord.y+window.scrollY})
                  } else {
                      setPos({x:coord.x+window.scrollX+coord.width, y:coord.y+window.scrollY})
                  }
@@ -153,4 +153,4 @@ const ButtonControl = (
     )
 }
 
-export default ButtonControl
+export default memo(ButtonControl)

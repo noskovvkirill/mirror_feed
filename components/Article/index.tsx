@@ -1,8 +1,8 @@
 //state
 import {styled} from 'stitches.config'
-import Box from '@/design-system/primitives/Box'
-import Button from '@/design-system/primitives/Button'
-import React from 'react'
+// import Box from '@/design-system/primitives/Box'
+// import Button from '@/design-system/primitives/Button'
+import React, {useMemo} from 'react'
 import * as ReactDOM from 'react-dom'
 import { useSetRecoilState} from 'recoil'
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
@@ -66,12 +66,12 @@ const StyledImageHidden = styled(StyledImage,{
     display:'none'
 })
 
-const StyledImageFull = (props:ReactPropTypes) => (
-    <Box>
-        <Button>Add to the pinned items</Button>
-        <StyledImage loading='lazy' {...props} inline={false}/>
-    </Box>
-)
+// const StyledImageFull = (props:ReactPropTypes) => (
+//     <Box>
+//         <Button>Add to the pinned items</Button>
+//         <StyledImage loading='lazy' {...props} inline={false}/>
+//     </Box>
+// )
 
 
 
@@ -161,6 +161,12 @@ const Article= ({entry, isPreview=true}:Props) => {
     const setSettings = useSetRecoilState(readSettings)
     const [isHover, setIsHover] = useState(false)
 
+    const bodyTextShort =  useMemo(() => processorShort.processSync(entry.body).result, [entry.body])
+
+    //we precompute the full body and memoize it on initial render. 
+    // This way, when we open a large article, animation is not glitchy :-) 
+    const bodyText =  useMemo(() => processorFull.processSync(entry.body).result, [entry.body])
+
     return(
         <Container
             ref={ref}
@@ -182,6 +188,10 @@ const Article= ({entry, isPreview=true}:Props) => {
                     router.push(digest)
                 }}
                 Close={()=>{
+                router.beforePopState((state) => {
+                    state.options.scroll = false;
+                    return true;
+                }); //avoids the scroll to jump to the top @https://github.com/vercel/next.js/issues/20951
                 router.back()
                 }}
                 setSettings={setSettings}
@@ -191,13 +201,12 @@ const Article= ({entry, isPreview=true}:Props) => {
                 setIsHover={setIsHover}
             />
 
-
              <Body
                 readingList={readingList}
                 setReadLater={setReadLater}
                 isPreview={isPreview}
                 entry={entry}
-                body={isPreview ? processorShort.processSync(entry.body).result : processorFull.processSync(entry.body).result}
+                body={isPreview ? bodyTextShort : bodyText}
                 Open={(digest:string)=>{
                     router.push(digest, undefined, {scroll:true})
                 }}
@@ -208,4 +217,5 @@ const Article= ({entry, isPreview=true}:Props) => {
     )
 }
 
+//do not Memo, it blocks the animation
 export default Article

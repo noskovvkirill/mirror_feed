@@ -13,7 +13,7 @@ import BackIcon from '@/design-system/icons/Back'
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 import Box from '@/design-system/primitives/Box'
 import { AddressPrettyPrint } from 'src/utils';
-
+import React from 'react'
 
 export interface ControlsExternal {}
 
@@ -250,7 +250,31 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
               
         </StyledControls>
     )
-
 }
 
-export default ControlsComponent
+//because fullSize Controls ignore the isFocus, isHover and isPreview state, we should not re-render
+//component on those changes as well 
+const areEqual = (prevProps:any, nextProps:any) => {
+   if(prevProps.isPreview === false 
+    && nextProps.isPreview === false
+    && prevProps.entry.id === nextProps.entry.id
+    && prevProps.isReadingList === nextProps.isReadingList
+    ){
+       return true 
+   } 
+
+   if( 
+    prevProps.entry.id === nextProps.entry.id
+    && prevProps.isPreview === nextProps.isPreview
+    && prevProps.isFocused === nextProps.isFocused
+    && prevProps.isHover === nextProps.isHover 
+    && prevProps.isReadingList === nextProps.isReadingList
+    ) {
+        //  console.log('same!')
+        return true
+    }
+    // console.log('not same!')
+    return false
+}
+
+export default React.memo(ControlsComponent, areEqual)

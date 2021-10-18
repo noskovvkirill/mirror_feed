@@ -1,38 +1,87 @@
-// import App from "next/app";
-import type { AppProps /* , AppContext */ } from "next/app";
+import type { AppProps } from "next/app";
+import React from 'react'
 import { IdProvider } from "@radix-ui/react-id";
-import { globalStyles } from "../stitches.config";
+import { globalStyles } from "stitches.config";
 import {RecoilRoot} from 'recoil'
 import { LazyMotion } from "framer-motion"
+import {ThemeProvider} from 'next-themes'
+import {darkTheme} from 'stitches.config'
+import {useState, useContext} from 'react'
 // import dynamic from 'next/dynamic'
 const loadFeatures = () =>
   import("src/animation-features").then(res => res.default)
 
+
+
+const CustomTheme = React.createContext<any>(null);
+const CustomThemeProvider = CustomTheme.Provider
+export const CustomThemeConsumer= CustomTheme.Consumer
+
+export const useStore = () => {
+  const context = useContext(CustomTheme);
+  if (!context) {
+    throw new Error("useStore must be used within a StoreProvider");
+  }
+  return context;
+};
+
+const initialState = {
+  theme: darkTheme,
+  name: null
+}
+
+
+
 function MyApp({ Component, pageProps }: AppProps) {
 
+  const [theme, changeTheme] = useState(initialState)
+
   globalStyles();
+
+ 
 
   return (
       <RecoilRoot>
          <LazyMotion features={loadFeatures} strict>
           <IdProvider>
-            <Component {...pageProps} />
+            <CustomThemeProvider value={{theme, changeTheme}}>
+              <CustomThemeConsumer>
+                {value => {
+                let values
+                if(value.theme.theme) {
+                  values = {
+                    dark: darkTheme.className,
+                    light:"light",
+                    [value.theme.name]:value.theme.theme.className
+                  }
+                } else {
+                  values = {
+                    dark: darkTheme.className,
+                    light:"light",
+                  }
+                }
+                return(
+                  <ThemeProvider
+                    disableTransitionOnChange
+                    attribute="class"
+                    defaultTheme="system"
+
+                    // defaultTheme="custom-theme"
+                    value={values}
+                  > 
+                      <Component {...pageProps} />
+                  </ThemeProvider>
+                  )}
+                }
+        
+              </CustomThemeConsumer>
+            </CustomThemeProvider>
           </IdProvider>
         </LazyMotion>
       </RecoilRoot>
   );
 }
 
-// Only uncomment this method if you have blocking data requirements for
-// every single page in your application. This disables the ability to
-// perform automatic static optimization, causing every page in your app to
-// be server-side rendered.
-//
-// MyApp.getInitialProps = async (appContext: AppContext) => {
-//   // calls page's `getInitialProps` and fills `appProps.pageProps`
-//   const appProps = await App.getInitialProps(appContext);
 
-//   return { ...appProps }
-// }
 
 export default MyApp;

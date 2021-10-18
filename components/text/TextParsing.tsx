@@ -42,6 +42,7 @@ export const StyledLabel = styled('span',{
     padding:'$0 $2',
     borderRadius:'$round',
     fontSize:'$6',
+    userSelect:'none',
     mixBlendMode:'multiply',
     transition:'$all',
     variants:{

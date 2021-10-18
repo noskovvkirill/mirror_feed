@@ -2,9 +2,10 @@ import {styled} from 'stitches.config'
 import Remove from '@/design-system/icons/Remove'
 import {useState, useEffect, useLayoutEffect} from 'react'
 import Button from '@/design-system/primitives/Button'
+import Box from '@/design-system/primitives/Box'
 import useLockBodyScroll from 'hooks/useLockBodyScroll'
 import {useRouter} from 'next/router'
-
+import Image from 'next/image'
 const StyledToast = styled('div', {
     zIndex:'100',
     borderRadius:'$2',
@@ -108,13 +109,13 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
       if(step === 4){
         return(
              <StyledToast css={{  
-            top:'calc($4 + $1)',
-            right:'calc($4 * 7)'
+            top:'calc($4 + $0)',
+            right:'calc($4 * 8)'
             }}>
             <StyledArrowRight/>
             <StyledBody>
                 <StyledHeader>
-                    <h5>Reading List</h5>
+                    <Box as='h5' css={{color:'$text'}}>Reading List</Box>
                     <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                 </StyledHeader>
                 <StyledContent>All saved items are accessible from one place.</StyledContent>
@@ -136,7 +137,7 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
             <StyledArrowLeft/>
             <StyledBody>
                 <StyledHeader>
-                    <h5>Control Panel</h5>
+                    <Box as='h5' css={{color:'$text'}}>Control Panel</Box>
                     <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                 </StyledHeader>
                 <StyledContent>Add items to the reading list, pin to keep them around while you scroll, ignore publications that you don&apos;t want to see.</StyledContent>
@@ -152,13 +153,13 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
     if(step === 2){
         return(
             <StyledToast css={{  
-                top:'$4',
+                top:'calc($4 + $0)',
                 left:'calc($4 * 4)'
                 }}>
                 <StyledArrowLeft/>
                 <StyledBody>
                     <StyledHeader>
-                        <h5>Curation Spaces</h5>
+                        <Box as='h5' css={{color:'$text'}}>Curation Spaces</Box>
                     <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                     </StyledHeader>
                     <StyledContent>
@@ -209,19 +210,30 @@ const OnBoarding = () => {
   
      return(
         <StyledToast css={{  
+            width:'532px',
+            height:'192px',
             bottom:'$2',
-            right:'calc($4 + $4 )'
+            right:'calc($4 + $4 )',
+            padding:'0',
+            overflow:'hidden'
             }}>
-            <StyledBody>
-                <StyledHeader>
-                    <h5>Welcome to MirrorFeed</h5>
-                    <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
-                </StyledHeader>
-                <StyledContent>An alternative reading client for the decentralized publishing platform Mirror.xyz. Our focus is <b>discovery, curation, and reading experience.</b></StyledContent>
-                <StyledFooter>
-                    <Button onClick={()=>setStep(prevStep=>prevStep+=1)}>Show me around</Button>
-                </StyledFooter>
-            </StyledBody>
+            <Box layout='flexBoxRow' css={{gap:'$0', overflow:'hidden'}}>
+                <Box css={{minWidth:'192px', background:'#EBEBEB', overflow:'hidden', boxSizing:'border-box', height:'100%', objectFit:'cover'}}>
+                    <Image alt='onboarding' quality='100' src='/onboarding.png' width='192px' height='192px' layout='responsive'/>
+                </Box>
+                <StyledBody css={{padding:'$2', gap:'$1'}}>
+                    <StyledHeader>
+                        <Box as='h5' css={{color:'$text'}}>Welcome to MirrorFeed</Box>
+                        <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
+                    </StyledHeader>
+                    <StyledContent>
+                        Reading client for the decentralized publishing platform Mirror.xyz. Our focus is <b>discovery, curation, and reading experience.</b>
+                    </StyledContent>
+                    <StyledFooter css={{justifyContent:'flex-start'}}>
+                        <Button onClick={()=>setStep(prevStep=>prevStep+=1)}>Show me around</Button>
+                    </StyledFooter>
+                </StyledBody>
+            </Box>
         </StyledToast>
     )
 }

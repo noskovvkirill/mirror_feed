@@ -11,7 +11,6 @@ import { useSetRecoilState } from "recoil"
 import * as Portal from '@radix-ui/react-portal';
 import {useState} from 'react'
 import useLockBodyScroll from 'hooks/useLockBodyScroll'
-
 const StyledMetadata = styled('div', {
     position:'absolute',
     left:0,

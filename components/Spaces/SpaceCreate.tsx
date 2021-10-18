@@ -92,7 +92,7 @@ const CreateSpace = ({setCuratedPublications}:{setCuratedPublications:(fn:(prevS
     const [errorMessage, setErrorMessage] = useState('')
     return(
          <Popover.Root modal={true}>
-            <StyledCurationButton css={{transform:'scale(0.8)'}}>
+            <StyledCurationButton css={{transform:'scale(0.94)'}}>
                 <AddIcon/>
             </StyledCurationButton> 
                 <StyledContent 

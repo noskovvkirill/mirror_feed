@@ -59,7 +59,7 @@ I want everyone to be able to create and share curated spaces. But I don't want 
 - [x] Safari custom focus outline for the Reading List
 - [x] Contributors list in the publication
 - [ ] Stitched Themes (Dark Mode, Black&White, Default)
-- [ ] Image full screen
+- [x] Image full screen
 - [x] Event Listener for Portalled Control Buttons (remove on scroll or scroll lock(?) // solved with proper positioning
 - [x] Patience loader text gradient :-)
 - [x] Basic local curation lists

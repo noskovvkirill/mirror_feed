@@ -1,3 +1,4 @@
+import React from 'react'
 import {styled} from 'stitches.config'
 //types
 import {Entry} from '@/design-system/Article'
@@ -10,8 +11,10 @@ import Button from '@/design-system/primitives/Button'
 import LinkIcon from '@/design-system/icons/Link'
 //dayjs
 import * as dayjs from 'dayjs'
+import Link from 'next/link'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
+
 
 export interface BodyExternal {}
 export interface BodyInternal extends BodyExternal {
@@ -125,11 +128,20 @@ const BodyComponent = (
         isFocused
     }:BodyInternal
 ) => (
-    <StyledBody isPreview={isPreview}>
+    <StyledBody 
+    //replace on double click only for the background (once you implement it), not the whole container. this way
+    //your prevent the  select from showing up 
+    onDoubleClick={()=>{
+           entry.publication?.ensLabel 
+            ?  Open(`/${entry.publication?.ensLabel ? entry.publication?.ensLabel : entry.author.address}/${entry.digest}`)
+            :  Open(`/${entry.author.address}/${entry.digest}`)
+    }}
+    isPreview={isPreview}>
+        {console.log('entry', entry)}
         <StyledContents isHighlighted={(isHover || isFocused) ? true : false}>
             <StyledMetadata>
-                <StyledLabel isHighlighted={(isHover || isFocused) ? true : false}>{entry.author?.displayName ? entry.author.displayName : entry.author?.address?.slice(0,8)}</StyledLabel>
-                <StyledLabel isHighlighted={(isHover || isFocused) ? true : false}>{dayjs.unix(entry.timestamp).fromNow() }</StyledLabel>
+                <StyledLabel isHighlighted={(isHover || isFocused || !isPreview) ? true : false}>{entry.author?.displayName ? entry.author.displayName : entry.author?.address?.slice(0,8)}</StyledLabel>
+                <StyledLabel isHighlighted={(isHover || isFocused || !isPreview) ? true : false}>{dayjs.unix(entry.timestamp).fromNow() }</StyledLabel>
                 {entry.publication?.ensLabel && (
                      <StyledLabel isHighlighted={(isHover || isFocused) ? true : false} css={{backgroundColor:'transparent', padding:'0 $1', cursor:'pointer'}} as='a' rel="noreferrer" href={`https://${entry.publication?.ensLabel}.mirror.xyz/${entry.digest}`} target='_blank'><LinkIcon/></StyledLabel>
                 )}
@@ -138,21 +150,15 @@ const BodyComponent = (
                 )}
             </StyledMetadata>
             <StyledTitle isHighlighted={(isHover || isFocused) ? true : false}>
-                <h1 style={{cursor:isPreview ? 'pointer' : 'auto'}} onClick={()=>{
-                      entry.publication?.ensLabel 
-                    ?  Open(`/${entry.publication?.ensLabel ? entry.publication?.ensLabel : entry.author.address}/${entry.digest}`)
-                    :  Open(`/${entry.author.address}/${entry.digest}`)
-                }}>{entry.title}</h1>
+                <Link 
+                passHref
+                href={
+                    entry.publication?.ensLabel 
+                    ?  `/${entry.publication?.ensLabel ? encodeURIComponent(entry.publication?.ensLabel) : encodeURIComponent(entry.author.address)}/${encodeURIComponent(entry.digest)}`
+                    :  `/${encodeURIComponent(entry.author.address)}/${encodeURIComponent(entry.digest)}`
+                }><Box as='a' css={{cursor:isPreview ? 'pointer' : 'auto', fontSize:'$1', fontWeight: "700",  margin:'calc($4 * 1) 0 $3 0', fontFamily:'$default', textDecoration:'none', color:'inherit'}}>{entry.title}</Box></Link>
             </StyledTitle>
-            {isPreview 
-            ? 
-            <>
-                {body}
-            </>
-            : <>
-             {body}
-              </>
-            }
+           {body}
             
             {!isPreview && (
                   <Box layout='flexBoxRow' css={{padding:'$4 0', 
@@ -166,7 +172,8 @@ const BodyComponent = (
                                     const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
                                     return newArray
                                 })}}
-                                >Remove from the reading list</Button>
+                                >Remove from the reading list
+                          </Button>
                       )}
                 
                         {readingList.filter(item=>item.entryDigest !== entry.digest).length > 0 
@@ -184,4 +191,29 @@ const BodyComponent = (
 )
 
 
-export default BodyComponent
+//because fullSize Body ignores the isFocus, isHover and isPreview state, we should not re-render
+//component on those changes as well 
+const areEqual = (prevProps:any, nextProps:any) => {
+   if(prevProps.isPreview === false 
+    && nextProps.isPreview === false
+    && prevProps.body.length === nextProps.body.length
+    && prevProps.entry.id === nextProps.entry.id
+    ){
+        // console.log('same!')
+       return true 
+   } 
+
+   if( prevProps.body.length === nextProps.body.length
+    && prevProps.entry.id === nextProps.entry.id
+    && prevProps.isPreview === nextProps.isPreview
+    && prevProps.isFocused === nextProps.isFocused
+    && prevProps.isHover === nextProps.isHover 
+    ) {
+        //  console.log('same!')
+        return true
+    }
+    // console.log('not same!')
+    return false
+
+}
+export default React.memo(BodyComponent, areEqual)

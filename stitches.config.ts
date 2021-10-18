@@ -1,24 +1,22 @@
 import { createStitches } from "@stitches/react";
-import { sand } from '@radix-ui/colors'
-import { bronze } from '@radix-ui/colors'
+import { sand, bronze, sandDark, bronzeDark } from '@radix-ui/colors'
 
-export const { styled, css, globalCss, getCssText, keyframes } = createStitches({
+export const { styled, css, globalCss, getCssText, keyframes, createTheme } = createStitches({
     theme: {
         colors: {
-            ...sand,
-            white: 'rgba(255,255,255,1)',
-            black: 'rgba(0,0,0,1)',
+            // ...sand,
             background: sand.sand1,
             tinted:sand.sand2,
-            backgroundBronze: bronze.bronze1,
             foreground: sand.sand7,
             foregroundBorder: sand.sand8,
-            foregroundBronze: bronze.bronze6,
             highlight: sand.sand3,
-            highlightBronze:bronze.bronze3,
             foregroundText: sand.sand9,
-            foregroundTextBronze: bronze.bronze9,
             text: sand.sand12,
+            //bronze
+            backgroundBronze: bronze.bronze1,
+            foregroundBronze: bronze.bronze7,
+            highlightBronze:bronze.bronze3,
+            foregroundTextBronze: bronze.bronze9,
             textBronze: bronze.bronze12
         },
         space: {
@@ -39,7 +37,7 @@ export const { styled, css, globalCss, getCssText, keyframes } = createStitches(
             p: "1rem",
         },
         fonts: {
-            default: "Satoshi-Variable",
+            default: "Satoshi-Variable, Inter, Helvetica, sans-serif",
         },
         fontWeights: {
             min:300,
@@ -84,10 +82,31 @@ export const { styled, css, globalCss, getCssText, keyframes } = createStitches(
         },
     },
     media: {
+        dark: "(prefers-color-scheme: dark)",
         bp1: "(max-width: 544)",
         bp2: "(max-width: 544), (min-width: 768px)",
         bp3: "(min-width: 1024px)",
     },
+});
+
+
+export const darkTheme = createTheme({
+       colors: {
+            // ...sand,
+            background: sandDark.sand1,
+            tinted:sandDark.sand2,
+            foreground: sandDark.sand7,
+            foregroundBorder: sandDark.sand8,
+            highlight: sandDark.sand3,
+            foregroundText: sandDark.sand9,
+            text: sandDark.sand12,
+            //bronze
+            backgroundBronze: bronzeDark.bronze1,
+            foregroundBronze: bronzeDark.bronze7,
+            highlightBronze:bronzeDark.bronze3,
+            foregroundTextBronze: bronzeDark.bronze9,
+            textBronze: bronzeDark.bronze12
+        },
 });
 
 export const fontWeightAnimation = keyframes({
@@ -108,12 +127,13 @@ export const globalStyles = globalCss({
             background:'$foregroundBronze',
         }
     },
+    "body":{background:'$background'},
     "body, html, #__next": { minHeight: "100%", height: "100%" },
-    h1: { fontSize: "$1",  letterSpacing:'-1px', fontKerning:'normal', fontStretch:'semi-condensed', fontOpticalSizing:'auto', WebkitFontSmoothing:'antialiased', lineHeight: "$6", fontWeight: "700",  margin:'calc($4 * 1) 0 $3 0', fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif' },
-    h2: { fontSize: "$2", lineHeight: "$5", fontWeight: "700", margin:'calc($4 * 1.5) 0 $2 0',fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'calc($2 * 1.5) 0 $2 0'} },
-    h3: { fontSize: "$3", lineHeight: "$4", margin:'$4 0 $2 0', fontWeight: "700",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'} },
-    h4: { fontSize: "$4", lineHeight: "$3",   margin:'$4 0 $2 0', fontWeight: "700",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'}},
-    h5: { fontSize: "$5", lineHeight: "$2",  margin:'$4 0 $2 0', fontWeight: "700",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'} },
+    h1: { fontSize: "$1",  letterSpacing:'-1px', fontKerning:'normal', fontStretch:'semi-condensed', fontOpticalSizing:'auto', WebkitFontSmoothing:'antialiased', lineHeight: "$6", fontWeight: "500",  margin:'calc($4 * 1) 0 $3 0', fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif' },
+    h2: { fontSize: "$2", lineHeight: "$5", fontWeight: "500", margin:'calc($4 * 1.5) 0 $2 0',fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'calc($2 * 1.5) 0 $2 0'} },
+    h3: { fontSize: "$3", lineHeight: "$4", margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'} },
+    h4: { fontSize: "$4", lineHeight: "$3",   margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'}},
+    h5: { fontSize: "$5", lineHeight: "$2",  margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'} },
     p: { fontSize: "$p", lineHeight: "$p",  margin:'$2 0', fontWeight: "300" },
     span: { fontSize: "$p", lineHeight: "$p", fontWeight: "300" },
     b: {
@@ -154,16 +174,4 @@ export const globalStyles = globalCss({
     fontStyle: 'normal'
     },
 ],
-    // "@font-face": [
-    //     {
-    //         fontFamily: "Graphik",
-    //         fontWeight: "100",
-    //         src: 'local("Graphik-Regular.woff"), url("/fonts/Graphik-Regular.woff")',
-    //     },
-    //     {
-    //         fontFamily: "Graphik",
-    //         fontWeight: "300",
-    //         src: 'local("Graphik-Semibold.woff"), url("/fonts/Graphik-Semibold.woff")',
-    //     },
-    // ],
 });

@@ -9,7 +9,7 @@ import { CurationList, SubscribedPublication} from 'contexts'
 import { useState } from 'react'
 import Search from '@/design-system/Spaces/Search'
 
-const StyledContent = styled(Popover.Content, {
+export const StyledContent = styled(Popover.Content, {
   display:'flex',
   flexDirection:'column',
   gap:'$1',
@@ -88,7 +88,7 @@ const SpacesAdd = ({setCuratedPublications, listName, current}:{setCuratedPublic
     const [searchState, setSearchState] = useState<'default' | 'loading' | 'not found' | 'error'>('default')
     const [errorMessage, setErrorMessage] = useState('')
     return(
-         <Popover.Root modal={true}>
+         <Popover.Root modal={false}>
             <StyledCurationButton css={{}}>
                 <AddIcon/>
             </StyledCurationButton> 

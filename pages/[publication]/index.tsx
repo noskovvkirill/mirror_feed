@@ -22,78 +22,78 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const { publication, type} = ctx.query;
 
-if(!publication) {
-  return {notFound:true}
-}
-
-if(type === 'personal') {
-  const entries = await request('https://arweave.net/graphql', queryPersonal, {contributor:publication}).then(({ transactions }) =>{
-          return transactions.edges
-  });
-
-  const pbl:SubscribedPublication = {
-    ensLabel:publication.toString(),
-    type:'personal'
+  if(!publication) {
+    return {notFound:true}
   }
 
-  const profiles:User[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
-
-  const content = entries.map(({node:{tags}}:{node:{tags:any}})=>{
-     return tags.find((c:any)=>c.name === 'Original-Content-Digest').value
-  })
-
-  const entriesData = await Promise.all([...new Set(content)].map(async (item:any) => {
-    return(await request('https://mirror-api.com/graphql', queryEntry, {
-       digest: item
-    }).then((data) =>
-      data.entry
-    ).catch(()=>{return})
-    )
-  }))
-
-   const entrieFiltered = entriesData.filter(function( element:any ) {
-      return element !== undefined;
+  if(type === 'personal') {
+    const entries = await request('https://arweave.net/graphql', queryPersonal, {contributor:publication}).then(({ transactions }) =>{
+            return transactions.edges
     });
+
+    const pbl:SubscribedPublication = {
+      ensLabel:publication.toString(),
+      type:'personal'
+    }
+
+    const profiles:User[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
+
+    const content = entries.map(({node:{tags}}:{node:{tags:any}})=>{
+      return tags.find((c:any)=>c.name === 'Original-Content-Digest').value
+    })
+
+    const entriesData = await Promise.all([...new Set(content)].map(async (item:any) => {
+      return(await request('https://mirror-api.com/graphql', queryEntry, {
+        digest: item
+      }).then((data) =>
+        data.entry
+      ).catch(()=>{return})
+      )
+    }))
+
+    const entrieFiltered = entriesData.filter(function( element:any ) {
+        return element !== undefined;
+      });
+      
+      return {
+      props:{pbl, entries:entrieFiltered, profiles:profiles},
+    }
+
+  }
+
+
+
+  const entries = await request('https://mirror-api.com/graphql', queryPublication, {
+        ensLabel: publication
+    }).then((data) =>data.publication.entries).catch(()=>{return})
     
-    return {
-    props:{pbl, entries:entrieFiltered, profiles:profiles},
-  }
+    if(!entries){
+      return { notFound:true}
+    }
 
-}
+    const pbl:SubscribedPublication = {
+      ensLabel:publication.toString(),
+      type:'ens'
+    }
 
+    const profiles:User[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
 
-
-const entries = await request('https://mirror-api.com/graphql', queryPublication, {
-       ensLabel: publication
-  }).then((data) =>data.publication.entries).catch(()=>{return})
-  
-  if(!entries){
-    return { notFound:true}
-  }
-
-  const pbl:SubscribedPublication = {
-    ensLabel:publication.toString(),
-    type:'ens'
-  }
-
-  const profiles:User[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
-
-  const content = entries.map((item:any)=>item.digest)
-   
-  const entriesData = await Promise.all([...new Set(content)].map(async (item:any) => {
-    return(await request('https://mirror-api.com/graphql', queryEntry, {
-       digest: item
-    }).then((data) =>
-      data.entry
-    ).catch(()=>{return})
-    )
-  }))
+    const content = entries.map((item:any)=>item.digest)
+    
+    const entriesData = await Promise.all([...new Set(content)].map(async (item:any) => {
+      return(await request('https://mirror-api.com/graphql', queryEntry, {
+        digest: item
+      }).then((data) =>
+        data.entry
+      ).catch(()=>{return})
+      )
+    }))
 
     const entrieFiltered = entriesData.filter(function( element:any ) {
       return element !== undefined;
     });
     
-    return {
+  return {
     props:{pbl:pbl, entries:entrieFiltered, profiles:profiles},
   }
 };
@@ -127,11 +127,12 @@ const Data = ({pbl, entries, profiles}:Props) =>{
     return(
       <Layout>
           <Box layout='flexBoxRow' css={{width:'100%', justifyContent:'space-between'}}>
-            <Box layout='flexBoxColumn'>
+            <Box layout='flexBoxColumn' css={{width:'100%'}}>
               {entries.length === 0 && (
-                <p>There is nothing just yet</p>
+                <Box layout='flexBoxRow' css={{width:'100%',
+                boxSizing:'border-box',
+                alignItems:'center', justifyContent:'center'}}>There is nothing just yet</Box>
               )}
-  
               {pinnedList !== null && (
                 <>
                 {entries.map((entry:Entry)=>{
@@ -156,7 +157,7 @@ const Data = ({pbl, entries, profiles}:Props) =>{
               alignItems:'flex-end',
               borderRadius:'$2',
               }}>
-              <Contributors data={profiles} Open={(route:string)=>router.push(route)}/>
+                <Contributors data={profiles} Open={(route:string)=>router.push(route)}/>
             </Box>
           </Box>
       </Layout>
