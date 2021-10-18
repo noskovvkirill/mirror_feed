@@ -30,7 +30,10 @@ interface Props {
 const StyledContainer = styled('div',{
     display:'flex',
     maxWidth:'1152px', 
-    width:'256px', height:'128px', flexDirection:'column', margin:'0', mixBlendMode:'multiply',
+    width:'256px', 
+    height:'128px',
+    boxSizing:'border-box',
+    flexDirection:'column', margin:'0', mixBlendMode:'multiply',
     padding:'$2 $2',
     color:'$text',
     borderRadius:'$2',
@@ -125,8 +128,8 @@ const PinnedComponent= ({item}:Props) => {
 
     if(item.type === 'attachment'){
         return(
-            <StyledContainer css={{objectFit:'scale-down', position:'relative', border:'1px solid $foregroundBronze'}}>
-                <StyledControls css={{position:'absolute'}}>
+            <StyledContainer css={{ padding:'0', overflow:'hidden', position:'relative', border:'1px solid $foregroundBronze'}}>
+                <StyledControls css={{position:'absolute', flexDirection:'column', padding:'$2'}}>
                         <ButtonControl
                             selected={true}
                             label='unpin item'
@@ -144,7 +147,7 @@ const PinnedComponent= ({item}:Props) => {
                         <StyledLabel css={{height:'fit-content'}} isHighlighted={true}>{item.item.mimeType}</StyledLabel>
 
                 </StyledControls>
-                 <StyledBody isHighlighted={true} css={{objectFit:'scale-down'}}>
+                 <StyledBody isHighlighted={true} css={{objectFit:'scale-down', padding:'0'}}>
                     <img alt='pinned item' src={item.item.url} width='100%' height='auto'/> 
                 </StyledBody>
             </StyledContainer>
@@ -203,7 +206,7 @@ const PinnedComponent= ({item}:Props) => {
                     </StyledControls>
                     <StyledBody isHighlighted={true}>
                         <StyledTitle isHighlighted={true}>
-                            <b style={{padding:0, margin:'16px 0px'}}>{item.item.title}</b>
+                            <b style={{padding:0, margin:'16px 0px'}}>{item.item.title.slice(0,45)}</b>
                         </StyledTitle>
                     </StyledBody>
             </StyledContainer>

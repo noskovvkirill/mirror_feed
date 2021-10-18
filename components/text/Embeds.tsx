@@ -5,6 +5,7 @@ import Editions from '@/design-system/text/Editions'
 // import LinkPreview from '@/design-system/text/LinkPreview'
 import Nft from '@/design-system/text/Nft'
 import { StyledLink } from '@/design-system/text/TextParsing'
+import TweetEmbed from 'react-tweet-embed'
 
  const Embeds = (props:ReactPropTypes & {href:string, children:React.ReactNode}) => {
     const myReg = `://`;
@@ -44,11 +45,12 @@ import { StyledLink } from '@/design-system/text/TextParsing'
         )
     }
 
-    // if(props?.href.slice)
-    // return(
-    //     <LinkPreview {...props}/>
-    // )
+    const regex = /https?:\/\/twitter\.com\/(?:\#!\/)?(\w+)\/status(es)?\/(\d+)/gm;
+    const result = regex.exec(props.href)
+    if(result && result.length>3) {  
+    return(<TweetEmbed id={result[3]} options={{cards: 'hidden' }}/>)}
 
+ 
     return(
         <StyledLink {...props}/>
     )

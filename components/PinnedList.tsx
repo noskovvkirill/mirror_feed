@@ -8,9 +8,11 @@ import PinnedComponent  from '@/design-system/PinnedItem'
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import React from 'react'
+
 const StyledPinnedList = styled(ScrollArea.Root,{
     width:'100%',
     boxSizing:'border-box',
+    height:'100%',
     overflow:'hidden',
     display:'block',
 })

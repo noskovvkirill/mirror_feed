@@ -131,7 +131,7 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
     if(step === 3){
         return(
              <StyledToast css={{  
-            top:'calc($5 * 4 + $2)',
+            top:'calc($5 * 4 + $3)',
             left:'calc($4 * 4)'
             }}>
             <StyledArrowLeft/>
@@ -153,7 +153,7 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
     if(step === 2){
         return(
             <StyledToast css={{  
-                top:'calc($4 + $0)',
+                top:'calc(-$1 + $0)',
                 left:'calc($4 * 4)'
                 }}>
                 <StyledArrowLeft/>

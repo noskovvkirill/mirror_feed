@@ -78,7 +78,7 @@ const StyledImageFull = (props:ReactPropTypes & {src:string}) => {
     if(pinnedList) {
     return(
     <Box css={{position:'relative'}} onClick={()=>setIsFullScreen(true)}>
-        <StyledMetadata>
+        <StyledMetadata css={{backdropFilter:'blur(1px'}}>
             {pinnedList.findIndex((item)=>item.type === 'attachment' && item.item.url === props.src) !== -1
             ? <ButtonControl 
             selected={true}

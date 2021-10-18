@@ -18,6 +18,13 @@ export const StyledList = styled('ul', {
     }
 })
 
+
+export const StyledQuote = styled('blockquote', {
+    padding:'$0 $2',
+    borderLeft:'1px solid $foregroundBronze',
+    margin:'$2 0'
+})
+
 export const StyledImage = styled('img', {
     maxWidth:'100%',
     margin:'$2 0',
@@ -198,13 +205,14 @@ export const StyledH5 = styled('h5', {
 export const StyledToc = styled('nav', {
     color:'$foregroundBronze',
     padding:'$2',
-    paddingLeft:'$2',
+    paddingLeft:'calc($3 + 4px)',
     top:'256px',
     height:'fit-content',
     position:'sticky',
     listStyle:'inside',
     'a':{
         userSelect:'none',
+        opacity:0.5,
         color:'$foregroundBronze',
         fontSize:'$6',
         marginBottom:'$2',

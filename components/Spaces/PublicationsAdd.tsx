@@ -14,7 +14,7 @@ import {AddressPrettyPrint} from 'src/utils'
 import Loader from '@/design-system/primitives/Loader'
 import {StyledSpaceSelector} from '@/design-system/Spaces/SpacesSelector'
 import {queryPublicationsEns} from 'src/queries'
-
+import {useThrottle, useThrottleCallback} from '@react-hook/throttle'
 const StyledLabel = styled('div', {
     fontSize:'$6',
     color:'$background',
@@ -107,10 +107,34 @@ const PublicationsAdd = ({publication, content, type, author}:{publication?:stri
       }
     },[isVisible, setSize])
 
+    const InputSearch = async (e:React.ChangeEvent<HTMLInputElement>) => {
+            setSearchState('loading')
+            const target = e.target 
+            if(target.value === '') {
+                setSearchState('default')
+                setSearchResult([])
+                return
+            }
+            const result = await Search(target.value).catch(()=>setSearchState('error'))
+            if(!result){
+                setSearchState('error')
+                return
+            }
+            if(result.length<=0) {
+                setSearchResult([])
+                setSearchState('not found')
+                return
+            }
+            setSearchResult(result)
+            setSearchState('default')
+    }
+    const thottleSearch = useThrottleCallback(InputSearch,1)
+
+
     return(
         <Box>
             <Box layout='flexBoxColumn' css={{height:'272px', overflow:'scroll'}}>
-                {(publication && type) && (
+                {(publication && type && router.query.publication) && (
                     <Box css={{paddingBottom:'$1'}}>
                         <StyledSpaceSelector
                         isActive={true}
@@ -122,29 +146,7 @@ const PublicationsAdd = ({publication, content, type, author}:{publication?:stri
                 )}
              
                 <Input ref={search} css={{top:'0',marginBottom:'$0', width:'100%'}} type='search' 
-                    onChange={async (e)=>{
-                        setSearchState('loading')
-                        const target = e.target as {
-                            value:string;
-                        }
-                        if(target.value === '') {
-                            setSearchState('default')
-                            setSearchResult([])
-                            return
-                        }
-                        const result = await Search(target.value).catch(()=>setSearchState('error'))
-                        if(!result){
-                            setSearchState('error')
-                            return
-                        }
-                        if(result.length<=0) {
-                            setSearchResult([])
-                            setSearchState('not found')
-                            return
-                        }
-                        setSearchResult(result)
-                        setSearchState('default')
-                    }}
+                    onChange={thottleSearch}
                     placeholder='Search user address or publication'/>
 
                 <Box css={searchResult?.length>0 ? {paddingBottom:'0'} : {}}>

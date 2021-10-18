@@ -14,7 +14,7 @@ import * as dayjs from 'dayjs'
 import Link from 'next/link'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
-
+import Image from 'next/image'
 
 export interface BodyExternal {}
 export interface BodyInternal extends BodyExternal {
@@ -115,6 +115,58 @@ const StyledContents = styled('article',{
     }
 })
 
+//probably some cleaver way to render images is needed :-/
+
+const RenderImage = ({featuredImage}:{featuredImage:Entry["featuredImage"]}) => {
+    if(!featuredImage){
+        return(<></>)
+    }
+
+    if(featuredImage.sizes.md){          
+        <Box css={{borderRadius:'$2',position:'relative', objectFit:'scale-down', maxWidth:'100%', overflow:'hidden', marginBottom:'calc($4 + $1)'}}>
+            <Image         layout='responsive'
+                                objectFit={'cover'}
+                                alt='cover'
+                                src={featuredImage.sizes.md.src}
+                                width={featuredImage.sizes.md.width}
+                                height={featuredImage.sizes.md.height}
+                                />
+        </Box>
+    }
+    if(featuredImage.sizes.lg){
+        <Box css={{borderRadius:'$2', position:'relative', maxWidth:'100%', overflow:'hidden', marginBottom:'calc($4 + $1)'}}>
+          <Image         objectFit={'cover'}
+                        layout='responsive'
+                        placeholder="blur"
+                        alt='cover'
+                        src={featuredImage.sizes.lg.src}
+                        width={featuredImage.sizes.lg.width}
+                        height={featuredImage.sizes.lg.height}/>
+        </Box>
+    }
+    if(featuredImage.sizes.og){
+        return(
+          <Box css={{borderRadius:'$2', position:'relative', maxWidth:'100%',  overflow:'hidden', marginBottom:'calc($4 + $1)'}}>
+            <Image      objectFit={'cover'} layout='responsive'
+                        alt='cover'
+                        src={featuredImage.sizes.og.src}
+                        width={featuredImage.sizes.og.width}
+                        height={featuredImage.sizes.og.height}/>
+          </Box>
+        )
+    }
+    if(featuredImage.sizes.sm){
+        <Box css={{borderRadius:'$2', position:'relative', maxWidth:'100%', overflow:'hidden', marginBottom:'calc($4 + $1)'}}>
+          <Image         objectFit={'cover'} layout='responsive'
+                        alt='cover'
+                        src={featuredImage.sizes.sm.src}
+                        width={featuredImage.sizes.sm.width}
+                        height={featuredImage.sizes.sm.height}/>
+        </Box>
+    }
+    return(<></>)
+}
+
 
 const BodyComponent = (
     {
@@ -137,8 +189,12 @@ const BodyComponent = (
             :  Open(`/${entry.author.address}/${entry.digest}`)
     }}
     isPreview={isPreview}>
+        {/* {console.log(entry.featuredImage.sizes.og.src)} */}
         {/* {console.log('entry', entry)} */}
         <StyledContents isHighlighted={(isHover || isFocused) ? true : false}>
+
+             {!isPreview && (<RenderImage featuredImage={entry.featuredImage}/>)}
+        
             <StyledMetadata>
                 <StyledLabel isHighlighted={(isHover || isFocused || !isPreview) ? true : false}>{entry.author?.displayName ? entry.author.displayName : entry.author?.address?.slice(0,8)}</StyledLabel>
                 <StyledLabel isHighlighted={(isHover || isFocused || !isPreview) ? true : false}>{dayjs.unix(entry.timestamp).fromNow() }</StyledLabel>
@@ -198,6 +254,7 @@ const areEqual = (prevProps:any, nextProps:any) => {
     && nextProps.isPreview === false
     && prevProps.body.length === nextProps.body.length
     && prevProps.entry.id === nextProps.entry.id
+    && prevProps.readingList.length === nextProps.readingList.length
     ){
         // console.log('same!')
        return true 
@@ -208,6 +265,7 @@ const areEqual = (prevProps:any, nextProps:any) => {
     && prevProps.isPreview === nextProps.isPreview
     && prevProps.isFocused === nextProps.isFocused
     && prevProps.isHover === nextProps.isHover 
+     && prevProps.readingList.length === nextProps.readingList.length
     ) {
         //  console.log('same!')
         return true

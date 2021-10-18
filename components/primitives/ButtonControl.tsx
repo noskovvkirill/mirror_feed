@@ -21,6 +21,14 @@ const StyledControl = styled(Button,{
     boxSizing:'border-box',
     lineHeight:'$6',
     variants:{
+        monochrome:{
+            true:{
+
+            },
+            false:{
+
+            }
+        },
         isHighlighted:{
             true:{
                  border:'1px solid $foregroundBronze', 
@@ -36,7 +44,7 @@ const StyledControl = styled(Button,{
 
             },
             false:{
-                  border:'1px solid $foreground', 
+                  border:'1px solid $foregroundBorder', 
                   color:'$foregroundText', 
                   '&:hover':{
                     background:'$foreground',

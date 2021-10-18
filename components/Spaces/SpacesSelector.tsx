@@ -79,7 +79,7 @@ const StyledCurationButton = styled(Popover.Trigger, {
     justifyContent:'center',
     background:'none',
     borderRadius:'$round',
-    border:'1px solid $foreground',
+    border:'1px solid $foregroundBorder',
     color:'$foregroundText',
     padding:'$1', 
     transition:'$background',

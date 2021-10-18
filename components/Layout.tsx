@@ -3,7 +3,7 @@ import Box from '@/design-system/primitives/Box'
 import Nav from '@/design-system/Nav'
 
 import Head from 'next/head'
-import React, { ReactNode, useEffect, useState} from 'react'
+import React, { ReactNode, useState} from 'react'
 import {useRouter} from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { pinnedItems, readLaterList, curationItems, portalState} from 'contexts'
@@ -117,7 +117,7 @@ const Layout = ({children}:Props) =>{
                     </>
                 )}
 
-                <StyledHeader css={!router.query.publication ? {position:'sticky'} : {position:'static'}}>
+                <StyledHeader css={{position:'sticky', height:'160px'}}>
                     <PinnedList 
                         pinnedList={pinnedList}
                         setPinnedList={setPinnedList}

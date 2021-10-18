@@ -23,6 +23,8 @@ import unwrapLinks from 'src/unwrapLinks'
 //types
 import {ignoredPublication, pinnedItems, readLaterList, readSettings, ReadingListItem} from 'contexts'
 import remarkUnwrapImages from 'remark-unwrap-images'
+import remarkSqueezeParagraphs from 'remark-squeeze-paragraphs'
+
 
 //components
 import Container from '@/design-system/Article/Container'
@@ -37,7 +39,7 @@ const DynamicEmbed = dynamic(() =>
 )
 // import Embeds from '@/design-system/text/Embeds'
 
-import {StyledImage, StyledH1, StyledH2, StyledH3, StyledH4, StyledH5,  StyledToc, StyledList} from '@/design-system/text/TextParsing'
+import {StyledImage, StyledQuote, StyledH1, StyledH2, StyledH3, StyledH4, StyledH5,  StyledToc, StyledList} from '@/design-system/text/TextParsing'
 import ImageFull from '@/design-system/text/Image'
 
 
@@ -55,6 +57,30 @@ export type Entry = {
   },
   publication:{
       ensLabel:string;
+  },
+  featuredImage?:{
+      sizes:{
+          og?:{
+            src:string,
+            width:number,
+            height:number
+          },
+          lg?:{
+            src:string,
+            width:number,
+            height:number
+          }, 
+          md?:{
+            src:string,
+            width:number,
+            height:number
+          },
+          sm?:{
+            src:string,
+            width:number,
+            height:number
+          }
+      }
   }
   title:string,
   body:any
@@ -94,12 +120,20 @@ const TocPortalled = (props:ReactPropTypes) => {
   );} else return(<></>)
 }
 
+//the func is taken from https://m1guelpf.blog/ 
+const truncateText = (text:string) => {
+	const paragraph = text.split('\n\n').slice(0, 6)
+	if (paragraph[paragraph.length - 1].startsWith('#')) paragraph.pop()
+	return paragraph.join('\n\n')
+}
 
 const processorShort = unified()
   .use(remarkParse)
   .use(remarkGfm)
   .use(remarkRehype)
-  .use(rehypeTruncate, { maxChars: 1000, ignoreTags: ["h1"]  })
+  .use(remarkUnwrapImages)
+  .use(remarkSqueezeParagraphs)
+//   .use(rehypeTruncate, { maxChars: 1000, ignoreTags: ["h1"]  })
   .use(rehypeReact, {createElement: React.createElement, Fragment:React.Fragment, components:{
       img: StyledImageHidden,
       h1: StyledH1,
@@ -109,7 +143,8 @@ const processorShort = unified()
       h5:StyledH5,
       ul: StyledList,
       ol: StyledList,
-      a:DynamicEmbed
+      a:DynamicEmbed,
+      blockquote:StyledQuote,
   }})
 
 
@@ -137,7 +172,8 @@ const processorFull = unified()
       ul: StyledList,
       ol: StyledList,
       a:DynamicEmbed,
-      nav:TocPortalled
+      nav:TocPortalled,
+      blockquote:StyledQuote,
   }
 }
 )
@@ -161,7 +197,7 @@ const Article= ({entry, isPreview=true}:Props) => {
     const setSettings = useSetRecoilState(readSettings)
     const [isHover, setIsHover] = useState(false)
 
-    const bodyTextShort =  useMemo(() => processorShort.processSync(entry.body).result, [entry.body])
+    const bodyTextShort =  useMemo(() => processorShort.processSync(truncateText(entry.body)).result, [entry.body])
 
     //we precompute the full body and memoize it on initial render. 
     // This way, when we open a large article, animation is not glitchy :-) 

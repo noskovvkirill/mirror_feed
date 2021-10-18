@@ -114,25 +114,25 @@ interface ColorHSV {
     readonly a?: number;
 }
 
-const reducer = (state:ThemeTokens, action:{color:string, value:Color}) => {
-      return { ...state, [action.color]: action.value }
-}
+// const reducer = (state:ThemeTokens, action:{color:string, value:Color}) => {
+//       return { ...state, [action.color]: action.value }
+// }
 
-type ThemeTokens = {
-        background: Color,
-        tinted:Color,
-        foreground: Color,
-        foregroundBorder: Color,
-        highlight: Color,
-        foregroundText: Color,
-        text: Color,
-        backgroundBronze:Color,
-        foregroundBronze:Color,
-        highlightBronze:Color,
-        foregroundTextBronze:Color,
-        textBronze: Color,
-        [U: string]: Color
-}
+// type ThemeTokens = {
+//         background: Color,
+//         tinted:Color,
+//         foreground: Color,
+//         foregroundBorder: Color,
+//         highlight: Color,
+//         foregroundText: Color,
+//         text: Color,
+//         backgroundBronze:Color,
+//         foregroundBronze:Color,
+//         highlightBronze:Color,
+//         foregroundTextBronze:Color,
+//         textBronze: Color,
+//         [U: string]: Color
+// }
 
 
  
@@ -140,12 +140,14 @@ const Nav = () =>{
     const router = useRouter();
     const readingList = useRecoilValueAfterMount(readLaterList, [])
     const setReadLater = useSetRecoilState(readLaterList) 
-    const { changeTheme} = useStore()
+    // const { changeTheme} = useStore()
     const { themes, theme, setTheme } = useTheme()
 
 
     //COMMENTED CODE IS FOR THE CUSTOM THEMING FUNCTIONALITY. 
     // NOT AVAILABLE AT THIS MOMENT
+
+
     
     // useEffect(()=>{
     //     let custom = localStorage.getItem('custom-theme') 
@@ -168,21 +170,21 @@ const Nav = () =>{
     // // eslint-disable-next-line react-hooks/exhaustive-deps
     // },[setTheme, changeTheme])
 
-    const initialValue:ThemeTokens = {
-            background: toColor("hex", "#121212"),
-            tinted:toColor("hex", "#121212"),
-            foreground: toColor("hex", "#121212"),
-            foregroundBorder: toColor("hex", "#121212"),
-            highlight: toColor("hex", "#121212"),
-            foregroundText: toColor("hex", "#121212"),
-            text:toColor("hex", "#121212"),
-            backgroundBronze: toColor("hex", "#121212"),
-            foregroundBronze: toColor("hex", "#121212"),
-            highlightBronze:toColor("hex", "#121212"),
-            foregroundTextBronze: toColor("hex", "#121212"),
-            textBronze: toColor("hex", "#121212"),
-    }
-    const [colors, dispatch] = useReducer(reducer, initialValue)
+    // const initialValue:ThemeTokens = {
+    //         background: toColor("hex", "#121212"),
+    //         tinted:toColor("hex", "#121212"),
+    //         foreground: toColor("hex", "#121212"),
+    //         foregroundBorder: toColor("hex", "#121212"),
+    //         highlight: toColor("hex", "#121212"),
+    //         foregroundText: toColor("hex", "#121212"),
+    //         text:toColor("hex", "#121212"),
+    //         backgroundBronze: toColor("hex", "#121212"),
+    //         foregroundBronze: toColor("hex", "#121212"),
+    //         highlightBronze:toColor("hex", "#121212"),
+    //         foregroundTextBronze: toColor("hex", "#121212"),
+    //         textBronze: toColor("hex", "#121212"),
+    // }
+    // const [colors, dispatch] = useReducer(reducer, initialValue)
 
 
     // const UpdateTheme = async () => {
