@@ -151,7 +151,7 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
                         <Box css={{display:'flex', alignItems:'center'}}>
                             {/* {data.publication.ensLabel} */}
                             <Box css={{width:'$4', height:'$4', borderRadius:'$round', overflow:'hidden'}}>
-                                <img src={data.publication.avatarURL} width='100%' height='100%' style={{objectFit:'cover'}}/>
+                                <img src={data?.publication?.avatarURL} width='100%' height='100%' style={{objectFit:'cover'}}/>
                             </Box>
                         </Box>
                     </Box>
