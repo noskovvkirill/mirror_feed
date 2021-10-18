@@ -137,7 +137,7 @@ const BodyComponent = (
             :  Open(`/${entry.author.address}/${entry.digest}`)
     }}
     isPreview={isPreview}>
-        {console.log('entry', entry)}
+        {/* {console.log('entry', entry)} */}
         <StyledContents isHighlighted={(isHover || isFocused) ? true : false}>
             <StyledMetadata>
                 <StyledLabel isHighlighted={(isHover || isFocused || !isPreview) ? true : false}>{entry.author?.displayName ? entry.author.displayName : entry.author?.address?.slice(0,8)}</StyledLabel>

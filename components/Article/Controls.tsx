@@ -43,11 +43,11 @@ const StyledHeader = styled('div',{
       padding:'0',
       margin:'$2 $2 $2 0',
       width:'32px',
-      color:'$foreground',
-      mixBlendMode:'multiply',
-      transition:'$all',
+      color:'$foregroundBronze',
+      transition:'$background',
       cursor:'pointer',
       'h5':{
+          transition:'$color',
           userSelect:'none',
           whiteSpace:'nowrap',
           fontWeight:'400',
@@ -59,7 +59,7 @@ const StyledHeader = styled('div',{
         isHighlighted:{
             true:{
                 '&:hover':{
-                    backgroundColor:'$highlightBronze',
+                    backgroundColor:'$foregroundTintBronze',
                     color:'$foregroundTextBronze',
                 },
             },
@@ -235,12 +235,12 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                 {entry.publication?.ensLabel 
                 ? <StyledHeader
                 onClick={()=>Open(`/${entry.publication.ensLabel}`)}
-                isHighlighted={isFocused}>
+                isHighlighted={(isHover || isFocused) ? true : false}>
                         <h5>{entry.publication.ensLabel}</h5>
                 </StyledHeader>
                 : <StyledHeader 
                 onClick={()=>Open(`/${entry.author.address}?type=personal`)}
-                isHighlighted={isFocused}>
+                isHighlighted={(isHover || isFocused) ? true : false}>
                     <h5>
                         {entry.author.displayName ? entry.author.displayName : <>{AddressPrettyPrint(entry.author.address, 6)}</>}
                     </h5> 

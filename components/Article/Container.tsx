@@ -78,8 +78,6 @@ interface Container {
 }
 
 
-
-
 const Container = forwardRef<HTMLElement, Container>(
     function Forward({
         entry, children, 
@@ -87,9 +85,6 @@ const Container = forwardRef<HTMLElement, Container>(
         setIsHover}, ref)  {
     return(
             <StyledContainerMotion 
-            // onLayoutAnimationComplete={()=>{
-            //     setIsAnimationComplete(true)
-            // }}
             initial={!isPreview ? {transform:`translateX(-2%)`} : false}
             exit={isPreview && {opacity:0, position:'absolute'}}
             layout='position'

@@ -1,7 +1,7 @@
 
 import {styled, keyframes} from 'stitches.config'
 import Box from '@/design-system/primitives/Box'
-import React from 'react'
+import React, { useEffect } from 'react'
 import * as Popover from '@radix-ui/react-popover';
 import {useRouter} from 'next/router'
 import {curationItems, CurationList, portalState} from 'contexts'
@@ -85,16 +85,17 @@ const StyledCurationButton = styled(Popover.Trigger, {
     transition:'$background',
     cursor:'pointer',
     '&:hover':{
-        color:'$background',
-        background: 'radial-gradient(50% 50% at 50% 50%, #E0CEC7 48.96%, #FFFFFF 100%)',
+        color:'white',
+        background: 'radial-gradient(50% 50% at 50% 50%, $foregroundBronze 48.96%, rgba(255,255,255,0.1) 100%)',
         fill:'white',
         'path':{
             fill:'white'
         }
     },
     '&[data-state="open"]':{
-        color:'$background',
-        background: 'radial-gradient(50% 50% at 50% 50%, #E0CEC7 48.96%, #FFFFFF 100%)',
+        color:'white',
+        background: 'radial-gradient(50% 50% at 50% 50%, #foregroundBronze 48.96%, rgba(255,255,255,0.1) 100%)',
+        fill:'white',
          'path':{
             fill:'white'
         }
@@ -102,8 +103,8 @@ const StyledCurationButton = styled(Popover.Trigger, {
     variants:{
         isOpen:{
             true:{
-                  color:'$background',
-                   background: 'radial-gradient(50% 50% at 50% 50%, #E0CEC7 48.96%, #FFFFFF 100%)',
+                 color:'white',
+                   background: 'radial-gradient(50% 50% at 50% 50%, $foregroundBronze 48.96%, rgba(255,255,255,0.1) 100%)',
                     fill:'white',
                     'path':{
                         fill:'white'
@@ -118,7 +119,7 @@ const StyledCurationButton = styled(Popover.Trigger, {
 })
 
 
-const StyledTabsList = styled(Tabs.List, {
+export const StyledTabsList = styled(Tabs.List, {
     width:'100%',
     boxSizing:'border-box',
     overflow:'hidden',
@@ -127,7 +128,7 @@ const StyledTabsList = styled(Tabs.List, {
     gap:'$0'
 })
 
-const StyledTabsTrigger = styled(Tabs.Trigger, {
+export const StyledTabsTrigger = styled(Tabs.Trigger, {
     display:'flex',
     alignItems:'center',
     justifyContent:'center',
@@ -188,7 +189,7 @@ export const StyledSpaceSelector = styled('button', {
 
 
 
-const StyledTabsContent = styled(Tabs.Content, {
+export const StyledTabsContent = styled(Tabs.Content, {
     transition:'$all',
     gap:'$1',
     display:'flex',
@@ -237,7 +238,7 @@ const SpacesSelector = ({publication, content, type, author}:{publication?:strin
     const curated = useRecoilValueAfterMount(curationItems, [])
     const setCuratedPublications = useSetRecoilState(curationItems)
     const [isPortal, setIsPortal] = useRecoilState(portalState)
-
+    
     return(
         <Box layout='flexBoxRow' css={{alignItems:'center', color:'$foreground', userSelect:'none'}}>
             <Popover.Root 

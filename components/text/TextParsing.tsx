@@ -43,12 +43,12 @@ export const StyledLabel = styled('span',{
     borderRadius:'$round',
     fontSize:'$6',
     userSelect:'none',
-    mixBlendMode:'multiply',
+    // mixBlendMode:'multiply',
     transition:'$all',
     variants:{
         isHighlighted:{
             true:{
-                backgroundColor:'$highlightBronze',
+                backgroundColor:'$foregroundTintBronze',
                 color:'$foregroundTextBronze',
             },
             false:{
@@ -68,9 +68,7 @@ export const StyledLink = styled('a', {
    cursor:'pointer',
    transition:'$color',
    whiteSpace:'break-spaces',
-    hyphens:'auto',
-//    wordBreak:'break-all',
-//    textDecoration:'none',
+   hyphens:'auto',
    '&:hover':{
        textShadow:'$normal',
         color:'$foregroundText'

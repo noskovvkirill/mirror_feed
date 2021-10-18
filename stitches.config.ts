@@ -1,12 +1,12 @@
 import { createStitches } from "@stitches/react";
-import { sand, bronze, sandDark, bronzeDark } from '@radix-ui/colors'
+import { sand, indigo, indigoDark, bronze, sandDark, bronzeDark } from '@radix-ui/colors'
 
 export const { styled, css, globalCss, getCssText, keyframes, createTheme } = createStitches({
+    prefix:'light-cream',
     theme: {
         colors: {
             // ...sand,
             background: sand.sand1,
-            tinted:sand.sand2,
             foreground: sand.sand7,
             foregroundBorder: sand.sand8,
             highlight: sand.sand3,
@@ -15,6 +15,7 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             //bronze
             backgroundBronze: bronze.bronze1,
             foregroundBronze: bronze.bronze7,
+            foregroundTintBronze: bronze.bronze5,
             highlightBronze:bronze.bronze3,
             foregroundTextBronze: bronze.bronze9,
             textBronze: bronze.bronze12
@@ -89,23 +90,84 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
     },
 });
 
+export const lightThemePlain =  createTheme('light-plain', {
+       colors: {
+            // ...sand,
+            background: sand.sand1,
+            foreground: sand.sand9,
+            foregroundBorder: sand.sand8,
+            highlight: sand.sand3,
+            foregroundText: sand.sand9,
+            text: sand.sand12,
+            //bronze
+            backgroundBronze:  sand.sand1,
+            foregroundBronze: sand.sand9,
+            foregroundTintBronze: sand.sand5,
+            highlightBronze:  sand.sand3,
+            foregroundTextBronze: sand.sand9,
+            textBronze: sand.sand12,
+        },
+});
 
-export const darkTheme = createTheme({
+
+
+export const lightThemeBlue =  createTheme('light-blue', {
+       colors: {
+            // ...sand,
+            background: sand.sand1,
+            foreground: sand.sand9,
+            foregroundBorder: sand.sand8,
+            highlight: sand.sand3,
+            foregroundText: sand.sand9,
+            text: sand.sand12,
+            //bronze
+            backgroundBronze:  indigo.indigo1,
+            foregroundBronze: indigo.indigo9,
+            foregroundTintBronze:indigo.indigo5,
+            highlightBronze: indigo.indigo3,
+            foregroundTextBronze: indigo.indigo9,
+            textBronze: indigo.indigo12,
+        },
+});
+
+
+
+export const darkThemePlain= createTheme('dark-plain', {
        colors: {
             // ...sand,
             background: sandDark.sand1,
-            tinted:sandDark.sand2,
-            foreground: sandDark.sand7,
+            foreground: sandDark.sand9,
             foregroundBorder: sandDark.sand8,
             highlight: sandDark.sand3,
             foregroundText: sandDark.sand9,
             text: sandDark.sand12,
             //bronze
-            backgroundBronze: bronzeDark.bronze1,
-            foregroundBronze: bronzeDark.bronze7,
-            highlightBronze:bronzeDark.bronze3,
-            foregroundTextBronze: bronzeDark.bronze9,
-            textBronze: bronzeDark.bronze12
+            backgroundBronze:  sandDark.sand1,
+            foregroundBronze: sandDark.sand9,
+            foregroundTintBronze:sandDark.sand5,
+            highlightBronze: sandDark.sand3,
+            foregroundTextBronze: sandDark.sand9,
+            textBronze: sandDark.sand12,
+        },
+});
+
+
+export const darkTheme = createTheme('dark-blue', {
+       colors: {
+            // ...sand,
+            background: sandDark.sand1,
+            foreground: sandDark.sand8,
+            foregroundBorder: sandDark.sand8,
+            highlight: sandDark.sand3,
+            foregroundText: sandDark.sand9,
+            text: sandDark.sand12,
+            //bronze
+            backgroundBronze: indigoDark.indigo1,
+            foregroundTintBronze: indigoDark.indigo5,
+            foregroundBronze: indigoDark.indigo8,
+            highlightBronze:indigoDark.indigo3,
+            foregroundTextBronze: indigoDark.indigo9,
+            textBronze: indigoDark.indigo12
         },
 });
 
@@ -134,7 +196,7 @@ export const globalStyles = globalCss({
     h3: { fontSize: "$3", lineHeight: "$4", margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'} },
     h4: { fontSize: "$4", lineHeight: "$3",   margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'}},
     h5: { fontSize: "$5", lineHeight: "$2",  margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'} },
-    p: { fontSize: "$p", lineHeight: "$p",  margin:'$2 0', fontWeight: "300" },
+    p: { fontSize: "$p", lineHeight: "$p",  margin:'$2 0', fontWeight: "300", '&:first-child':{margin:'0 0 $2 0'} },
     span: { fontSize: "$p", lineHeight: "$p", fontWeight: "300" },
     b: {
         fontWeight: "700",

@@ -3,7 +3,7 @@ import Box from '@/design-system/primitives/Box'
 import Nav from '@/design-system/Nav'
 
 import Head from 'next/head'
-import React, { ReactNode, useState} from 'react'
+import React, { ReactNode, useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { pinnedItems, readLaterList, curationItems, portalState} from 'contexts'
@@ -79,16 +79,11 @@ const Layout = ({children}:Props) =>{
     const curated = useRecoilValueAfterMount(curationItems, [])
     const [isPortal, setIsPortal] = useRecoilState(portalState)
 
-    //doesn't work.. need to record a time from pressed to differntiate simple Alt from a combo
-    useHotkeys('*', (e:any)=>{
-        if (e.altKey && e.key === 'Alt') {
-           console.log('e', e)
-           const portalTimeout = setTimeout(()=>{
-                setIsPortal(!isPortal)
-           },500)
-           return(()=>clearTimeout(portalTimeout))
-        }
-    },[isPortal])
+    useHotkeys("*", (e) => {
+        if(e.key === 'Alt'){
+             setIsPortal(!isPortal)
+        } 
+    },{keyup:true},[])
     
     useHotkeys('cmd+z, ctrl+z', () => {
         if(history.length>0){

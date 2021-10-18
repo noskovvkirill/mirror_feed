@@ -12,6 +12,7 @@ import {createTheme} from 'stitches.config'
 import { useTheme } from 'next-themes'
 import {useEffect, useReducer} from 'react'
 
+import Settings from '@/design-system/Settings'
 import AdjustIcon from '@/design-system/icons/Adjust'
 import ColorPicker from '@/design-system/primitives/ColorPicker'
 import { toColor} from "react-color-palette";
@@ -32,15 +33,16 @@ const StyledContent = styled(DropdownMenu.Content,{
     padding:'0',
     borderRadius:'$2',
     maxHeight:'calc($4 * 12)',
-    overflow:'scroll',
-    backgroundColor:'$highlightBronze',
+    overflow:'scroll', 
+    border:'1px solid $foregroundBorder',
+    backgroundColor:'$background',
+    // backgroundColor:'$highlightBronze',
     mixBlendMode:'multiply',
     width:'calc($4 * 9)',
     display:'flex',
     flexDirection:'column',
     gap:'$1',
     listStyle:'none',
-    boxShadow:'$normal'
 })
 
 
@@ -50,7 +52,8 @@ const StyledItem = styled(DropdownMenu.Item, {
     gap:'$2',
     fontSize:'$6',
     maxWidth:'100%',
-    color:'$foregroundTextBronze',
+    color:'$foregroundText',
+    padding:'$0 $0',
     marginBottom:'$1',
     cursor:'pointer',
     transition:'$color',
@@ -59,7 +62,7 @@ const StyledItem = styled(DropdownMenu.Item, {
           color:'$textBronze',
     },
     '&:focus': {
-    outline:' 3px solid $foregroundBronze',
+    outline:' 3px solid $highlight',
     borderRadius:'$2',
     },
     // expand the reach of the text 
@@ -80,7 +83,7 @@ const StyledDelete = styled('button', {
       display:'flex',
       alignItems:'center',
       justifyContent:'flex-end',
-      color:'$foregroundTextBronze',
+      color:'$foregroundText',
       background:'transparent',
       cursor:'pointer',
       width:'calc($4 * 2)',
@@ -138,28 +141,32 @@ const Nav = () =>{
     const readingList = useRecoilValueAfterMount(readLaterList, [])
     const setReadLater = useSetRecoilState(readLaterList) 
     const { changeTheme} = useStore()
-    const { setTheme } = useTheme()
+    const { themes, theme, setTheme } = useTheme()
+
+
+    //COMMENTED CODE IS FOR THE CUSTOM THEMING FUNCTIONALITY. 
+    // NOT AVAILABLE AT THIS MOMENT
     
-    useEffect(()=>{
-        let custom = localStorage.getItem('custom-theme') 
-        if(custom){
-            const data  = JSON.parse(custom)
-            const newColors:{[U: string]: string} = {}
-                for (const key in colors) {
-                    if (colors.hasOwnProperty(key)) {
-                        newColors[key] = data[key].hex
-                    }
-            }
-            const newName = 'custom'+Math.floor(Math.random()*1000).toString()
-            const themeN = createTheme(newName, {
-                colors: newColors
-             });
-            changeTheme({theme:themeN, name:newName})
-            setTheme(newName)
-            Object.keys(data).map((key)=>dispatch({color:key, value:data[key]}))
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[setTheme, changeTheme])
+    // useEffect(()=>{
+    //     let custom = localStorage.getItem('custom-theme') 
+    //     if(custom){
+    //         const data  = JSON.parse(custom)
+    //         const newColors:{[U: string]: string} = {}
+    //             for (const key in colors) {
+    //                 if (colors.hasOwnProperty(key)) {
+    //                     newColors[key] = data[key].hex
+    //                 }
+    //         }
+    //         const newName = 'custom'+Math.floor(Math.random()*1000).toString()
+    //         const themeN = createTheme(newName, {
+    //             colors: newColors
+    //          });
+    //         changeTheme({theme:themeN, name:newName})
+    //         setTheme(newName)
+    //         Object.keys(data).map((key)=>dispatch({color:key, value:data[key]}))
+    //     }
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // },[setTheme, changeTheme])
 
     const initialValue:ThemeTokens = {
             background: toColor("hex", "#121212"),
@@ -178,23 +185,23 @@ const Nav = () =>{
     const [colors, dispatch] = useReducer(reducer, initialValue)
 
 
-    const UpdateTheme = async () => {
-       const newName = 'custom'+Math.floor(Math.random()*1000).toString()
-       const newColors:{[U: string]: string} = {}
-       for (const key in colors) {
-            if (colors.hasOwnProperty(key)) {
-                newColors[key] = colors[key].hex
-            }
-       }
-       const themeN = createTheme(newName, {
-            colors: newColors
-       });
+    // const UpdateTheme = async () => {
+    //    const newName = 'custom'+Math.floor(Math.random()*1000).toString()
+    //    const newColors:{[U: string]: string} = {}
+    //    for (const key in colors) {
+    //         if (colors.hasOwnProperty(key)) {
+    //             newColors[key] = colors[key].hex
+    //         }
+    //    }
+    //    const themeN = createTheme(newName, {
+    //         colors: newColors
+    //    });
     
-        changeTheme({theme:themeN, name:newName})
-        setTheme(newName)
+    //     changeTheme({theme:themeN, name:newName})
+    //     setTheme(newName)
 
-        localStorage.setItem('custom-theme', JSON.stringify(colors))
-    }
+    //     localStorage.setItem('custom-theme', JSON.stringify(colors))
+    // }
 
     
 
@@ -207,7 +214,6 @@ const Nav = () =>{
                 '&[data-state="open"]': {
                     color:'$foregroundTextBronze',
                     border:'1px solid $highlightBronze',
-           
                     backgroundColor:'$highlightBronze'
                 }
                 }}
@@ -254,14 +260,16 @@ const Nav = () =>{
                     {readingList.length > 0 && (
                         <Box css={{ backgroundColor:'$highlightBronze', 
                         mixBlendMode:'multiply', 
-                        backdropFilter:'opacity(0.55) blur(0.5px)', //0.5px weirdly works differently than 1px !!! 
-                        marginTop:'$0', position:'sticky', bottom:'0', padding:'calc($1 * 1.5)', paddingTop:'$1', }}>
+                        backdropFilter:'opacity(0.55) blur(1px)',  
+                        marginTop:'$0', position:'sticky', bottom:'0', padding:'calc($1 * 1.5)', paddingTop:'$0', }}>
                             <Button 
                             onClick={(e)=>{
                                 e.preventDefault()
                                 router.push('/list')
                             }}
                             css={{
+                            padding:'$0',
+                            color:'$foregroundTextBronze',
                             backgroundColor:'$highlightBronze',
                             bottom:'0',
                             border:'1px solid transparent',
@@ -269,6 +277,7 @@ const Nav = () =>{
                             width:'100%', justifyContent:'center',
                             transition:'$all',
                             '&:hover':{
+                                color:'$textBronze',
                                 borderRadius:'$2'
                             }
                         }}>
@@ -280,24 +289,10 @@ const Nav = () =>{
                 </StyledContent>
             </DropdownMenu.Root>
 
-            <ButtonPopover icon={<AdjustIcon/>} label='change' isHighlighted={true}>
-                <p>Theme settings</p>
-                <Box css={{width:'100%', overflow:'hidden'}}>
-                    {colors && (
-                        <>
-                          {Object.keys(colors).map((key:string)=>{
-                            return(
-                                 <Box layout='flexBoxRow' key={'theme_color'+key} css={{padding:'0 $2', justifyContent:'space-between', fontSize:'$6'}}>
-                                     {key} {colors[key].hex}
-                                     <ColorPicker color={colors[key]} setColor={(newValue:Color)=>{dispatch({color:key, value:newValue})}}/>
-                                  </Box>
-                            )
-                          })}
-                        </>
-                    )}
-                </Box>
-                <Button onClick={UpdateTheme}>Update theme 1 </Button>
-            </ButtonPopover>
+            <Settings 
+            themes={themes}
+            theme={theme}
+            UpdateTheme={setTheme}/>
 
 
         </StyledNav> 

@@ -114,7 +114,7 @@ const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater, routerQuery,
                 )}
             </Box>
 
-            <ButtonControl 
+            {/* <ButtonControl 
             isHighlighted={false}
             onClick={()=>{
                 //Transform all the Entries to the reading list items and remove them from the list
@@ -133,7 +133,7 @@ const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater, routerQuery,
             }}
             label='Add all to the reading list'>
                 <AddAllIcon/>
-            </ButtonControl>
+            </ButtonControl> */}
             
             <SpacesSelector  
                 type={currentArticle?.publication.type}

@@ -2,13 +2,13 @@
 import {styled} from 'stitches.config'
 // import Box from '@/design-system/primitives/Box'
 // import Button from '@/design-system/primitives/Button'
-import React, {useMemo} from 'react'
+import React, {useEffect, useMemo} from 'react'
 import * as ReactDOM from 'react-dom'
 import { useSetRecoilState} from 'recoil'
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 import {useRouter} from 'next/router'
 import useOnScreen from 'hooks/useOnScreen'
-import {useRef, useState, ReactPropTypes, useLayoutEffect} from 'react'
+import {useRef, useState, ReactPropTypes} from 'react'
 // import remarkOembed from 'remark-oembed'
 // @ts-ignore
 import rehypeTruncate from "rehype-truncate";
@@ -78,7 +78,7 @@ const StyledImageHidden = styled(StyledImage,{
 //this is really ugly solution, but works for now 
 const TocPortalled = (props:ReactPropTypes) => {
     const [container, setContainer] = useState<Element | null>(null)
-    useLayoutEffect(()=>{
+    useEffect(()=>{
         if(document){
             const element = document.querySelector('#article-toc')
             if(element){

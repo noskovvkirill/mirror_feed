@@ -5,7 +5,7 @@ import { globalStyles } from "stitches.config";
 import {RecoilRoot} from 'recoil'
 import { LazyMotion } from "framer-motion"
 import {ThemeProvider} from 'next-themes'
-import {darkTheme} from 'stitches.config'
+import {darkTheme, darkThemePlain, lightThemePlain, lightThemeBlue} from 'stitches.config'
 import {useState, useContext} from 'react'
 // import dynamic from 'next/dynamic'
 const loadFeatures = () =>
@@ -47,25 +47,37 @@ function MyApp({ Component, pageProps }: AppProps) {
             <CustomThemeProvider value={{theme, changeTheme}}>
               <CustomThemeConsumer>
                 {value => {
-                let values
+                let values = { 
+                    'dark-blue': darkTheme.className,
+                    'light-cream':"light",
+                   'light-plain':lightThemePlain.className,
+                    'dark-plain':darkThemePlain.className,
+                    'light-blue':lightThemeBlue.className,
+                  }
                 if(value.theme.theme) {
                   values = {
-                    dark: darkTheme.className,
-                    light:"light",
-                    [value.theme.name]:value.theme.theme.className
+                    'dark-blue': darkTheme.className,
+                    'light-cream':"light",
+                     'light-plain':lightThemePlain.className,
+                     'dark-plain':darkThemePlain.className,
+                       'light-blue':lightThemeBlue.className,
+                    // [value.theme.name]:value.theme.theme.className
                   }
                 } else {
                   values = {
-                    dark: darkTheme.className,
-                    light:"light",
+                    'dark-blue': darkTheme.className,
+                    'light-cream':"light",
+                     'light-plain':lightThemePlain.className,
+                    'dark-plain':darkThemePlain.className,
+                    'light-blue':lightThemeBlue.className,
                   }
                 }
                 return(
                   <ThemeProvider
                     disableTransitionOnChange
                     attribute="class"
-                    defaultTheme="system"
-
+                    defaultTheme="light-cream"
+                    themes={['light-cream', 'dark-plain', 'light-blue', 'dark-blue']}
                     // defaultTheme="custom-theme"
                     value={values}
                   > 
