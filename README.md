@@ -1,8 +1,8 @@
 # An alternative reading client for the Mirror.xyz
 
-~~Probably Mirror team is already working on their feed implementation, but I think it's important to highlight the power of decentralization and build an alternative to the existing client app. Fat protocols and thin layers?
+~~Probably Mirror team is already working on their feed implementation, but I think it's important to highlight the power of decentralization and build an alternative to the existing client app. Fat protocols and thin layers?~~
 
-I see that Mirror.xyz is moving towards a channel of communication for the different projects rather than a simply text-focused publishing platform. The advantage of my app could be in its simplicity that focuses on text&ideas.~~
+~~I see that Mirror.xyz is moving towards a channel of communication for the different projects rather than a simply text-focused publishing platform. The advantage of my app could be in its simplicity that focuses on text&ideas~~ <- NOT RELEVANT ANYMORE
 
 After the initial release of the project, I've realized that the real pain point is a curation. There is a huge amount of great content available on Mirror, but it's hard to find it unless someone shares it directly. Probably the easiest direction to take is to have a content indexation, tagging and have a search. Or to curate stuff though likes/upvotes on a server. I want to explore crypto native interactions and token stacking seems to be one of the most interesting direction to explore. But I'm not sure that it provides a right experience for the curator (signing everything, waiting for a transaction to be approved and etc.). I welcome all the ideas! :-)
 
@@ -92,22 +92,18 @@ I want everyone to be able to create and share curated spaces. But I don't want 
 - [ ] Actions History (Ctrl+Z, Cmd+Z), Keyboard navigation and Article previews on spacebar
 - [ ] Replace Recoil with Zustand for simplicity (maybe not :)
 - [ ] Keyboard navigation (spacebar preview, enter to open, cmd+x to close (?))
-- [-] Public curated Lists (not sure where to store.. Textille? I like the way Ceramic works though, but authentication is a real mess)
-- [ ] Full version of Embeded crypto blocks (Editions and etc.).
-- [-] Speech Synthesis Native Browser API for the audio. Simple Audio player (?)
-- [ ] Move the app from Vercel to Sleek (?) (compare the speed and experience first)
+- [ ] Full version of Embeded crypto blocks (Editions and etc.).- [ ] Move the app from Vercel to Sleek (?) (compare the speed and experience first)
 - [ ] Subscribtions & notifications //centralized, using supabase for indexing together with CRON jobs. Hopefully, once the-graph provides an Arweave support the app can use it instead (?)
-- [-] Proper handle of multiple columns to create a book like text handling (native css columns are useless, because they can be really tall and unreadable) (not sure it's needed at this stage since most of the posts aren't that long)
 - [ ] Search through articles (when thegraph + arweave is available?)
 - [ ] Screen split on drag (the cards on main page are draggable into open space to create the columns(?)
 - [ ] Inline comments [medium like discussions]
 
 ### Curation
 
-— [ ] Separate page for the personal/group curation. Similar to the ownership of publication on Mirror.
-— [ ] Drag and drop functionality from Pinned Items to that space
-— [ ] Authentication
-— [ ] ERC-20 token, governance // https://docs.openzeppelin.com/contracts/4.x/api/governance
-— [ ] Test contract interaction. Can stacking be a smooth experience?
-— [ ] How do we fetch and see the articles based on stacking? Do we sort by day/by week/both?
-— [ ] .. Rest of the mechanics/design should follow.
+- [ ] Separate page for the personal/group curation. Similar to the ownership of publication on Mirror.
+- [ ] Drag and drop functionality from Pinned Items to that space
+- [ ] Authenticatio-
+- [ ] ERC-20 token, governance // https://docs.openzeppelin.com/contracts/4.x/api/governance 
+- [ ] Test contract interaction. Can stacking be a smooth experience?
+- [ ]  How do we fetch and see the articles based on stacking? Do we sort by day/by week/both?
+- [ ]   .. Rest of the mechanics/design should follow.
