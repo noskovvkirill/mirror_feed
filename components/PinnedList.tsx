@@ -1,7 +1,7 @@
 import {styled} from 'stitches.config'
 import Box from '@/design-system/primitives/Box'
 import ArrowDownIcon from '@/design-system/icons/ArrowDown'
-import AddAllIcon from '@/design-system/icons/AddAll'
+// import AddAllIcon from '@/design-system/icons/AddAll'
 import {  PinnedItem, ReadingListItem, CurrentArticle} from 'contexts'
 import SpacesSelector from '@/design-system/Spaces/SpacesSelector'
 import PinnedComponent  from '@/design-system/PinnedItem' 

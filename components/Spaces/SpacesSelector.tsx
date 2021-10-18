@@ -1,7 +1,7 @@
 
 import {styled, keyframes} from 'stitches.config'
 import Box from '@/design-system/primitives/Box'
-import React, { useEffect } from 'react'
+import React from 'react'
 import * as Popover from '@radix-ui/react-popover';
 import {useRouter} from 'next/router'
 import {curationItems, CurationList, portalState} from 'contexts'

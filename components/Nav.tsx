@@ -6,16 +6,16 @@ import { useSetRecoilState } from "recoil"
 import { useRecoilValueAfterMount } from "hooks/useRecoilValueAfterMount"
 import {readLaterList, ReadingListItem} from 'contexts'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import ButtonPopover from "@/design-system/primitives/ButtonPopover"
-import {useStore} from 'pages/_app'
-import {createTheme} from 'stitches.config'
+// import ButtonPopover from "@/design-system/primitives/ButtonPopover"
+// import {useStore} from 'pages/_app'
+// import {createTheme} from 'stitches.config'
 import { useTheme } from 'next-themes'
-import {useEffect, useReducer} from 'react'
+// import {useEffect, useReducer} from 'react'
 
 import Settings from '@/design-system/Settings'
-import AdjustIcon from '@/design-system/icons/Adjust'
-import ColorPicker from '@/design-system/primitives/ColorPicker'
-import { toColor} from "react-color-palette";
+// import AdjustIcon from '@/design-system/icons/Adjust'
+// import ColorPicker from '@/design-system/primitives/ColorPicker'
+// import { toColor} from "react-color-palette";
 import React from 'react'
 
 

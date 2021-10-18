@@ -6,7 +6,7 @@ import React from 'react'
 import {useEffect, useState, useRef} from 'react'
 import {useRouter} from 'next/router'
 import useOnScreen from 'hooks/useOnScreen'
-import {request, gql} from 'graphql-request'
+import {request} from 'graphql-request'
 import {  SubscribedPublication} from 'contexts'
 import { Search } from 'src/search'
 import User  from '@/design-system/primitives/Profile'
@@ -14,7 +14,7 @@ import {AddressPrettyPrint} from 'src/utils'
 import Loader from '@/design-system/primitives/Loader'
 import {StyledSpaceSelector} from '@/design-system/Spaces/SpacesSelector'
 import {queryPublicationsEns} from 'src/queries'
-import {useThrottle, useThrottleCallback} from '@react-hook/throttle'
+import { useThrottleCallback} from '@react-hook/throttle'
 const StyledLabel = styled('div', {
     fontSize:'$6',
     color:'$background',
