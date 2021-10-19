@@ -1,18 +1,20 @@
 import {styled} from 'stitches.config'
-import { ReactPropTypes } from 'react'
-import Box from '@/design-system/primitives/Box'
-import Proposal from '@/design-system/text/Proposal'
-import Editions from '@/design-system/text/Editions'
-// import LinkPreview from '@/design-system/text/LinkPreview'
-import Nft from '@/design-system/text/Nft'
 
 export const StyledList = styled('ul', {
-    listStyle:'inside',
+    listStyle:'none',
     color:'$foregroundBronzeText',
     padding:'$2 0',
     li:{    
         color:'$foregroundBronzeText',
-        marginBottom:'$2'
+        marginBottom:'$2',
+        '&:before':{
+              content: "\u2022",
+              color:'$foregroundBronzeText',
+              opacity:0.3,
+              display:'inline-block',
+              width:'1em',
+              marginRight:'$1'
+        }
     },
     strong:{
         fontFamily:'Satoshi Variable',
@@ -22,6 +24,13 @@ export const StyledList = styled('ul', {
         fontFamily:'Satoshi Variable',
         fontWeight:'$max'
     }
+})
+
+
+export const StyledQuote = styled('blockquote', {
+    padding:'$0 $2',
+    borderLeft:'1px solid $foregroundBronze',
+    margin:'$2 0'
 })
 
 export const StyledImage = styled('img', {
@@ -48,12 +57,13 @@ export const StyledLabel = styled('span',{
     padding:'$0 $2',
     borderRadius:'$round',
     fontSize:'$6',
-    mixBlendMode:'multiply',
+    userSelect:'none',
+    // mixBlendMode:'multiply',
     transition:'$all',
     variants:{
         isHighlighted:{
             true:{
-                backgroundColor:'$highlightBronze',
+                backgroundColor:'$foregroundTintBronze',
                 color:'$foregroundTextBronze',
             },
             false:{
@@ -73,9 +83,7 @@ export const StyledLink = styled('a', {
    cursor:'pointer',
    transition:'$color',
    whiteSpace:'break-spaces',
-    hyphens:'auto',
-//    wordBreak:'break-all',
-//    textDecoration:'none',
+   hyphens:'auto',
    '&:hover':{
        textShadow:'$normal',
         color:'$foregroundText'
@@ -202,62 +210,17 @@ export const StyledH5 = styled('h5', {
 
 
 
-
-
-
-export const Embeds = (props:ReactPropTypes & {href:string, children:React.ReactNode}) => {
-    const myReg = `://`;
-    if(props?.href.split(myReg)[0] === 'auction'){
-        return(
-            <Box layout='flexBoxColumn' css={{padding:'$1 $2', opacity:0.5, borderRadius:'$2', backgroundColor:'$foreground'}}>
-                <p>This is Mirror.xyz auction. They aren&apos;t support yet. Please, visit the source publication.</p>
-                {/* {props.children} */}
-            </Box>
-        )
-    }
-
-    if(props?.href.split(myReg)[0] === 'proposal'){
-        return(<Proposal cid={props?.href.split(myReg)[1]}/>)
-    }
-
-
-    if(props?.href.split(myReg)[0] === 'edition'){
-        const editions = new URLSearchParams(props?.href.split(myReg)[1].split('?')[1]).get('editionId')
-        const contract = props?.href.split(myReg)[1].split('?')[0]
-        return(
-            // <></>
-           <Editions editionId={Number(editions)} editionContractAddress={contract}/>
-        )
-        // return(<Editions cid={props?.href.split(myReg)[1]}/>)
-    }
-
-    if(props?.href.split(myReg)[0] === 'ethereum'){
-        const links = props?.href.split(myReg)[1].split('/')
-        return(
-            <Nft contract={links[0]} tokenId={links[1]}/> 
-        )
-    }
-
-    // if(props?.href.slice)
-    // return(
-    //     <LinkPreview {...props}/>
-    // )
-
-    return(
-        <StyledLink {...props}/>
-    )
-}
-
 export const StyledToc = styled('nav', {
     color:'$foregroundBronze',
     padding:'$2',
-    paddingLeft:'$2',
+    paddingLeft:'calc($3 + 4px)',
     top:'256px',
-    height:'fit-content',
+    overflow:'scroll',
     position:'sticky',
     listStyle:'inside',
     'a':{
         userSelect:'none',
+        opacity:0.5,
         color:'$foregroundBronze',
         fontSize:'$6',
         marginBottom:'$2',
@@ -279,10 +242,10 @@ export const StyledToc = styled('nav', {
         },
     },
     'ul':{
-         listStyle:'inside'
+         listStyle:'none'
     },
     'ol':{
-        listStyle:'inside'
+        listStyle:'none'
     },
     'li':{
         paddingLeft:'1px',

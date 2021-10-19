@@ -3,6 +3,7 @@ import {history} from '@/design-system/Layout'
 import {Entry} from '@/design-system/Article'
 
 
+
 export type Publication = {
      type: 'personal' | 'ens',
      ensLabel:string
@@ -28,9 +29,32 @@ export type SubscribedPublication  =  Publication & {
     avatarURL?:string
 }
 
-export type PinnedItem = {
-    entry:Entry
+
+export type Attachment = {
+    mimeType:string
+    url:string
 }
+
+type PinnedItemEntry = {
+    id:number
+    type:'entry'
+    item:Entry
+}
+
+type PinnedItemPublication = {
+    id:number
+    type:'publication'
+    item:Publication
+}
+
+export type PinnedItemAttachment = {
+    id:number
+    type:'attachment'
+    item: Attachment
+}
+
+export type PinnedItem = PinnedItemEntry | PinnedItemAttachment | PinnedItemPublication 
+
 
 export type ReadingListItem = {
     title:string,
@@ -55,6 +79,12 @@ export const Current = atom({
     default:null as CurrentArticle | null,
 })
 
+
+//controls open/close of the navigation (aka portal)
+export const portalState = atom({
+    key:'isPortal',
+    default:false
+})
 
 
 const ignoredPublicationEffect = ():AtomEffect<IgnoredPublication[]> => ({setSelf, onSet, trigger}) => {

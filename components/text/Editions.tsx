@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Box from '@/design-system/primitives/Box'
 import RemoveIcon from '@/design-system/icons/Remove'
 import ButtonControl from '@/design-system/primitives/ButtonControl'
@@ -16,7 +17,7 @@ import {useRecoilValue, useSetRecoilState} from 'recoil'
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
 
 const StyledSection = styled('section',{
-    display:'flex-inline',
+    display:'flex',
     flexDirection:'row',
     alignItems:'flex-start',
     margin:'$4 0',
@@ -26,6 +27,8 @@ const StyledSection = styled('section',{
 const StyledProposal = styled('div', {
     width:'100%',
     maxWidth:'640px',
+    overflow:'hidden',
+    objectFit:'scale-down',
     height:'fit-content',
     // minHeight:'248px',
     background:'$background',
@@ -33,7 +36,6 @@ const StyledProposal = styled('div', {
     padding:'$2 $4',
     boxSizing:'border-box',
     hyphens:'auto',
-    overflow:'hidden',
     'h3':{
         margin:'$2 0',
     },
@@ -44,7 +46,6 @@ const StyledProposal = styled('div', {
         maxWidth:'95%',
         fontSize:'$6'
     },
-    boxShadow:'$normal',
     variants:{
         displayed:{
             true:{
@@ -71,10 +72,6 @@ const StyledLabel = styled('p',{
     color:'$foregroundText',
 })
 
-// type EditionsProps = {
-//     editionId:number,
-//     editionContractAddress:string
-// }
 
 const getEditions =  async (editionId:number, editionContractAddress:string) => {
     return await request('https://mirror-api.com/graphql', queryEditions, {editionId:editionId, editionContractAddress:editionContractAddress})
@@ -90,7 +87,8 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
         onErrorRetry: (error, _, __, ___, { retryCount }) => {
             if (error.status === 404) return
              if (retryCount >= 2) return
-        }
+        },
+        loadingTimeout:3000
     })
 
     const currentArticle = useRecoilValue(Current)
@@ -125,33 +123,40 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
                             <StyledLabel>{data.price} ETH</StyledLabel>
                         </Box>
                     </Box>
-                    <Box css={{width:'100%', padding:'$4', boxSizing:'border-box', overflow:'hidden', borderTop:'1px solid $foreground', borderBottom:'1px solid $foreground'}}>
-                    {data.primaryMedia.mimetype === 'video/mp4' && (
+                    <Box css={{width:'100%', 
+                    objectFit:'scale-down',
+                    padding:'$4', boxSizing:'border-box', overflow:'hidden', borderTop:'1px solid $foreground', borderBottom:'1px solid $foreground'}}>
+                    {data.primaryMedia?.mimetype === 'video/mp4' && (
                     <Box as='video' 
                     width={"100%"} 
                     css={{objectFit:'cover', borderRadius:'$2', boxShadow:'$normal'}}
                     height={"100%"} autoPlay muted loop>
-                            <source src={data.primaryMedia.sizes.md.src} type="video/mp4"/>
+                            <source src={data.primaryMedia?.sizes?.md?.src} type="video/mp4"/>
                             Your browser does not support the video tag.
                         </Box>
                     )}
-                    {data.primaryMedia.mimetype !== 'video/mp4' && (
+
+                    {data.primaryMedia?.mimetype !== 'video/mp4' && (
                         <Box as='img'
-                        css={{objectFit:'cover', borderRadius:'$2', boxShadow:'$normal'}}
-                        src={data.primaryMedia.sizes.md? data.primaryMedia.sizes.md.src : data.primaryMedia.sizes.og?.src}/>
+                        width='100%'
+                        height="100%"
+                        css={{objectFit:'scale-down', borderRadius:'$2', boxShadow:'$normal'}}
+                        src={data?.primaryMedia?.sizes?.md?.hasOwnProperty('src') ? data.primaryMedia.sizes.md.src : data.primaryMedia?.sizes?.og?.src}/>
+
                     )}
                     </Box>
                     
-                    <Box layout='flexBoxRow' css={{justifyContent:'space-between', width:'100%', boxSizing:'border-box'}}>
+                    <Box layout='flexBoxRow' css={{justifyContent:'space-between',  width:'100%', boxSizing:'border-box'}}>
                         <Box layout='flexBoxColumn' css={{gap:'$1', padding:'$2 0', boxSizing:'border-box', fontSize:'$6'}}>
                             NFTs Sold
-                        <Box layout='flexBoxRow' css={{fontSize:'$3'}}>{data.events.length-1}/{data.quantity}</Box>
+                            <Box layout='flexBoxRow' css={{fontSize:'$3'}}>{data.events.length-1}/{data.quantity}</Box>
                         </Box>
 
                         <Box css={{display:'flex', alignItems:'center'}}>
                             {/* {data.publication.ensLabel} */}
                             <Box css={{width:'$4', height:'$4', borderRadius:'$round', overflow:'hidden'}}>
-                                <img src={data?.publication?.avatarURL} width='100%' height='100%' style={{objectFit:'cover'}}/>
+                                <img alt='user-avatar' src={data?.publication?.avatarURL} width='100%' height='100%'/>
+
                             </Box>
                         </Box>
                     </Box>
@@ -164,7 +169,7 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
                 </StyledProposal>
             )}
             
-            <Box css={{color:"$foregroundBronze"}}>
+            <Box css={{color:"$foregroundBronze", width:'fit-content'}}>
                 <ButtonControl 
                 onClick={()=>{
                     setSettings((settings:ReadSettings)=>{

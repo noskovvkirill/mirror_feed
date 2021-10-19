@@ -1,5 +1,5 @@
 import {styled} from 'stitches.config'
-import { motion} from 'framer-motion'
+import { m} from 'framer-motion'
 import { forwardRef, ReactElement } from 'react';
 
 //dayjs
@@ -18,6 +18,8 @@ const StyledContainer = styled('div',{
     padding:'$4 $2',
     minHeight:'448px',
     margin:'calc($4 * 1) 0',
+    contain:'layout',
+    willChange:'transform',
     color:'$text',
     width:'100vw',
     boxSizing:'border-box',
@@ -56,7 +58,7 @@ const StyledContainerComponent = forwardRef(function Component (props:any, ref:a
 });
 
 
-const StyledContainerMotion = motion(StyledContainerComponent)
+const StyledContainerMotion = m(StyledContainerComponent)
 
 
 
@@ -76,19 +78,15 @@ interface Container {
 }
 
 
-
-
 const Container = forwardRef<HTMLElement, Container>(
     function Forward({
         entry, children, 
-        isPreview=true, isHover, isFocused, 
+        isPreview=true, isHover, isFocused,
         setIsHover}, ref)  {
-
     return(
             <StyledContainerMotion 
-            initial={!isPreview ? {transform:`translateX(-10%)`} : false}
-            animate={{opacity:1, position:'relative'}}
-            exit={{opacity:0, position:'absolute'}}
+            initial={!isPreview ? {transform:`translateX(-2%)`} : false}
+            exit={isPreview && {opacity:0, position:'absolute'}}
             layout='position'
             layoutId={`layout-${entry.digest}`} //transitions animations using framer motion
             key={`key-${entry.digest}`} //transitions animations using framer motion
@@ -107,7 +105,7 @@ const Container = forwardRef<HTMLElement, Container>(
             isPreview={isPreview}
             isHighlighted={!isPreview ? true : (isHover || isFocused ) ? true : false}
             ref={ref}>
-                {children}
+                     {children}
             </StyledContainerMotion>
     )
 })

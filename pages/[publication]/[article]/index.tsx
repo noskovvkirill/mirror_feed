@@ -1,45 +1,28 @@
 import Layout from '@/design-system/Layout'
 import Box from '@/design-system/primitives/Box'
-import { request, gql } from 'graphql-request';
+import { request } from 'graphql-request';
 import type { GetServerSideProps } from 'next'
 import Article from '@/design-system/Article';
 import type {Entry} from '@/design-system/Article'
-import type {CurrentArticle} from 'contexts'
+// import type {CurrentArticle} from 'contexts'
 import {Current} from 'contexts'
 import { useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
+import { queryEntry } from 'src/queries';
 
-const queryEntry = gql`
-query Entry($digest: String!) {
-  entry(digest: $digest) {
-       id
-        body
-        digest
-        timestamp
-        title
-        author{
-          address
-          displayName
-        }
-        publication{
-          ensLabel
-        }
-    }
-}`
 
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-
-const { article, publication} = ctx.query;
-
-console.log('article', article, 'publication', publication)
-const entry = await request('https://mirror-api.com/graphql', queryEntry, {
-       digest: article
-    }).then((data) =>data.entry).catch(()=>{return { notFound:true}})
-  return {
-    props:{entry:entry},
-  }
+  // const { article, publication} = ctx.query;
+  const { article} = ctx.query;
+  const entry = await request('https://mirror-api.com/graphql', queryEntry, {
+        digest: article
+      }).then((data) =>data.entry).catch(()=>{return { notFound:true}})
+    return {
+      props:{entry:entry},
+    }
 };
+
 type Props = {
     entry:Entry;
 }
@@ -58,6 +41,7 @@ const Data = ({entry}:Props) =>{
       title:entry.title,
       digest: entry.digest
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[entry])
 
     return(
