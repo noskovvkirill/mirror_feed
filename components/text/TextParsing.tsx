@@ -1,12 +1,20 @@
 import {styled} from 'stitches.config'
 
 export const StyledList = styled('ul', {
-    listStyle:'inside',
+    listStyle:'none',
     color:'$foregroundBronzeText',
     padding:'$2 0',
     li:{    
         color:'$foregroundBronzeText',
-        marginBottom:'$2'
+        marginBottom:'$2',
+        '&:before':{
+              content: "\u2022",
+              color:'$foregroundBronzeText',
+              opacity:0.3,
+              display:'inline-block',
+              width:'1em',
+              marginRight:'$1'
+        }
     },
     strong:{
         fontFamily:'Satoshi Variable',
@@ -207,7 +215,7 @@ export const StyledToc = styled('nav', {
     padding:'$2',
     paddingLeft:'calc($3 + 4px)',
     top:'256px',
-    height:'fit-content',
+    overflow:'scroll',
     position:'sticky',
     listStyle:'inside',
     'a':{
@@ -234,10 +242,10 @@ export const StyledToc = styled('nav', {
         },
     },
     'ul':{
-         listStyle:'inside'
+         listStyle:'none'
     },
     'ol':{
-        listStyle:'inside'
+        listStyle:'none'
     },
     'li':{
         paddingLeft:'1px',

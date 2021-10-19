@@ -92,30 +92,35 @@ const StyledImageHidden = styled(StyledImage,{
     display:'none'
 })
 
-// const StyledImageFull = (props:ReactPropTypes) => (
-//     <Box>
-//         <Button>Add to the pinned items</Button>
-//         <StyledImage loading='lazy' {...props} inline={false}/>
-//     </Box>
-// )
 
 
-
+// TODO: Add window height resize event listener to change the height of TOC 
+ 
 //this is really ugly solution, but works for now 
 const TocPortalled = (props:ReactPropTypes) => {
     const [container, setContainer] = useState<Element | null>(null)
+    const [height, setHeight] = useState<'fit-content' | number>(0)
     useEffect(()=>{
         if(document){
             const element = document.querySelector('#article-toc')
+            console.log('rect', element?.getBoundingClientRect())
+            const top = element?.getBoundingClientRect().top
             if(element){
              setContainer(element)
             }
+            if(!top || top === undefined){
+                setHeight('fit-content');
+                return
+            }
+            const heightWindow = window.innerHeight 
+            const elementHeight = heightWindow-top;
+            setHeight(elementHeight)
         }
     },[])
 
     if(container){
     return ReactDOM.createPortal(
-     <StyledToc {...props}/>,
+     <StyledToc css={{height:height}} {...props}/>,
     container
   );} else return(<></>)
 }
@@ -197,10 +202,10 @@ const Article= ({entry, isPreview=true}:Props) => {
     const setSettings = useSetRecoilState(readSettings)
     const [isHover, setIsHover] = useState(false)
 
-    const bodyTextShort =  useMemo(() => processorShort.processSync(truncateText(entry.body)).result, [entry.body])
 
-    //we precompute the full body and memoize it on initial render. 
+    //  we precompute the  body and memoize it on initial render. 
     // This way, when we open a large article, animation is not glitchy :-) 
+    const bodyTextShort =  useMemo(() => processorShort.processSync(truncateText(entry.body)).result, [entry.body])
     const bodyText =  useMemo(() => processorFull.processSync(entry.body).result, [entry.body])
 
     return(
