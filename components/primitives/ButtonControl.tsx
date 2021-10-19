@@ -1,8 +1,7 @@
 import Button from '@/design-system/primitives/Button'
 import {styled} from 'stitches.config'
-import { ReactChild,useState } from 'react'
+import { ReactChild,useState, memo} from 'react'
 import * as Portal from '@radix-ui/react-portal';
-import {useRef, useEffect} from 'react';
 
 const StyledControl = styled(Button,{
     border:'1px solid $foreground', 
@@ -22,6 +21,14 @@ const StyledControl = styled(Button,{
     boxSizing:'border-box',
     lineHeight:'$6',
     variants:{
+        monochrome:{
+            true:{
+
+            },
+            false:{
+
+            }
+        },
         isHighlighted:{
             true:{
                  border:'1px solid $foregroundBronze', 
@@ -37,7 +44,7 @@ const StyledControl = styled(Button,{
 
             },
             false:{
-                  border:'1px solid $foreground', 
+                  border:'1px solid $foregroundBorder', 
                   color:'$foregroundText', 
                   '&:hover':{
                     background:'$foreground',
@@ -117,7 +124,7 @@ const Control = ({children, direction, label, pos}:{
 const ButtonControl = (
     {children, selected, 
     direction='right',
-    label, isHighlighted, onClick}:{children:ReactChild,label:string, direction?:'right' | 'left',selected?:boolean, isHighlighted:boolean, onClick?: () => void;
+    label, isHighlighted, onClick}:{children:ReactChild,label:string, direction?:'right' | 'left',selected?:boolean, isHighlighted:boolean, onClick?: (e:React.MouseEvent<HTMLButtonElement> | never) => void;
     }) => {
     const [isHover, setIsHover] = useState(false)
     const [pos, setPos] = useState({x:-99999, y:-99999})
@@ -135,13 +142,10 @@ const ButtonControl = (
                  const target = e.target as HTMLElement;
                  const coord = target.getBoundingClientRect()
                  if(direction === 'right'){
-                 setPos({x:coord.x+window.scrollX, y:coord.y+window.scrollY})
+                    setPos({x:coord.x+window.scrollX, y:coord.y+window.scrollY})
                  } else {
                      setPos({x:coord.x+window.scrollX+coord.width, y:coord.y+window.scrollY})
                  }
-                //  const eventL = window.addEventListener('scroll', (e)=>console.log('scroll'))
-                // console.log('eventL', eventL)
-                
             }}
             onMouseLeave={()=>{
                 setIsHover(false)
@@ -152,23 +156,9 @@ const ButtonControl = (
             </StyledControl>
             {isHover && (
                 <Control direction={direction} label={label} pos={pos}>{children}</Control>
-            //  <Portal.Root>
-            //     <StyledControl
-            //     css={{
-            //     position:'absolute', 
-            //     background:'$foregroundBronze',
-            //     color:'$backgroundBronze',
-            //     pointerEvents:'none', top:0, left:0,
-            //     transform:`translate(${pos.x}px, ${pos.y}px)`}}
-            //     isHighlighted={true}
-            //     >
-            //         {children}
-            //         {label}
-            //     </StyledControl>
-            // </Portal.Root>
             )}
         </>
     )
 }
 
-export default ButtonControl
+export default memo(ButtonControl)

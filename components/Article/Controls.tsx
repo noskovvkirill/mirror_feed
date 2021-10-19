@@ -13,7 +13,7 @@ import BackIcon from '@/design-system/icons/Back'
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 import Box from '@/design-system/primitives/Box'
 import { AddressPrettyPrint } from 'src/utils';
-
+import React from 'react'
 
 export interface ControlsExternal {}
 
@@ -43,11 +43,11 @@ const StyledHeader = styled('div',{
       padding:'0',
       margin:'$2 $2 $2 0',
       width:'32px',
-      color:'$foreground',
-      mixBlendMode:'multiply',
-      transition:'$all',
+      color:'$foregroundBronze',
+      transition:'$background',
       cursor:'pointer',
       'h5':{
+          transition:'$color',
           userSelect:'none',
           whiteSpace:'nowrap',
           fontWeight:'400',
@@ -59,7 +59,7 @@ const StyledHeader = styled('div',{
         isHighlighted:{
             true:{
                 '&:hover':{
-                    backgroundColor:'$highlightBronze',
+                    backgroundColor:'$foregroundTintBronze',
                     color:'$foregroundTextBronze',
                 },
             },
@@ -220,7 +220,7 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                     label='pin on top'
                     isHighlighted={(isHover || isFocused) ? true : false}
                     onClick={()=>
-                    setPinnedItem((prevState:PinnedItem[])=>[...prevState, {entry:entry}])
+                    setPinnedItem((prevState:PinnedItem[])=>[...prevState, {id:prevState.length > 0 ? prevState[prevState.length-1].id + 1 : 0,type:'entry', item:entry}])
                     }>
                         <PinIcon/>
                 </ButtonControl>
@@ -235,12 +235,12 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
                 {entry.publication?.ensLabel 
                 ? <StyledHeader
                 onClick={()=>Open(`/${entry.publication.ensLabel}`)}
-                isHighlighted={isFocused}>
+                isHighlighted={(isHover || isFocused) ? true : false}>
                         <h5>{entry.publication.ensLabel}</h5>
                 </StyledHeader>
                 : <StyledHeader 
                 onClick={()=>Open(`/${entry.author.address}?type=personal`)}
-                isHighlighted={isFocused}>
+                isHighlighted={(isHover || isFocused) ? true : false}>
                     <h5>
                         {entry.author.displayName ? entry.author.displayName : <>{AddressPrettyPrint(entry.author.address, 6)}</>}
                     </h5> 
@@ -250,7 +250,31 @@ const ControlsComponent = ({entry, isPreview=true, isHover, isFocused, isReading
               
         </StyledControls>
     )
-
 }
 
-export default ControlsComponent
+//because fullSize Controls ignore the isFocus, isHover and isPreview state, we should not re-render
+//component on those changes as well 
+const areEqual = (prevProps:any, nextProps:any) => {
+   if(prevProps.isPreview === false 
+    && nextProps.isPreview === false
+    && prevProps.entry.id === nextProps.entry.id
+    && prevProps.isReadingList === nextProps.isReadingList
+    ){
+       return true 
+   } 
+
+   if( 
+    prevProps.entry.id === nextProps.entry.id
+    && prevProps.isPreview === nextProps.isPreview
+    && prevProps.isFocused === nextProps.isFocused
+    && prevProps.isHover === nextProps.isHover 
+    && prevProps.isReadingList === nextProps.isReadingList
+    ) {
+        //  console.log('same!')
+        return true
+    }
+    // console.log('not same!')
+    return false
+}
+
+export default React.memo(ControlsComponent, areEqual)

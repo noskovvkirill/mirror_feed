@@ -51,7 +51,13 @@ const getProposal =  async (cid:string) => await request('https://mirror-api.com
 
 const Proposal = ({cid}:{cid:string}) => {
     
-    const {data, error} = useSWR(cid, getProposal)
+    const {data, error} = useSWR(cid, getProposal, {
+        onErrorRetry: (error, _, __, ___, { retryCount }) => {
+            if (error.status === 404) return
+             if (retryCount >= 2) return
+        },
+        loadingTimeout:3000
+    })
     const currentArticle = useRecoilValue(Current)
    
 

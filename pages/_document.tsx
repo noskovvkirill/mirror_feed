@@ -13,7 +13,6 @@ export default class Document extends NextDocument {
     static async getInitialProps(ctx: DocumentContext) {
         try {
             const initialProps = await NextDocument.getInitialProps(ctx);
-
             return {
                 ...initialProps,
                 styles: (

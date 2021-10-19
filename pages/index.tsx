@@ -34,7 +34,7 @@ const entries = await Promise.all([...new Set(content)].map(async (item:any) => 
        digest: item
     }).then((data) =>
       data.entry
-    ).catch((e)=>{return})
+    ).catch(()=>{return})
     )
   }))
 
@@ -55,7 +55,7 @@ const getKey = (_:any, previousPageData:any) => {
   if (previousPageData && !previousPageData.length) return null // reached the end
 
   return `{
-		transactions(first:10, ${previousPageData ? 'after:"'+previousPageData[1]+'"' : ''}, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
+		transactions(first:5, ${previousPageData ? 'after:"'+previousPageData[1]+'"' : ''}, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
 			edges {
 				node {
 					id
@@ -134,7 +134,7 @@ const Data = ({entries, lastCursor}:Props) =>{
             {data.map((page:any)=>{
               return page[0].map((entry:any)=>{
                 if(ignoredList.findIndex((item:IgnoredPublication)=>entry.publication?.ensLabel === item.ensLabel || entry.author.address === item.ensLabel) === -1){
-                    if(pinnedList.findIndex((item:PinnedItem)=>item.entry.digest === entry.digest) !== -1){
+                    if(pinnedList.findIndex((item:PinnedItem)=>item.type === 'entry' && item.item.digest === entry.digest) !== -1){
                       return;
                     } else {
                         return(

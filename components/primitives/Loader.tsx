@@ -16,7 +16,8 @@ const Loader = ({size='default'}:{size:'small' | 'default'}) =>{
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         animation:`${textAnimation} 4s linear infinite`,
-        animationDirection:'alternate'
+        animationDirection:'alternate',
+        mixBlendMode:'multiply'
         }}>
             Patience
           </Box>
