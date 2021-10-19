@@ -125,7 +125,8 @@ const PinnedComponent= ({item}:Props) => {
     const setReadLater = useSetRecoilState(readLaterList)
     const readingList = useRecoilValueAfterMount(readLaterList, [])
     const router = useRouter();
-
+    // const {attributes, listeners, setNodeRef, transform} = useDraggable({id: 'draggable'});
+    // const style = transform ? {    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,  } : undefined;
     if(item.type === 'attachment'){
         return(
             <StyledContainer css={{ padding:'0', overflow:'hidden', position:'relative', border:'1px solid $foregroundBronze'}}>
@@ -156,7 +157,13 @@ const PinnedComponent= ({item}:Props) => {
 
     if(item.type==='entry'){
     return(
-        <StyledContainer isHighlighted={true}>
+        <StyledContainer 
+        draggable
+        // onDrag={()=>alert('darg')}
+        // css={{style}}
+        // ref={setNodeRef}
+        //  {...listeners} {...attributes}
+        isHighlighted={true}>
                     <StyledControls>
                         <ButtonControl
                         isHighlighted={true}
@@ -185,8 +192,6 @@ const PinnedComponent= ({item}:Props) => {
                             <SuccessMarkIcon/>
                         </ButtonControl>
                         }
-
-
                         <ButtonControl
                             selected={true}
                             label='unpin item'

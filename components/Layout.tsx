@@ -14,7 +14,7 @@ import OnBoarding from '@/design-system/Onboarding'
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 import PinnedList from '@/design-system/PinnedList'
 import { Current } from 'contexts'
-
+import {DndContext} from '@dnd-kit/core';
 
 const StyledMain = styled('main', {
     backgroundColor: '$background',
@@ -116,24 +116,25 @@ const Layout = ({children}:Props) =>{
                     ))}
                     </>
                 )}
-
-                <StyledHeader css={{position:'sticky', height:'160px'}}>
-                    <PinnedList 
-                        pinnedList={pinnedList}
-                        setPinnedList={setPinnedList}
-                        currentArticle={currentArticle}
-                        routerQuery={{
-                            article:router.query.article?.toString(),
-                            publication:router.query.publication?.toString()
-                        }}
-                        isPinnedList={isPinnedList} 
-                        setIsPinnedList={setIsPinnedList}
-                        setReadLater={setReadLater}
-                    />
-                </StyledHeader>
-                <StyledMain>
-                    {children}
-                </StyledMain>
+                 {/* <DndContext onDragStart={()=>alert('fire')}> */}
+                    <StyledHeader css={{position:'sticky', height:'160px'}}>
+                        <PinnedList 
+                            pinnedList={pinnedList}
+                            setPinnedList={setPinnedList}
+                            currentArticle={currentArticle}
+                            routerQuery={{
+                                article:router.query.article?.toString(),
+                                publication:router.query.publication?.toString()
+                            }}
+                            isPinnedList={isPinnedList} 
+                            setIsPinnedList={setIsPinnedList}
+                            setReadLater={setReadLater}
+                        />
+                    </StyledHeader>
+                    <StyledMain>
+                        {children}
+                    </StyledMain>
+                {/* </DndContext> */}
             </Box>
     )
 }

@@ -7,6 +7,8 @@ import { LazyMotion } from "framer-motion"
 import {ThemeProvider} from 'next-themes'
 import {darkTheme, darkThemePlain, lightThemePlain, lightThemeBlue} from 'stitches.config'
 import {useState, useContext} from 'react'
+
+
 // import dynamic from 'next/dynamic'
 const loadFeatures = () =>
   import("src/animation-features").then(res => res.default)
@@ -80,8 +82,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                     themes={['light-cream', 'dark-plain', 'light-blue', 'dark-blue']}
                     // defaultTheme="custom-theme"
                     value={values}
-                  > 
-                      <Component {...pageProps} />
+                  >          
+                    <Component {...pageProps} />
                   </ThemeProvider>
                   )}
                 }

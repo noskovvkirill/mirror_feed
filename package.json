@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@dnd-kit/core": "^4.0.0",
     "@jsdevtools/rehype-toc": "^3.0.2",
     "@nfte/react": "^1.0.4",
     "@radix-ui/colors": "^0.1.7",

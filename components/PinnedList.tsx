@@ -8,6 +8,7 @@ import PinnedComponent  from '@/design-system/PinnedItem'
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import React from 'react'
+import {useDraggable, useDroppable} from '@dnd-kit/core'
 
 const StyledPinnedList = styled(ScrollArea.Root,{
     width:'100%',
@@ -93,9 +94,18 @@ interface IPinnedList {
     currentArticle:CurrentArticle | null;
 }
 
-
+function Draggable(props:any) {  
+    const Element = props.element || 'div';  
+    const {attributes, listeners, setNodeRef} = useDraggable({    id: props.id,  });    
+    return (
+    <Element ref={setNodeRef} {...listeners} {...attributes}>      
+    {props.children}    
+    </Element>  
+    );
+}
 
 const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater, routerQuery, pinnedList, setPinnedList, currentArticle}:IPinnedList) => {
+    const {isOver, setNodeRef} = useDroppable({    id: 'droppable_pinnedList',  });
     return(
     <>
         <StyledNavControls layout='flexBoxColumn'>
@@ -148,10 +158,14 @@ const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater, routerQuery,
         {isPinnedList && (
             <StyledPinnedList type='scroll'>
                 <StyledViewport asChild={false}>
-                    <Box layout='flexBoxRow' css={{paddingTop:'$2'}}>
+                    <Box layout='flexBoxRow' 
+                    ref={setNodeRef} 
+                    css={{paddingTop:'$2'}}>
                         {pinnedList.map((item:PinnedItem)=>{
                             return(
-                                <PinnedComponent key={'pinned item' + item.id} item={item}/>
+                                <Draggable key={'pinned item' + item.id}>
+                                    <PinnedComponent item={item}/>
+                                </Draggable>
                             )
                         })}
 
@@ -170,9 +184,10 @@ const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater, routerQuery,
                      
 )}
 
-const areEqual = (prevProps:any, nextProps:any) => {
-   if(prevProps.pinnedList.length === nextProps.pinnedList.length && prevProps.isPinnedList === nextProps.isPinnedList)
-    return true
-    else return false
-}
-export default React.memo(PinnedList, areEqual)
+// const areEqual = (prevProps:any, nextProps:any) => {
+//    if(prevProps.pinnedList.length === nextProps.pinnedList.length && prevProps.isPinnedList === nextProps.isPinnedList)
+//     return true
+//     else return false
+// }
+// export default React.memo(PinnedList, areEqual)
+export default PinnedList
