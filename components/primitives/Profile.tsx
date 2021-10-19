@@ -149,7 +149,7 @@ const Profile = ({profile, size='md'}:IProfile) => {
                    
                           
                             <StyledImage 
-                            src={profile?.avatarURL && profile.avatarURL}
+                            src={profile?.avatarURL ? profile.avatarURL : ''}
                             alt={'user avatar'}
                             />
                            

@@ -142,6 +142,7 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
                         height="100%"
                         css={{objectFit:'scale-down', borderRadius:'$2', boxShadow:'$normal'}}
                         src={data?.primaryMedia?.sizes?.md?.hasOwnProperty('src') ? data.primaryMedia.sizes.md.src : data.primaryMedia?.sizes?.og?.src}/>
+
                     )}
                     </Box>
                     
@@ -155,6 +156,7 @@ const Editions = ({editionId, editionContractAddress}:{editionId:number, edition
                             {/* {data.publication.ensLabel} */}
                             <Box css={{width:'$4', height:'$4', borderRadius:'$round', overflow:'hidden'}}>
                                 <img alt='user-avatar' src={data?.publication?.avatarURL} width='100%' height='100%'/>
+
                             </Box>
                         </Box>
                     </Box>
