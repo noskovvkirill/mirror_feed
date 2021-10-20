@@ -73,6 +73,7 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
         },
         shadows: {
             normal: `0px 2px 4px rgba(224,206,199, 0.5)`,
+             large: `0px 4px 8px rgba(224,206,199, 0.8)`,
         },
         zIndices: {},
         transitions: {

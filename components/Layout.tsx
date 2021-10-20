@@ -15,6 +15,7 @@ import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 import PinnedList from '@/design-system/PinnedList'
 import { Current } from 'contexts'
 import {DndContext} from '@dnd-kit/core';
+import {createPortal} from 'react-dom';
 
 const StyledMain = styled('main', {
     backgroundColor: '$background',
@@ -79,6 +80,8 @@ const Layout = ({children}:Props) =>{
     const curated = useRecoilValueAfterMount(curationItems, [])
     const [isPortal, setIsPortal] = useRecoilState(portalState)
 
+    const [activeId, setActiveId] = useState<number | null>(null); //draggable
+
     useHotkeys("*", (e) => {
         if(e.key === 'Alt'){
              setIsPortal(!isPortal)
@@ -116,9 +119,14 @@ const Layout = ({children}:Props) =>{
                     ))}
                     </>
                 )}
-                 {/* <DndContext onDragStart={()=>alert('fire')}> */}
+                 <DndContext 
+                 onDragEnd={()=>{setActiveId(null)}}
+                 onDragStart={(e)=>{
+                     setActiveId(Number(e.active.id))
+                    }}>
                     <StyledHeader css={{position:'sticky', height:'160px'}}>
                         <PinnedList 
+                            activeId={activeId}
                             pinnedList={pinnedList}
                             setPinnedList={setPinnedList}
                             currentArticle={currentArticle}
@@ -131,10 +139,12 @@ const Layout = ({children}:Props) =>{
                             setReadLater={setReadLater}
                         />
                     </StyledHeader>
+                     
+
                     <StyledMain>
                         {children}
                     </StyledMain>
-                {/* </DndContext> */}
+                </DndContext>
             </Box>
     )
 }

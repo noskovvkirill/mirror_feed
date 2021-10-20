@@ -8,8 +8,10 @@ import PinnedComponent  from '@/design-system/PinnedItem'
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import React from 'react'
-import {useDraggable, useDroppable} from '@dnd-kit/core'
-
+import {useDraggable, useDroppable,DragOverlay} from '@dnd-kit/core'
+import {useState, useEffect, forwardRef} from 'react'
+import * as Portal from '@radix-ui/react-portal';
+import { createPortal } from 'react-dom'
 const StyledPinnedList = styled(ScrollArea.Root,{
     width:'100%',
     boxSizing:'border-box',
@@ -82,6 +84,7 @@ const StyledNavControls = styled(Box, {
 
 
 interface IPinnedList {
+    activeId:number | null;
     isPinnedList:boolean;
     setIsPinnedList:(newState:boolean) => void;
     setReadLater:(fn:(prevState:ReadingListItem[]) => ReadingListItem[]) => void;
@@ -96,16 +99,42 @@ interface IPinnedList {
 
 function Draggable(props:any) {  
     const Element = props.element || 'div';  
-    const {attributes, listeners, setNodeRef} = useDraggable({    id: props.id,  });    
+    const {attributes, listeners, setNodeRef} = useDraggable({    id: props.id.toString()  });    
     return (
-    <Element ref={setNodeRef} {...listeners} {...attributes}>      
-    {props.children}    
-    </Element>  
+        <Element 
+        ref={setNodeRef}>
+        
+              <PinnedComponent  
+              isActive={false}
+                // isActive={(activeId && item.id === Number(activeId)) ? true : false}
+            item={props.item}>
+                <button  {...listeners} {...attributes}>
+                    DRAG
+                </button>
+            </PinnedComponent>
+        </Element>  
     );
 }
 
-const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater, routerQuery, pinnedList, setPinnedList, currentArticle}:IPinnedList) => {
+interface Props {
+  dragOverlay?: boolean;
+  dragging?: boolean;
+  handle?: boolean;
+  label?: string;
+  children:any;
+}
+
+const Item = forwardRef<HTMLDivElement, Props>(({children, ...props}, ref) => {  
+ return (<div {...props} ref={ref}>{children}</div>)
+});
+
+Item.displayName ='Item'
+
+
+const PinnedList = ({ activeId, isPinnedList,  setIsPinnedList, setReadLater, routerQuery, pinnedList, setPinnedList, currentArticle}:IPinnedList) => {
     const {isOver, setNodeRef} = useDroppable({    id: 'droppable_pinnedList',  });
+
+
     return(
     <>
         <StyledNavControls layout='flexBoxColumn'>
@@ -125,6 +154,81 @@ const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater, routerQuery,
                     <Box layout='flexBoxRow' css={{userSelect:'none', fontSize:'$6', color:'$foregroundText', alignItems:'center', justifyContent:'center'}}>{pinnedList.length}</Box>
                 )}
             </Box>
+
+
+            
+            <SpacesSelector  
+                type={currentArticle?.publication.type}
+                author={currentArticle?.author}
+                content={currentArticle?.title || routerQuery.article}
+                publication={ currentArticle?.publication.ensLabel || routerQuery.publication}
+            />
+   
+        </StyledNavControls>       
+        {isPinnedList && (
+            <StyledPinnedList type='scroll'>
+                <StyledViewport asChild={false}>
+                    <Box layout='flexBoxRow' 
+                    ref={setNodeRef} 
+                    css={{paddingTop:'$2'}}>
+                        {pinnedList.map((item:PinnedItem)=>{
+                            return(
+                                <Draggable id={item.id} 
+                                isActive={(activeId && item.id === Number(activeId)) ? true : false}
+                                item={item}
+                                key={'pinned item' + item.id}/>  
+                            )
+                        })}
+                        {/* Placeholder to have an empty space around the end of the component */}
+                        <Box css={{width:'256px', userSelect:'none'}}>
+                            &nbsp;
+                        </Box>
+                    </Box>
+
+    
+
+                </StyledViewport>
+                <StyledScrollbar orientation="horizontal">
+                    <StyledThumb/>
+                </StyledScrollbar>
+            </StyledPinnedList>
+        )}
+
+            {typeof window !== 'undefined' && (
+            <>
+             {createPortal(
+               <DragOverlay >
+                      {(activeId && pinnedList.findIndex((item)=>item.id === Number(activeId)) !== -1)
+                        ? <Item>
+                            <PinnedComponent 
+                            isActive={"dragged"}
+                            item={pinnedList.find((item)=>item.id === Number(activeId))}>
+                            <button>
+                                DRAG
+                            </button>
+                            </PinnedComponent>
+                         </Item>
+               
+                      : null}
+                </DragOverlay>,
+                     document.body)}
+                 </>
+            )}
+
+  
+    </>
+                     
+)}
+
+
+
+// const areEqual = (prevProps:any, nextProps:any) => {
+//    if(prevProps.pinnedList.length === nextProps.pinnedList.length && prevProps.isPinnedList === nextProps.isPinnedList)
+//     return true
+//     else return false
+// }
+// export default React.memo(PinnedList, areEqual)
+export default PinnedList
 
             {/* <ButtonControl 
             isHighlighted={false}
@@ -146,48 +250,3 @@ const PinnedList = ({ isPinnedList,  setIsPinnedList, setReadLater, routerQuery,
             label='Add all to the reading list'>
                 <AddAllIcon/>
             </ButtonControl> */}
-            
-            <SpacesSelector  
-                type={currentArticle?.publication.type}
-                author={currentArticle?.author}
-                content={currentArticle?.title || routerQuery.article}
-                publication={ currentArticle?.publication.ensLabel || routerQuery.publication}
-            />
-   
-        </StyledNavControls>       
-        {isPinnedList && (
-            <StyledPinnedList type='scroll'>
-                <StyledViewport asChild={false}>
-                    <Box layout='flexBoxRow' 
-                    ref={setNodeRef} 
-                    css={{paddingTop:'$2'}}>
-                        {pinnedList.map((item:PinnedItem)=>{
-                            return(
-                                <Draggable key={'pinned item' + item.id}>
-                                    <PinnedComponent item={item}/>
-                                </Draggable>
-                            )
-                        })}
-
-                        {/* Placeholder to have an empty space around the end of the component */}
-                        <Box css={{width:'256px', userSelect:'none'}}>
-                            &nbsp;
-                        </Box>
-                    </Box>
-                </StyledViewport>
-                <StyledScrollbar orientation="horizontal">
-                    <StyledThumb/>
-                </StyledScrollbar>
-            </StyledPinnedList>
-        )}
-    </>
-                     
-)}
-
-// const areEqual = (prevProps:any, nextProps:any) => {
-//    if(prevProps.pinnedList.length === nextProps.pinnedList.length && prevProps.isPinnedList === nextProps.isPinnedList)
-//     return true
-//     else return false
-// }
-// export default React.memo(PinnedList, areEqual)
-export default PinnedList

@@ -1,42 +1,39 @@
 import Box from '@/design-system/primitives/Box'
 import Layout from '@/design-system/Layout'
-// import {useDroppable} from '@dnd-kit/core';
-import {useDraggable, useDroppable} from '@dnd-kit/core'
-import {DndContext,closestCorners} from '@dnd-kit/core';
 
-function Draggable(props:any) {  
-    const Element = props.element || 'div';  
-    const {attributes, listeners, setNodeRef, transform} = useDraggable({    id: props.id,  });   
-    const style = transform ? {    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,  } : undefined; 
-    return (    
-    <Element style={style} ref={setNodeRef} {...listeners} {...attributes}>      
-    {props.children}    
-    </Element>  
-    );
+import { useDroppable} from '@dnd-kit/core'
+import {useState} from 'react'
+
+
+
+const Droppable = ({id}:{id:string}) => {
+    const {isOver, setNodeRef} = useDroppable({id: id});
+       return(
+         <div ref={setNodeRef} style={{padding:'24px', background:'gray', color:!isOver ? 'white' : 'blue'}}>
+                Hey, how are you!
+                {JSON.stringify(isOver)}
+         </div>
+     )
 }
 
+
+
 const MySpace = () => {
-     const {isOver, setNodeRef} = useDroppable({    id: 'droppable_myspace',  });
+    const [active, setActive] = useState(false)
 
     return(
         <Layout>
-            <DndContext 
-             collisionDetection={closestCorners}
-            onDragStart={()=>console.log('start')}>
-            <div ref={setNodeRef} style={{padding:'24px',color:'white'}}>
-                Hey, how are you!
-                {JSON.stringify(isOver)}
-            </div>
-            <div style={{width:'500px', height:'500px'}}>
-                 <Draggable id="draggable_ITEMSKI" >
-                    <div 
-                    draggable
-                    style={{padding:'16px', position:'relative', background:'gray', width:'120px'}}
-                    // css={{padding:'$2', backgroundColor:'$foreground'}}
-                    >DRAG ME</div>
-                </Draggable>
-            </div>
-            </DndContext>
+           
+            <Droppable id={'21'}/>
+            <Box css={{height:'120px', background:'red'}}>
+                RED ZONE
+            </Box>
+            <Droppable id={'22'}/>
+
+       
+
+
+    
         </Layout>
     )
 }

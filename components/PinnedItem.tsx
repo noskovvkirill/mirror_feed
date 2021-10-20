@@ -19,11 +19,13 @@ import { pinnedItems, readLaterList,  ReadingListItem} from 'contexts'
 import { useSetRecoilState} from 'recoil'
 import {useRouter} from 'next/router'
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
-
+import { useDraggable } from '@dnd-kit/core'
 import type {PinnedItem} from 'contexts'
 
 interface Props {
     item: PinnedItem;
+    isActive:boolean | "dragged";
+    children?:React.ReactNode[] | React.ReactNode
 }
 
 
@@ -46,10 +48,23 @@ const StyledContainer = styled('div',{
             false:{
                 backgroundColor:'$background',
             }
+        },
+        isActive:{
+            true:{
+                opacity:0.5
+            },
+            false:{
+                opacity:1
+            },
+            dragged:{
+                cursor:'pointer',
+                boxShadow:'$large'
+            }
         }
     },
     defaultVariants:{
-        isHighlighted:false
+        isHighlighted:false,
+        isActive:false
     }
 })
 
@@ -120,106 +135,106 @@ const StyledControls = styled('div',{
 
 
 
-const PinnedComponent= ({item}:Props) => {
+const PinnedComponent= ({item, isActive, children}:Props) => {
     const setPinnedItem = useSetRecoilState(pinnedItems)
     const setReadLater = useSetRecoilState(readLaterList)
     const readingList = useRecoilValueAfterMount(readLaterList, [])
     const router = useRouter();
-    // const {attributes, listeners, setNodeRef, transform} = useDraggable({id: 'draggable'});
-    // const style = transform ? {    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,  } : undefined;
+
     if(item.type === 'attachment'){
         return(
-            <StyledContainer css={{ padding:'0', overflow:'hidden', position:'relative', border:'1px solid $foregroundBronze'}}>
-                <StyledControls css={{position:'absolute', flexDirection:'column', padding:'$2'}}>
-                        <ButtonControl
-                            selected={true}
-                            label='unpin item'
-                            isHighlighted={true}
-                            onClick={()=>
-                            setPinnedItem((prevState:PinnedItem[])=>{
-                                const indexUnPin = prevState.findIndex((itemP:PinnedItem)=>{
-                                  return itemP.id === item.id 
-                            })
-                                const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
-                                return newArray
-                            })
-                            }><UnPinIcon/>
-                        </ButtonControl>
-                        <StyledLabel css={{height:'fit-content'}} isHighlighted={true}>{item.item.mimeType}</StyledLabel>
+                <StyledContainer 
+                isActive={isActive}
+                css={{ padding:'0', overflow:'hidden', position:'relative', border:'1px solid $foregroundBronze'}}>
+                    <StyledControls css={{position:'absolute', flexDirection:'column', padding:'$2'}}>
+                        {children}
+                            <ButtonControl
+                                selected={true}
+                                label='unpin item'
+                                isHighlighted={true}
+                                onClick={()=>
+                                setPinnedItem((prevState:PinnedItem[])=>{
+                                    const indexUnPin = prevState.findIndex((itemP:PinnedItem)=>{
+                                    return itemP.id === item.id 
+                                })
+                                    const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
+                                    return newArray
+                                })
+                                }><UnPinIcon/>
+                            </ButtonControl>
+                            <StyledLabel css={{height:'fit-content'}} isHighlighted={true}>{item.item.mimeType}</StyledLabel>
 
-                </StyledControls>
-                 <StyledBody isHighlighted={true} css={{objectFit:'scale-down', padding:'0'}}>
-                    <img alt='pinned item' src={item.item.url} width='100%' height='auto'/> 
-                </StyledBody>
-            </StyledContainer>
+                    </StyledControls>
+                    <StyledBody isHighlighted={true} css={{objectFit:'scale-down', padding:'0'}}>
+                        <img alt='pinned item' src={item.item.url} width='100%' height='auto'/> 
+                    </StyledBody>
+                </StyledContainer>
         )
     }
 
     if(item.type==='entry'){
     return(
-        <StyledContainer 
-        draggable
-        // onDrag={()=>alert('darg')}
-        // css={{style}}
-        // ref={setNodeRef}
-        //  {...listeners} {...attributes}
-        isHighlighted={true}>
-                    <StyledControls>
-                        <ButtonControl
-                        isHighlighted={true}
-                        label='open'
-                        onClick={()=>{
-                                 item.item.publication?.ensLabel 
-                                ?  router.push(`/${item.item.publication?.ensLabel ? item.item.publication?.ensLabel : item.item.author.address}/${item.item.digest}`)
-                                :  router.push(`/${item.item.author.address}/${item.item.digest}`)
-                        }}><OpenIcon/></ButtonControl>
-                        {readingList.findIndex((itemL:ReadingListItem)=>itemL.entryDigest === item.item.digest) === -1 
-                        ? <ButtonControl
-                        label='to reading list'
-                        isHighlighted={true}
-                        onClick={()=>{setReadLater((prevState:ReadingListItem[])=>[...prevState, {entryDigest:item.item.digest, title:item.item.title, ensLabel: item.item.publication?.ensLabel ? item.item.publication.ensLabel : item.item.author.address }])}}><AddIcon/></ButtonControl>
-                        : <ButtonControl
-                        selected={true}
-                        label='remove from the reading list'
-                        isHighlighted={true}
-                        onClick={()=>{
-                            setReadLater((prevState:ReadingListItem[])=>{
-                                const indexUnPin = prevState.findIndex((itemL:ReadingListItem)=>itemL.entryDigest=== item.item.digest)
-                                const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
-                                return newArray
-                            })
-                        }}>
-                            <SuccessMarkIcon/>
-                        </ButtonControl>
-                        }
-                        <ButtonControl
-                            selected={true}
-                            label='unpin item'
+            <StyledContainer 
+            isActive={isActive}
+            isHighlighted={true}>
+                        <StyledControls>
+                             {children}
+                            <ButtonControl
                             isHighlighted={true}
-                            onClick={()=>
-                            setPinnedItem((prevState:PinnedItem[])=>{
-                                const indexUnPin = prevState.findIndex((itemP:PinnedItem)=>{
-                                    if(itemP.type === 'entry'){
-                                     if(item.item.digest === itemP.item.digest) return true
-                                    } else return false 
-                            })
-                                const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
-                                return newArray
-                            })
-                            }><UnPinIcon/>
-                        </ButtonControl>
-                    </StyledControls>
-                    <StyledBody isHighlighted={true}>
-                        <StyledTitle isHighlighted={true}>
-                            <b style={{padding:0, margin:'16px 0px'}}>{item.item.title.slice(0,45)}</b>
-                        </StyledTitle>
-                    </StyledBody>
-            </StyledContainer>
+                            label='open'
+                            onClick={()=>{
+                                    item.item.publication?.ensLabel 
+                                    ?  router.push(`/${item.item.publication?.ensLabel ? item.item.publication?.ensLabel : item.item.author.address}/${item.item.digest}`)
+                                    :  router.push(`/${item.item.author.address}/${item.item.digest}`)
+                            }}><OpenIcon/></ButtonControl>
+                            {readingList.findIndex((itemL:ReadingListItem)=>itemL.entryDigest === item.item.digest) === -1 
+                            ? <ButtonControl
+                            label='to reading list'
+                            isHighlighted={true}
+                            onClick={()=>{setReadLater((prevState:ReadingListItem[])=>[...prevState, {entryDigest:item.item.digest, title:item.item.title, ensLabel: item.item.publication?.ensLabel ? item.item.publication.ensLabel : item.item.author.address }])}}><AddIcon/></ButtonControl>
+                            : <ButtonControl
+                            selected={true}
+                            label='remove from the reading list'
+                            isHighlighted={true}
+                            onClick={()=>{
+                                setReadLater((prevState:ReadingListItem[])=>{
+                                    const indexUnPin = prevState.findIndex((itemL:ReadingListItem)=>itemL.entryDigest=== item.item.digest)
+                                    const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
+                                    return newArray
+                                })
+                            }}>
+                                <SuccessMarkIcon/>
+                            </ButtonControl>
+                            }
+                            <ButtonControl
+                                selected={true}
+                                label='unpin item'
+                                isHighlighted={true}
+                                onClick={()=>
+                                setPinnedItem((prevState:PinnedItem[])=>{
+                                    const indexUnPin = prevState.findIndex((itemP:PinnedItem)=>{
+                                        if(itemP.type === 'entry'){
+                                        if(item.item.digest === itemP.item.digest) return true
+                                        } else return false 
+                                })
+                                    const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
+                                    return newArray
+                                })
+                                }><UnPinIcon/>
+                            </ButtonControl>
+                        </StyledControls>
+                        <StyledBody isHighlighted={true}>
+                            <StyledTitle isHighlighted={true}>
+                                <b style={{padding:0, userSelect:'none', margin:'16px 0px'}}>{item.item.title.slice(0,45)}</b>
+                            </StyledTitle>
+                        </StyledBody>
+                </StyledContainer>
+     
     )}
     return(
-        <StyledContainer></StyledContainer>
+      <StyledContainer></StyledContainer>
     )
 }
-
+// export default PinnedComponent
 
 export default React.memo(PinnedComponent)
