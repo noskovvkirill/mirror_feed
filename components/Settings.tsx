@@ -3,12 +3,16 @@ import Button from "@/design-system/primitives/Button"
 import { styled } from "stitches.config"
 import ButtonPopover from "@/design-system/primitives/ButtonPopover"
 import * as Tabs from '@radix-ui/react-tabs';
-import AdjustIcon from '@/design-system/icons/Adjust'
-import ColorPicker from '@/design-system/primitives/ColorPicker'
+import Profile from '@/design-system/icons/Profile'
 import React from 'react'
-import {Color} from '@/design-system/Nav'
+import {useRouter} from 'next/router'
+// import {Color} from '@/design-system/Nav'
+// import Image from 'next/image'
+// import ColorPicker from '@/design-system/primitives/ColorPicker'
+// import AdjustIcon from '@/design-system/icons/Adjust'
+
 import {StyledTabsList, StyledTabsTrigger, StyledTabsContent} from '@/design-system/Spaces/SpacesSelector'
-import Image from 'next/image'
+import {useAuth} from 'contexts/user'
 
 interface ISettings {
     UpdateTheme:any,
@@ -17,14 +21,41 @@ interface ISettings {
 }
 
 
+const StyledSign = styled('button', {
+        display:'flex',
+        padding:'$1 $2',
+        fontSize:'$6',
+        transition: "$background",
+        color:'$foregroundText',
+        boxSizing:'border-box',
+        background:'$background',
+        borderRadius:'$2',
+        justifyContent:'space-between',
+        alignItems:'center',
+        border:'1px solid $foregroundBorder',
+        cursor:'pointer',
+        width:'100%',
+        '&:hover':{
+            color:'$background',
+            background:'$foregroundBronze',
+            border:'1px solid $foregroundBronze'
+        }
+})
+
+declare let window: any;
+
 
 const Settings = ({UpdateTheme, themes, theme}:ISettings) => {
+
+    const {user, Disconnect, Connect} = useAuth()
+    const router = useRouter()
+
     return(
-        <ButtonPopover icon={<AdjustIcon/>} label='change' isHighlighted={true}>
+        <ButtonPopover icon={<Profile/>} label='change' isHighlighted={true}>
           <Tabs.Root defaultValue='settings'>
               <Box layout='flexBoxRow' css={{alignItems:'center', boxSizing:'border-box', padding:'$2 $2', justifyContent:'space-between'}}>
                 <StyledTabsList css={{boxSizing:'border-box', color:'$foregroundText'}}>
-                    <StyledTabsTrigger value='login'>Sign In</StyledTabsTrigger>
+                    <StyledTabsTrigger value='login'>{(user && !user.isConnected) ? 'Sign In' : 'Account'}</StyledTabsTrigger>
                     <StyledTabsTrigger value='settings'>Settings</StyledTabsTrigger>
                 </StyledTabsList>
                 <Box css={{
@@ -37,13 +68,60 @@ const Settings = ({UpdateTheme, themes, theme}:ISettings) => {
                     padding:'$1', 
                     lineHeight:'$6',
                     borderRadius:'$round', color:'$background', background:'$foreground'}}>
-                    <AdjustIcon/>
+                    <Profile/>
                 </Box>
              </Box>
                 <StyledTabsContent value='login' css={{overflow:'hidden'}}>
-                    <Box css={{transform:'scale(1.08)', userSelect:'none'}}>
-                        <img alt='coming soon' src='/comingsoon.jpg' width="100%" height="100%"/>
-                    </Box>
+                    {(user && user.isConnected) && (
+                        <Box layout='flexBoxColumn' css={{padding:'0 $2 $2 $2'}}>
+                            {(()=>{
+                                switch(user.network?.name){
+                                    case 'rinkeby':
+                                        return(
+                                        <Box as='section' layout='flexBoxColumn'>
+                                            {/* <Box as='span' css={{fontSize:'$6', color:'$foregroundText'}}>Connected as</Box> */}
+                                            <Box as='span' css={{
+                                            fontSize:'$6',  
+                                            borderRadius:'$2',
+                                            padding:'$1 $2',
+                                            whiteSpace:'nowrap',
+                                            wordBreak:'break-all', background:'$highlightBronze', color:'$foregroundTextBronze'}}>
+                                                {user.address?.slice(0,13)}
+                                            </Box>
+                                        </Box>
+                                        )
+                                    case 'homestead':
+                                        return(<Box as='p' css={{color:'$error'}}>Mainnet is not supported yet. Switch to Rinkeby</Box>)
+                                    default: return(<>Unsupported network</>)
+                                }
+                           
+                            })()}
+                        
+                            <Button tabIndex={0} 
+                            onClick={()=>router.push('/my')}
+                            css={{width:'100%',  border:'1px solid transparent'}}>My Curation Space</Button>
+                            <Button tabIndex={0}  onClick={Disconnect} css={{width:'100%', border:'1px solid transparent'}}>Sign Out</Button>
+                        </Box>
+                    )}
+
+                    {(!user || !user.isConnected) && (
+                        <Box layout='flexBoxColumn' css={{padding:'$1 $2 $4 $2'}}>
+                            <StyledSign onClick={()=>Connect('metamask')}>
+                                Metamask <img width='auto' height='15px' src='/metamaskFox.svg'/>
+                            </StyledSign>
+                            <StyledSign onClick={()=>Connect('wc')}>WalletConnect <img width='auto' height='15px' src='/WalletConnectIcon.svg'/></StyledSign>
+                            <Box 
+                            as='a'
+                            href={'https://rainbow.me/'}
+                            target='_blank'
+                            css={{color:'$foregroundText', 
+                            transition:'$color',
+                            '&:hover':{color:'$foregroundTextBronze'},
+                            textDecoration:'none', paddingTop:'$1', boxSizing:'border-box', width:'100%', textAlign:'center', fontSize:'$6'}}>I don&apos;t have a wallet</Box>
+                        </Box>
+                    )}
+                    
+
                 </StyledTabsContent>
                 <StyledTabsContent value='settings' css={{boxSizing:'border-box'}}>
                     <Box layout='flexBoxRow' css={{alignItems:'flex-start', padding:'$2', color:'$text', gap:'$2', 'span':{fontSize:'$6', color:'$foregroundText'}}}>

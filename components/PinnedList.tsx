@@ -4,14 +4,14 @@ import ArrowDownIcon from '@/design-system/icons/ArrowDown'
 // import AddAllIcon from '@/design-system/icons/AddAll'
 import {  PinnedItem, ReadingListItem, CurrentArticle} from 'contexts'
 import SpacesSelector from '@/design-system/Spaces/SpacesSelector'
-import PinnedComponent  from '@/design-system/PinnedItem' 
 import ButtonControl from '@/design-system/primitives/ButtonControl'
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import React from 'react'
-import {useDraggable, useDroppable,DragOverlay} from '@dnd-kit/core'
-import {useState, useEffect, forwardRef} from 'react'
-import * as Portal from '@radix-ui/react-portal';
+import { useDroppable} from '@dnd-kit/core'
 import { createPortal } from 'react-dom'
+import Draggable from '@/design-system/Drag/Draggable'
+import DragOverlay from '@/design-system/Drag/DragOverlay'
+
 const StyledPinnedList = styled(ScrollArea.Root,{
     width:'100%',
     boxSizing:'border-box',
@@ -84,7 +84,7 @@ const StyledNavControls = styled(Box, {
 
 
 interface IPinnedList {
-    activeId:number | null;
+    activeId:string | null;
     isPinnedList:boolean;
     setIsPinnedList:(newState:boolean) => void;
     setReadLater:(fn:(prevState:ReadingListItem[]) => ReadingListItem[]) => void;
@@ -97,43 +97,9 @@ interface IPinnedList {
     currentArticle:CurrentArticle | null;
 }
 
-function Draggable(props:any) {  
-    const Element = props.element || 'div';  
-    const {attributes, listeners, setNodeRef} = useDraggable({    id: props.id.toString()  });    
-    return (
-        <Element 
-        ref={setNodeRef}>
-        
-              <PinnedComponent  
-              isActive={false}
-                // isActive={(activeId && item.id === Number(activeId)) ? true : false}
-            item={props.item}>
-                <button  {...listeners} {...attributes}>
-                    DRAG
-                </button>
-            </PinnedComponent>
-        </Element>  
-    );
-}
-
-interface Props {
-  dragOverlay?: boolean;
-  dragging?: boolean;
-  handle?: boolean;
-  label?: string;
-  children:any;
-}
-
-const Item = forwardRef<HTMLDivElement, Props>(({children, ...props}, ref) => {  
- return (<div {...props} ref={ref}>{children}</div>)
-});
-
-Item.displayName ='Item'
-
 
 const PinnedList = ({ activeId, isPinnedList,  setIsPinnedList, setReadLater, routerQuery, pinnedList, setPinnedList, currentArticle}:IPinnedList) => {
-    const {isOver, setNodeRef} = useDroppable({    id: 'droppable_pinnedList',  });
-
+    const {setNodeRef} = useDroppable({    id: 'droppable_pinnedList',  });
 
     return(
     <>
@@ -155,8 +121,6 @@ const PinnedList = ({ activeId, isPinnedList,  setIsPinnedList, setReadLater, ro
                 )}
             </Box>
 
-
-            
             <SpacesSelector  
                 type={currentArticle?.publication.type}
                 author={currentArticle?.author}
@@ -173,10 +137,10 @@ const PinnedList = ({ activeId, isPinnedList,  setIsPinnedList, setReadLater, ro
                     css={{paddingTop:'$2'}}>
                         {pinnedList.map((item:PinnedItem)=>{
                             return(
-                                <Draggable id={item.id} 
-                                isActive={(activeId && item.id === Number(activeId)) ? true : false}
+                                <Draggable id={item.id+1} 
+                                isActive={(activeId && (item.id+1 === parseInt(activeId))) ? true : false}
                                 item={item}
-                                key={'pinned item' + item.id}/>  
+                                key={'pinned item' + item.id+1}/>  
                             )
                         })}
                         {/* Placeholder to have an empty space around the end of the component */}
@@ -184,10 +148,8 @@ const PinnedList = ({ activeId, isPinnedList,  setIsPinnedList, setReadLater, ro
                             &nbsp;
                         </Box>
                     </Box>
-
-    
-
                 </StyledViewport>
+
                 <StyledScrollbar orientation="horizontal">
                     <StyledThumb/>
                 </StyledScrollbar>
@@ -197,21 +159,11 @@ const PinnedList = ({ activeId, isPinnedList,  setIsPinnedList, setReadLater, ro
             {typeof window !== 'undefined' && (
             <>
              {createPortal(
-               <DragOverlay >
-                      {(activeId && pinnedList.findIndex((item)=>item.id === Number(activeId)) !== -1)
-                        ? <Item>
-                            <PinnedComponent 
-                            isActive={"dragged"}
-                            item={pinnedList.find((item)=>item.id === Number(activeId))}>
-                            <button>
-                                DRAG
-                            </button>
-                            </PinnedComponent>
-                         </Item>
-               
-                      : null}
-                </DragOverlay>,
-                     document.body)}
+                 <DragOverlay activeId={activeId} item={
+                     activeId ? pinnedList.find((item)=>item.id+1 === parseInt(activeId))
+                    : null
+                    }
+                 />, document.body)}
                  </>
             )}
 
@@ -221,7 +173,6 @@ const PinnedList = ({ activeId, isPinnedList,  setIsPinnedList, setReadLater, ro
 )}
 
 
-
 // const areEqual = (prevProps:any, nextProps:any) => {
 //    if(prevProps.pinnedList.length === nextProps.pinnedList.length && prevProps.isPinnedList === nextProps.isPinnedList)
 //     return true
@@ -229,6 +180,8 @@ const PinnedList = ({ activeId, isPinnedList,  setIsPinnedList, setReadLater, ro
 // }
 // export default React.memo(PinnedList, areEqual)
 export default PinnedList
+
+
 
             {/* <ButtonControl 
             isHighlighted={false}

@@ -48,7 +48,7 @@ import TweetEmbed from 'react-tweet-embed'
     const regex = /https?:\/\/twitter\.com\/(?:\#!\/)?(\w+)\/status(es)?\/(\d+)/gm;
     const result = regex.exec(props.href)
     if(result && result.length>3) {  
-    return(<TweetEmbed id={result[3]} options={{cards: 'hidden' }}/>)}
+    return(<Box css={{padding:'$2 0'}}><TweetEmbed id={result[3]} options={{cards: 'hidden' }}/></Box>)}
 
  
     return(

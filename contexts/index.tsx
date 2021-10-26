@@ -1,8 +1,7 @@
 import {atom, AtomEffect} from 'recoil'
 import {history} from '@/design-system/Layout'
 import {Entry} from '@/design-system/Article'
-
-
+import localForage from 'localforage' //async localstorage
 
 export type Publication = {
      type: 'personal' | 'ens',
@@ -308,4 +307,48 @@ export const readSettings = atom({
     key:'readSettings',
     default:readSettingsDefault as ReadSettings,
     effects_UNSTABLE: [SettingsEffect()]
+})
+
+
+
+
+
+
+export type CuratedSpaceItem = PinnedItem & {isSync:boolean}
+
+
+
+export type CuratedSpace = {
+    title:string,
+    items:CuratedSpaceItem[]
+}
+
+const CuratedSpaceEffect = ():AtomEffect<CuratedSpace> => ({setSelf, onSet, trigger}) => {
+    const loadPersisted = async () => {
+        if(trigger === 'get' && typeof localForage !== 'undefined' && typeof window !== 'undefined'){
+            const curatedItemsList:CuratedSpace | null = await localForage.getItem('mirror-curated-space-item')
+            if(curatedItemsList !== null){
+                setSelf(curatedItemsList)
+            } 
+        }   
+    }   
+    loadPersisted();
+    onSet((newValue:CuratedSpace, oldValue:any) => {
+            localForage.setItem('mirror-curated-space-item', newValue)
+            history.push({
+                label: `${JSON.stringify(oldValue)} -> ${JSON.stringify(newValue)}`,
+                undo: () => {
+                    setSelf(oldValue);
+                },
+            });
+    })   
+}
+
+export const curatedSpace = atom({
+    key:'curatedSpace',
+    default: {
+        title:'my_default_space',
+        items:[]
+    } as CuratedSpace,
+    effects_UNSTABLE:[CuratedSpaceEffect()]
 })

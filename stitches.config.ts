@@ -1,5 +1,5 @@
 import { createStitches } from "@stitches/react";
-import { sand, indigo, indigoDark, bronze, sandDark, bronzeDark } from '@radix-ui/colors'
+import { sand, indigo, indigoDark, bronze, sandDark, red } from '@radix-ui/colors'
 
 export const { styled, css, globalCss, getCssText, keyframes, createTheme } = createStitches({
     prefix:'light-cream',
@@ -18,7 +18,8 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             foregroundTintBronze: bronze.bronze5,
             highlightBronze:bronze.bronze3,
             foregroundTextBronze: bronze.bronze9,
-            textBronze: bronze.bronze12
+            textBronze: bronze.bronze12,
+            error:red.red10
         },
         space: {
             0: "4px",
@@ -72,8 +73,8 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             round: "9999px",
         },
         shadows: {
-            normal: `0px 2px 4px rgba(224,206,199, 0.5)`,
-             large: `0px 4px 8px rgba(224,206,199, 0.8)`,
+            normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
+            large: `0px 1px 8px ${sand.sand6}`,
         },
         zIndices: {},
         transitions: {
@@ -107,6 +108,11 @@ export const lightThemePlain =  createTheme('light-plain', {
             highlightBronze:  sand.sand3,
             foregroundTextBronze: sand.sand9,
             textBronze: sand.sand12,
+            error:red.red10
+        },
+         shadows: {
+            normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
+            large: `0px 1px 8px ${sand.sand6}`,
         },
 });
 
@@ -128,6 +134,11 @@ export const lightThemeBlue =  createTheme('light-blue', {
             highlightBronze: indigo.indigo3,
             foregroundTextBronze: indigo.indigo9,
             textBronze: indigo.indigo12,
+            error:red.red10
+        },
+        shadows: {
+            normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
+            large: `0px 1px 8px ${indigo.indigo6}`,
         },
 });
 
@@ -149,6 +160,11 @@ export const darkThemePlain= createTheme('dark-plain', {
             highlightBronze: sandDark.sand3,
             foregroundTextBronze: sandDark.sand9,
             textBronze: sandDark.sand12,
+            error:red.red10
+        },
+        shadows: {
+            normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
+            large: `0px 4px 8px ${sandDark.sand1}`,
         },
 });
 
@@ -168,7 +184,12 @@ export const darkTheme = createTheme('dark-blue', {
             foregroundBronze: indigoDark.indigo8,
             highlightBronze:indigoDark.indigo3,
             foregroundTextBronze: indigoDark.indigo9,
-            textBronze: indigoDark.indigo12
+            textBronze: indigoDark.indigo12,
+            error:red.red10
+        },
+        shadows: {
+            normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
+            large: `0px 4px 8px ${indigoDark.indigo1}`,
         },
 });
 

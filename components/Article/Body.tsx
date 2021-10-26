@@ -181,6 +181,7 @@ const BodyComponent = (
     }:BodyInternal
 ) => (
     <StyledBody 
+    
     //replace on double click only for the background (once you implement it), not the whole container. this way
     //your prevent the  select from showing up 
     onDoubleClick={()=>{

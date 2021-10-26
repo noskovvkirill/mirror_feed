@@ -126,13 +126,13 @@ const TocPortalled = (props:ReactPropTypes) => {
 }
 
 //the func is taken from https://m1guelpf.blog/ 
-const truncateText = (text:string) => {
+export const truncateText = (text:string) => {
 	const paragraph = text.split('\n\n').slice(0, 6)
 	if (paragraph[paragraph.length - 1].startsWith('#')) paragraph.pop()
 	return paragraph.join('\n\n')
 }
 
-const processorShort = unified()
+export const processorShort = unified()
   .use(remarkParse)
   .use(remarkGfm)
   .use(remarkRehype)
@@ -206,7 +206,20 @@ const Article= ({entry, isPreview=true}:Props) => {
     //  we precompute the  body and memoize it on initial render. 
     // This way, when we open a large article, animation is not glitchy :-) 
     const bodyTextShort =  useMemo(() => processorShort.processSync(truncateText(entry.body)).result, [entry.body])
-    const bodyText =  useMemo(() => processorFull.processSync(entry.body).result, [entry.body])
+    // const bodyText =  useMemo(() =>  processorFull.processSync(entry.body).result, [entry.body])
+    
+    // MOVE FULL BODY TO render asynch. 
+    
+    // const [fullText, setFullText] = useState<any>() 
+    // useEffect(()=>{
+    //     bodyTextAsync()
+    // },[entry.body])
+
+    // const bodyTextAsync =  async() => {
+    //   const data = await processorFull.process(entry.body).then((result)=>(result.result))
+    //   setFullText(data)
+    // }
+    
 
     return(
         <Container
@@ -247,7 +260,7 @@ const Article= ({entry, isPreview=true}:Props) => {
                 setReadLater={setReadLater}
                 isPreview={isPreview}
                 entry={entry}
-                body={isPreview ? bodyTextShort : bodyText}
+                body={isPreview ? bodyTextShort : bodyTextShort}
                 Open={(digest:string)=>{
                     router.push(digest, undefined, {scroll:true})
                 }}

@@ -19,7 +19,6 @@ import { pinnedItems, readLaterList,  ReadingListItem} from 'contexts'
 import { useSetRecoilState} from 'recoil'
 import {useRouter} from 'next/router'
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
-import { useDraggable } from '@dnd-kit/core'
 import type {PinnedItem} from 'contexts'
 
 interface Props {
@@ -147,7 +146,6 @@ const PinnedComponent= ({item, isActive, children}:Props) => {
                 isActive={isActive}
                 css={{ padding:'0', overflow:'hidden', position:'relative', border:'1px solid $foregroundBronze'}}>
                     <StyledControls css={{position:'absolute', flexDirection:'column', padding:'$2'}}>
-                        {children}
                             <ButtonControl
                                 selected={true}
                                 label='unpin item'
@@ -163,7 +161,7 @@ const PinnedComponent= ({item, isActive, children}:Props) => {
                                 }><UnPinIcon/>
                             </ButtonControl>
                             <StyledLabel css={{height:'fit-content'}} isHighlighted={true}>{item.item.mimeType}</StyledLabel>
-
+                            {children}
                     </StyledControls>
                     <StyledBody isHighlighted={true} css={{objectFit:'scale-down', padding:'0'}}>
                         <img alt='pinned item' src={item.item.url} width='100%' height='auto'/> 
@@ -178,7 +176,6 @@ const PinnedComponent= ({item, isActive, children}:Props) => {
             isActive={isActive}
             isHighlighted={true}>
                         <StyledControls>
-                             {children}
                             <ButtonControl
                             isHighlighted={true}
                             label='open'
@@ -222,6 +219,7 @@ const PinnedComponent= ({item, isActive, children}:Props) => {
                                 })
                                 }><UnPinIcon/>
                             </ButtonControl>
+                            {children}
                         </StyledControls>
                         <StyledBody isHighlighted={true}>
                             <StyledTitle isHighlighted={true}>

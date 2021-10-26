@@ -3,11 +3,11 @@ import Box from '@/design-system/primitives/Box'
 import Nav from '@/design-system/Nav'
 
 import Head from 'next/head'
-import React, { ReactNode, useState} from 'react'
+import React, { ReactNode, useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { pinnedItems, readLaterList, curationItems, portalState} from 'contexts'
-import type {CurationList} from 'contexts'
+import { pinnedItems, readLaterList, curationItems, portalState, curatedSpace, PinnedItem} from 'contexts'
+import type {CurationList, CuratedSpace, CuratedSpaceItem} from 'contexts'
 import {  useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil'
 
 import OnBoarding from '@/design-system/Onboarding'
@@ -15,7 +15,6 @@ import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 import PinnedList from '@/design-system/PinnedList'
 import { Current } from 'contexts'
 import {DndContext} from '@dnd-kit/core';
-import {createPortal} from 'react-dom';
 
 const StyledMain = styled('main', {
     backgroundColor: '$background',
@@ -79,8 +78,10 @@ const Layout = ({children}:Props) =>{
     const router = useRouter()
     const curated = useRecoilValueAfterMount(curationItems, [])
     const [isPortal, setIsPortal] = useRecoilState(portalState)
+    const [activeId, setActiveId] = useState<string | null>(null); //draggable
+    const setMyCurated = useSetRecoilState(curatedSpace) //personal curated items
 
-    const [activeId, setActiveId] = useState<number | null>(null); //draggable
+
 
     useHotkeys("*", (e) => {
         if(e.key === 'Alt'){
@@ -120,9 +121,32 @@ const Layout = ({children}:Props) =>{
                     </>
                 )}
                  <DndContext 
-                 onDragEnd={()=>{setActiveId(null)}}
+                 onDragEnd={(e)=>{
+                     const over = e.over 
+                    //  'droppable_pinnedList' || curated
+                     if(over?.id === 'curated'){
+                         const itemIndex = pinnedList.findIndex((item)=>item.id === (parseInt(e.active.id)-1))
+                         if(itemIndex !== -1){
+                           console.log('updating the list')
+                           setMyCurated((prevState:CuratedSpace)=>{
+                               if(prevState){
+                                    const newState = Object.assign({}, prevState)
+                                    const newItem = Object.assign({},pinnedList[itemIndex]) as CuratedSpaceItem;
+                                    newItem.isSync = false;
+                                    const newStateItems = [...prevState.items, newItem]
+                                    newState.items = newStateItems
+                                    return newState
+                               } else return prevState
+                            })
+                            setPinnedList((prevState:PinnedItem[])=>{
+                                return [...prevState.slice(0, itemIndex), ...prevState.slice(itemIndex + 1)];
+                            })
+                         } 
+                     }
+                     setActiveId(null)
+                 }}
                  onDragStart={(e)=>{
-                     setActiveId(Number(e.active.id))
+                     setActiveId(e.active.id)
                     }}>
                     <StyledHeader css={{position:'sticky', height:'160px'}}>
                         <PinnedList 
@@ -139,8 +163,7 @@ const Layout = ({children}:Props) =>{
                             setReadLater={setReadLater}
                         />
                     </StyledHeader>
-                     
-
+                    
                     <StyledMain>
                         {children}
                     </StyledMain>
