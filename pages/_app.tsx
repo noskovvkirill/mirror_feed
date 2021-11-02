@@ -7,8 +7,7 @@ import { LazyMotion } from "framer-motion"
 import {ThemeProvider} from 'next-themes'
 import {darkTheme, darkThemePlain, lightThemePlain, lightThemeBlue} from 'stitches.config'
 import {useState} from 'react'
-import {UserProvider} from 'contexts/user'
-
+import {UserProvider, UserType} from 'contexts/user'
 
 // import dynamic from 'next/dynamic'
 const loadFeatures = () =>
@@ -56,7 +55,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <RecoilRoot>
          <LazyMotion features={loadFeatures} strict>
           <UserProvider>
-       
+  
 
               {/* //custom theme provider is an addition that helps to create a theme at the runtime */}
               {/* <CustomThemeProvider value={{theme, changeTheme}}> 
@@ -111,7 +110,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           
                 {/* </CustomThemeConsumer>
               </CustomThemeProvider> */}
-                
+             
            </UserProvider>
         </LazyMotion>
       </RecoilRoot>

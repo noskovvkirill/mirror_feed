@@ -6,8 +6,8 @@ import Head from 'next/head'
 import React, { ReactNode, useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { pinnedItems, readLaterList, curationItems, portalState, curatedSpace, PinnedItem} from 'contexts'
-import type {CurationList, CuratedSpace, CuratedSpaceItem} from 'contexts'
+import { pinnedItems, readLaterList, curationItems, portalState, curatedSpace, curatedSpaceNotSync, PinnedItem} from 'contexts'
+import type {CurationList, CuratedSpaceNotSync, CuratedSpaceItem} from 'contexts'
 import {  useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil'
 
 import OnBoarding from '@/design-system/Onboarding'
@@ -79,7 +79,7 @@ const Layout = ({children}:Props) =>{
     const curated = useRecoilValueAfterMount(curationItems, [])
     const [isPortal, setIsPortal] = useRecoilState(portalState)
     const [activeId, setActiveId] = useState<string | null>(null); //draggable
-    const setMyCurated = useSetRecoilState(curatedSpace) //personal curated items
+    const setMyCurated = useSetRecoilState(curatedSpaceNotSync) //personal curated items
 
 
 
@@ -128,11 +128,10 @@ const Layout = ({children}:Props) =>{
                          const itemIndex = pinnedList.findIndex((item)=>item.id === (parseInt(e.active.id)-1))
                          if(itemIndex !== -1){
                            console.log('updating the list')
-                           setMyCurated((prevState:CuratedSpace)=>{
+                           setMyCurated((prevState:CuratedSpaceNotSync)=>{
                                if(prevState){
                                     const newState = Object.assign({}, prevState)
                                     const newItem = Object.assign({},pinnedList[itemIndex]) as CuratedSpaceItem;
-                                    newItem.isSync = false;
                                     const newStateItems = [...prevState.items, newItem]
                                     newState.items = newStateItems
                                     return newState

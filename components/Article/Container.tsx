@@ -85,10 +85,10 @@ const Container = forwardRef<HTMLElement, Container>(
         setIsHover}, ref)  {
     return(
             <StyledContainerMotion 
-            initial={!isPreview ? {transform:`translateX(-2%)`} : false}
+            // initial={!isPreview ? {transform:`translateX(-2%)`} : false}
             exit={isPreview && {opacity:0, position:'absolute'}}
             layout='position'
-            layoutId={`layout-${entry.digest}`} //transitions animations using framer motion
+            // layoutId={`layout-${entry.digest}`} //transitions animations using framer motion
             key={`key-${entry.digest}`} //transitions animations using framer motion
             id={`preview-${entry.digest}`}
             onTouchStart={()=>setIsHover(true)} 

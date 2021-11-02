@@ -15,7 +15,7 @@ const StyledContainer = styled('div', {
     justifyContent:'flex-start',
     width:'100%', 
     padding:'$4 $2',
-    margin:'calc($4 * 1) 0',
+    // margin:'calc($4 * 1) 0',
     maxWidth:'1152px', 
     boxSizing:'border-box',
     height:'512px',

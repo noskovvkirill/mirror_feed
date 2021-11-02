@@ -6,11 +6,16 @@ import ShowIcon from '@/design-system/icons/ArrowDown'
 import Stake from '@/design-system/Stake'
 import {styled} from 'stitches.config'
 
+//types
+import type {UserType} from 'contexts/user'
+import type {SpaceType} from 'contexts/spaces'
+
 interface ISpaceSettings {
-    title:string
+    user:UserType;
+    space:SpaceType;
 }
 
-const SpaceSettings = ({title}:ISpaceSettings) => {
+const SpaceSettings = ({user, space}:ISpaceSettings) => {
     const [isOpen, setIsOpen] = useState(true)
     const [isStake, setIsStake] = useState(false)
     const entries = 100
@@ -19,16 +24,18 @@ const SpaceSettings = ({title}:ISpaceSettings) => {
         <Box layout='flexBoxColumn' css={{width:'100%', alignItems:'flex-end'}}>
             <Box layout='flexBoxColumn' css={{
             position:'relative',
-            right:'-$1',
+            right:'$3',
             width:'256px', 
             height:'fit-content',
             color:'$text',
-            background:'$highlight', borderRadius:'$2', padding:'$2'}}>
+            border:'1px solid $foregroundBorder',
+            background:'$background', borderRadius:'$2', padding:'$2'}}>
                 <Box layout='flexBoxRow' css={{
                     justifyContent:'space-between',
                     alignItems:'center'}}>
-                    <h5>{title}</h5>
+                    <Box as='h5' css={{color:'$foregroundText'}}>{space.title}</Box>
                     <ButtonControl 
+                    direction={"left"}
                     onClick={()=>setIsOpen(!isOpen)}
                     isHighlighted={false} label={!isOpen ? 'hide' : 'show'}>
                         {isOpen  ? <HideIcon/> : <ShowIcon/>}
@@ -39,6 +46,8 @@ const SpaceSettings = ({title}:ISpaceSettings) => {
                     <Box layout='flexBoxColumn' css={{color:'$foregroundText'}}>
                         <span>Entries: {entries}</span>
                         <span>Tokens earned: {earned}</span>
+                        <span>Staked: {space.totalStacked} </span>
+                        <span>Timelock {space.timelock}</span>
                     </Box>
                     <Stake isOpen={isStake} setIsOpen={setIsStake}/>
                     </>

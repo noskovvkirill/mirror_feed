@@ -1,4 +1,4 @@
-import {atom, AtomEffect} from 'recoil'
+import {atom,  AtomEffect} from 'recoil'
 import {history} from '@/design-system/Layout'
 import {Entry} from '@/design-system/Article'
 import localForage from 'localforage' //async localstorage
@@ -270,7 +270,6 @@ export const curationItems = atom({
 
 
 
-
 const SettingsEffect = ():AtomEffect<ReadSettings> => ({setSelf, onSet, trigger}) => {
     const loadPersisted = () => {
         if(trigger === 'get' && typeof localStorage !== 'undefined'){
@@ -311,30 +310,25 @@ export const readSettings = atom({
 
 
 
+export type CuratedSpaceItem = PinnedItem 
 
 
-
-export type CuratedSpaceItem = PinnedItem & {isSync:boolean}
-
-
-
-export type CuratedSpace = {
-    title:string,
+export type CuratedSpaceNotSync = {
     items:CuratedSpaceItem[]
 }
 
-const CuratedSpaceEffect = ():AtomEffect<CuratedSpace> => ({setSelf, onSet, trigger}) => {
+const CuratedSpaceNotSyncEffect = ():AtomEffect<CuratedSpaceNotSync> => ({setSelf, onSet, trigger}) => {
     const loadPersisted = async () => {
         if(trigger === 'get' && typeof localForage !== 'undefined' && typeof window !== 'undefined'){
-            const curatedItemsList:CuratedSpace | null = await localForage.getItem('mirror-curated-space-item')
+            const curatedItemsList:CuratedSpace | null = await localForage.getItem('mirror-curated-space-item-not-synced')
             if(curatedItemsList !== null){
                 setSelf(curatedItemsList)
             } 
         }   
     }   
     loadPersisted();
-    onSet((newValue:CuratedSpace, oldValue:any) => {
-            localForage.setItem('mirror-curated-space-item', newValue)
+    onSet((newValue:CuratedSpaceNotSync, oldValue:any) => {
+            localForage.setItem('mirror-curated-space-item-not-synced', newValue)
             history.push({
                 label: `${JSON.stringify(oldValue)} -> ${JSON.stringify(newValue)}`,
                 undo: () => {
@@ -344,11 +338,56 @@ const CuratedSpaceEffect = ():AtomEffect<CuratedSpace> => ({setSelf, onSet, trig
     })   
 }
 
+
+export const curatedSpaceNotSync = atom({
+    key:'curatedSpaceNotSync',
+    default: {
+        items:[]
+    } as CuratedSpaceNotSync,
+    effects_UNSTABLE:[CuratedSpaceNotSyncEffect()]
+})
+
+
+
+export type CuratedSpace = {
+    title:string,
+    items:CuratedSpaceItem[]
+}
+
+const CuratedSpaceEffect = ():AtomEffect<CuratedSpace | undefined> => ({setSelf, onSet, trigger}) => {
+    const loadPersisted = async () => {
+        if(trigger === 'get' && typeof localForage !== 'undefined' && typeof window !== 'undefined'){
+            const curatedItemsList:CuratedSpace | null = await localForage.getItem('mirror-curated-space-item')
+            if(curatedItemsList !== null){
+                setSelf(curatedItemsList)
+            } 
+        }   
+    }   
+    loadPersisted();
+    onSet((newValue:CuratedSpace | undefined, oldValue:any) => {
+            if(newValue !== undefined){
+                localForage.setItem('mirror-curated-space-item', newValue)
+                history.push({
+                    label: `${JSON.stringify(oldValue)} -> ${JSON.stringify(newValue)}`,
+                    undo: () => {
+                        setSelf(oldValue);
+                    },
+                });
+        }
+    })   
+}
+
 export const curatedSpace = atom({
     key:'curatedSpace',
-    default: {
-        title:'my_default_space',
-        items:[]
-    } as CuratedSpace,
+    default: undefined as CuratedSpace | undefined,
     effects_UNSTABLE:[CuratedSpaceEffect()]
 })
+
+
+
+// export const curatedSpaceSelector = selector({
+//   key: 'curatedSpaceItem',
+//   get:  spaceId => async () => {
+
+//   },
+// });

@@ -34,9 +34,10 @@ const StyledButton = styled("button", {
                     border:'1px solid $foregroundBronze'
                 },
                 "&:disabled": {
-                    color:'$background',
-                    backgroundColor:'$foregroundBronze',
-                    border:'1px solid $foregroundBronze'
+                    color:'$foreground',
+                    cursor:'not-allowed',
+                    backgroundColor:'$highlight',
+                    border:'1px solid $highlight'
                 },
             },
             outlined: {

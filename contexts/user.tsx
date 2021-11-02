@@ -2,17 +2,20 @@ import React, { useContext, createContext, useState, useMemo, useCallback, useEf
 import type {Dispatch} from 'react'
 import type {providers} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import {ethers} from 'ethers'
 import {getBalance} from 'src/utils'
+import { ethers } from 'ethers'
+
+
 
 declare let window: any;
+
 
 export type UserType = {
     address?:string,
     balance?:number,
     isConnected:boolean,
     network?:providers.Network,
-    provider?: providers.Web3Provider | providers.WebSocketProvider
+    provider?: providers.Web3Provider | providers.WebSocketProvider,
 }
 
 type Providers = 'wc' | 'metamask'
@@ -30,20 +33,19 @@ export const UserProvider = ({children}:{children:React.ReactNode[] | React.Reac
 
     const [user, changeUser] = useState<UserType | null>(null)
 
+     const getUserBalance = async (address: string, provider: any) => {
+        const balance = await getBalance({ provider: provider, address: address })
+        return ethers.utils.formatEther(balance)
+    }   
+
+
+
     const Connect = useCallback(async (type:Providers='metamask') => {
         if(type === 'wc'){
             const provider = new WalletConnectProvider({
                 infuraId: "87ff3775011f44d1ad3ae2c38d63d950",
                 chainId:4
             });
-
-            // try{
-            //     //reinterracting with wallet connect if it was disconnected before
-            //     provider.disconnect() 
-            // } catch(e){
-            //     console.log('nothing to disconnect')
-            // }
-
             await provider.enable();
             try{
                 const web3Provider = new ethers.providers.Web3Provider(provider, "any");
@@ -52,6 +54,8 @@ export const UserProvider = ({children}:{children:React.ReactNode[] | React.Reac
                 const network = await web3Provider.getNetwork()
 
                 if(web3Provider && address && signer){
+                    try{
+                    const balance = await getUserBalance(address, web3Provider)
                     localStorage.setItem('mirror-feed-last-provider', 'wc')
                     changeUser((user)=>{
                         const newUser = Object.assign({}, user)
@@ -60,8 +64,21 @@ export const UserProvider = ({children}:{children:React.ReactNode[] | React.Reac
                         newUser.isConnected = true; 
                         newUser.network = network;
                         newUser.provider = web3Provider;
+                        newUser.balance = parseFloat(balance)
                         return newUser
-                    })
+                    })} catch(e){
+                          console.log(e)
+                          changeUser((user)=>{
+                            const newUser = Object.assign({}, user)
+                            delete newUser.provider
+                            newUser.address = address
+                            newUser.isConnected = true; 
+                            newUser.network = network;
+                            newUser.balance = 0;
+                            newUser.provider = web3Provider;
+                            return newUser
+                        })
+                    }
                 }
             } catch(e){
                 console.log(e)
@@ -83,16 +100,31 @@ export const UserProvider = ({children}:{children:React.ReactNode[] | React.Reac
 
      
         if(web3Provider && address && signer){
-            localStorage.setItem('mirror-feed-last-provider', 'metamask')
-            changeUser((user)=>{
-                const newUser = Object.assign({}, user)
-                delete newUser.provider
-                newUser.address = address
-                newUser.isConnected = true; 
-                newUser.network = network;
-                newUser.provider = web3Provider;
-                return newUser
-            })
+            try{
+                const balance = await getUserBalance(address, web3Provider)
+                localStorage.setItem('mirror-feed-last-provider', 'metamask')
+                changeUser((user)=>{
+                    const newUser = Object.assign({}, user)
+                    delete newUser.provider
+                    newUser.address = address
+                    newUser.isConnected = true; 
+                    newUser.network = network;
+                    newUser.provider = web3Provider;
+                    newUser.balance = parseFloat(balance)
+                    return newUser
+            })} catch(e){
+                console.log(e)
+                changeUser((user)=>{
+                    const newUser = Object.assign({}, user)
+                    delete newUser.provider
+                    newUser.address = address
+                    newUser.isConnected = true; 
+                    newUser.network = network;
+                    newUser.balance = 0;
+                    newUser.provider = web3Provider;
+                    return newUser
+                })
+            }
         }
     }, [])
 

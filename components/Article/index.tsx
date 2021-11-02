@@ -205,8 +205,8 @@ const Article= ({entry, isPreview=true}:Props) => {
 
     //  we precompute the  body and memoize it on initial render. 
     // This way, when we open a large article, animation is not glitchy :-) 
-    const bodyTextShort =  useMemo(() => processorShort.processSync(truncateText(entry.body)).result, [entry.body])
-    // const bodyText =  useMemo(() =>  processorFull.processSync(entry.body).result, [entry.body])
+    // const bodyTextShort =  useMemo(() => processorShort.processSync(truncateText(entry.body)).result, [entry.body])
+    const bodyText =  useMemo(() =>  processorFull.processSync(entry.body).result, [entry.body])
     
     // MOVE FULL BODY TO render asynch. 
     
@@ -254,13 +254,13 @@ const Article= ({entry, isPreview=true}:Props) => {
                 setReadLater={setReadLater}
                 setIsHover={setIsHover}
             />
-
+  
              <Body
                 readingList={readingList}
                 setReadLater={setReadLater}
                 isPreview={isPreview}
                 entry={entry}
-                body={isPreview ? bodyTextShort : bodyTextShort}
+                body={isPreview ? bodyText.props.children.slice(0,5) : bodyText}
                 Open={(digest:string)=>{
                     router.push(digest, undefined, {scroll:true})
                 }}

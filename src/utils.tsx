@@ -21,7 +21,11 @@ interface IGetBalance {
 
 export const getBalance = async ({ provider, address }: IGetBalance) => {
     if (!tokenAddress) return;
+    try{
     const contract = new Contract(tokenAddress, ERC20Abi, provider);
     const balance = await contract.balanceOf(address);
     return balance.toString();
+    } catch(e){
+        return 0
+    }
 };

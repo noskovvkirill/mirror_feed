@@ -9,7 +9,7 @@ import type {CuratedSpace} from 'contexts'
 interface IStackControls{
     Sync?:(index:number)=>void;
     index:number;
-    setCurated:(fn:(prevState:CuratedSpace)=>CuratedSpace)=>void
+    setCurated:(fn:(prevState:CuratedSpace | undefined)=>CuratedSpace)=>void
 }
 
 const StackControls = ({Sync, setCurated, index}:IStackControls) => {
@@ -56,7 +56,8 @@ const StackControls = ({Sync, setCurated, index}:IStackControls) => {
         <ButtonControl 
         onClick={(e)=>{
             e.stopPropagation()
-            setCurated((prevState:CuratedSpace)=>{
+            setCurated((prevState:CuratedSpace | undefined)=>{
+                    if(prevState === undefined) return;
                     const newSpace:CuratedSpace | any = Object.assign({}, prevState)
                     delete newSpace.items;
                     const itemsNew =  [...prevState.items.slice(0, index), ...prevState.items.slice(index + 1)];

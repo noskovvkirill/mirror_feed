@@ -13,6 +13,7 @@ import {useRouter} from 'next/router'
 
 import {StyledTabsList, StyledTabsTrigger, StyledTabsContent} from '@/design-system/Spaces/SpacesSelector'
 import {useAuth} from 'contexts/user'
+import {AddressPrettyPrint} from 'src/utils'
 
 interface ISettings {
     UpdateTheme:any,
@@ -52,7 +53,7 @@ const Settings = ({UpdateTheme, themes, theme}:ISettings) => {
 
     return(
         <ButtonPopover icon={<Profile/>} label='change' isHighlighted={true}>
-          <Tabs.Root defaultValue='settings'>
+          <Tabs.Root defaultValue={(user && user.isConnected) ? 'login' :'settings'}>
               <Box layout='flexBoxRow' css={{alignItems:'center', boxSizing:'border-box', padding:'$2 $2', justifyContent:'space-between'}}>
                 <StyledTabsList css={{boxSizing:'border-box', color:'$foregroundText'}}>
                     <StyledTabsTrigger value='login'>{(user && !user.isConnected) ? 'Sign In' : 'Account'}</StyledTabsTrigger>
@@ -80,13 +81,21 @@ const Settings = ({UpdateTheme, themes, theme}:ISettings) => {
                                         return(
                                         <Box as='section' layout='flexBoxColumn'>
                                             {/* <Box as='span' css={{fontSize:'$6', color:'$foregroundText'}}>Connected as</Box> */}
-                                            <Box as='span' css={{
-                                            fontSize:'$6',  
-                                            borderRadius:'$2',
-                                            padding:'$1 $2',
-                                            whiteSpace:'nowrap',
-                                            wordBreak:'break-all', background:'$highlightBronze', color:'$foregroundTextBronze'}}>
-                                                {user.address?.slice(0,13)}
+                                            <Box 
+                                            layout='flexBoxRow'
+                                            css={{ 
+                                                justifyContent:'space-between',
+                                                alignItems:'center',
+                                                borderRadius:'$2',
+                                                padding:'$1 $2',
+                                                whiteSpace:'nowrap',
+                                                wordBreak:'break-all', background:'$highlightBronze', color:'$foregroundTextBronze'}}>
+                                                <Box as='span' css={{whiteSpace:'nowrap', fontSize:'$6'}}>
+                                                    {user.address ? AddressPrettyPrint(user.address) : ''}
+                                                </Box>
+                                                <Box as='span' css={{whiteSpace:'nowrap', fontSize:'$6'}}>
+                                                    {user?.balance?.toString().slice(0,5)}&thinsp;●
+                                                </Box>
                                             </Box>
                                         </Box>
                                         )
