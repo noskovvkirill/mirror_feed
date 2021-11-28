@@ -23,7 +23,7 @@ import StyledButton from '@/design-system/primitives/Button'
 
 
 
-const StyledContributorsSidebar = styled('div', {
+export const StyledContributorsSidebar = styled('ul', {
     display:'flex',
     flexDirection:'column',
     gap:'$1',
@@ -33,6 +33,7 @@ const StyledContributorsSidebar = styled('div', {
     height:'fit-content',
     alignItems:'flex-end',
     borderRadius:'$2',
+    listStyle:'none'
 })
 
 
@@ -70,7 +71,7 @@ const Space = ({contributors, current, setCurated, currentSpace}:ISpace) => {
                 {JSON.stringify(error)}
             </Box>
         )
-    }
+    } 
     return(
         <Box layout='flexBoxRow'>
             <Box layout='flexBoxRow' css={{width:'100%', justifyContent:'space-between'}}>

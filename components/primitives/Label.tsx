@@ -1,16 +1,28 @@
 import { styled } from "stitches.config";
 
 const Label = styled("span", {
-    fontSize: "$6",
     userSelect: "none",
     variants: {
         color: {
             default: {
+                color:'inherit'
             },
+            error:{
+                color:'$error'
+            }
         },
+        size:{
+            default:{
+                fontSize:'$6'
+            },
+            normal:{
+                fontSize:'$p'
+            }
+        }
     },
     defaultVariants: {
         color: "default",
+        size:'default'
     },
 });
 

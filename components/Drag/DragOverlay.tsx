@@ -1,7 +1,8 @@
 import {DragOverlay} from '@dnd-kit/core'
-import PinnedComponent  from '@/design-system/PinnedItem' 
+// import PinnedComponent  from '@/design-system/PinnedItem' 
 import { forwardRef} from 'react'
 import Handler from '@/design-system/Drag/Handler'
+import Pinned from '@/design-system/Pinned'
 
 interface Props {
   dragOverlay?: boolean;
@@ -26,11 +27,13 @@ const Overlay = ({activeId, item}:IOverlay) => {
         <DragOverlay >
             {(activeId && item)
             ? <Item>
-                <PinnedComponent 
-                isActive={"dragged"}
+                <Pinned.Root 
+                isDragged={true}
                 item={item}>
-                    <Handler isActive={true}/>
-                </PinnedComponent>
+                    <Pinned.ControlsNotSync isHighlighted={true}>
+                        <Handler isActive={true}/>
+                    </Pinned.ControlsNotSync>
+                </Pinned.Root>
               </Item>
             : null}
         </DragOverlay>

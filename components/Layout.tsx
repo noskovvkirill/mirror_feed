@@ -6,15 +6,19 @@ import Head from 'next/head'
 import React, { ReactNode, useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { pinnedItems, readLaterList, curationItems, portalState, curatedSpace, curatedSpaceNotSync, PinnedItem} from 'contexts'
+import { pinnedItems, readLaterList, curationItems, portalState, curatedSpaceNotSyncSelected, curatedSpaceNotSync, PinnedItem} from 'contexts'
 import type {CurationList, CuratedSpaceNotSync, CuratedSpaceItem} from 'contexts'
 import {  useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil'
+import useScrollPosition from '@react-hook/window-scroll'
+import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 
 import OnBoarding from '@/design-system/Onboarding'
-import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 import PinnedList from '@/design-system/PinnedList'
 import { Current } from 'contexts'
 import {DndContext} from '@dnd-kit/core';
+import Portal from '@/design-system/Portal'
+import Notifications from '@/design-system/Notifications'
+
 
 const StyledMain = styled('main', {
     backgroundColor: '$background',
@@ -37,7 +41,7 @@ const StyledHeader = styled('header', {
     boxSizing:'border-box',
     overflowY:'hidden',
     background:'transparent',
-    backdropFilter:'opacity(0.25)',
+    // backdropFilter:'opacity(0.25)',
     top:'0',
     padding: '$2 0 0 $4',
     color: '$text',
@@ -48,6 +52,15 @@ const StyledHeader = styled('header', {
     flexDirection: 'row', 
     gap:'$2',
 })
+
+const StyledNavControls = styled(Box, {
+    margin:'$4',
+    alignItems:'flex-start', 
+    justifyContent:'center', 
+    marginRight:'$5', 
+    background:'transparent'
+})
+
 
 
 type Props = {
@@ -76,10 +89,42 @@ const Layout = ({children}:Props) =>{
     const setPinnedList = useSetRecoilState(pinnedItems)
     const currentArticle = useRecoilValue(Current)
     const router = useRouter()
+
     const curated = useRecoilValueAfterMount(curationItems, [])
     const [isPortal, setIsPortal] = useRecoilState(portalState)
+
     const [activeId, setActiveId] = useState<string | null>(null); //draggable
-    const setMyCurated = useSetRecoilState(curatedSpaceNotSync) //personal curated items
+
+    const currentNotSync = useRecoilValue(curatedSpaceNotSyncSelected)
+    const setMyCurated = useSetRecoilState(curatedSpaceNotSync(currentNotSync)) //personal curated items
+
+
+    const [scrollDir, setScrollDir] = useState<'top' | 'bottom' | 'stale'>('stale')
+    const scrollY = useScrollPosition(10) //framerate scroll check
+    const [prevScroll, setPrevScroll] = useState(0)
+
+    useEffect(()=>{
+        const currentScroll = scrollY
+        if(currentScroll >= Math.floor(window.innerHeight/3) && scrollDir === 'bottom'){
+            setIsPinnedList(false)
+        } 
+        if(currentScroll <= 10) {
+            setIsPinnedList(true)
+        } 
+
+        if((prevScroll - currentScroll) > 150 && scrollDir !== 'top'){
+            setScrollDir('top')
+        } 
+
+        if((prevScroll - currentScroll) > 150 && scrollDir === 'top'){
+            setIsPinnedList(true)
+        }
+        if((currentScroll - prevScroll) > 70 && scrollDir !== 'bottom'){
+            setScrollDir('bottom')
+        }
+        setPrevScroll(scrollY)
+
+    },[scrollY])
 
 
 
@@ -87,7 +132,7 @@ const Layout = ({children}:Props) =>{
         if(e.key === 'Alt'){
              setIsPortal(!isPortal)
         } 
-    },{keyup:true},[])
+    },{keyup:true},[isPortal])
     
     useHotkeys('cmd+z, ctrl+z', () => {
         if(history.length>0){
@@ -104,8 +149,11 @@ const Layout = ({children}:Props) =>{
                     <meta name="description" content="Mirror.xyz curation feed" />
                     <link rel="icon" href="/favicon.ico" />
                 </Head>
+
+                <Notifications/>
                 <OnBoarding/>
-                <Nav/>
+                <Nav pinnedListLength={pinnedList.length} isPinnedList={isPinnedList} 
+                            setIsPinnedList={setIsPinnedList}/>
 
                 {/* Main feed key */}
                 <SpaceKeysMapping index={1}
@@ -123,11 +171,14 @@ const Layout = ({children}:Props) =>{
                  <DndContext 
                  onDragEnd={(e)=>{
                      const over = e.over 
-                    //  'droppable_pinnedList' || curated
+                    console.log('drop', e)
+                    if(over?.id === 'droppable_pinnedList'){
+                         const itemIndex = pinnedList.findIndex((item)=>item.id === (parseInt(e.active.id)-1))
+                    }
+
                      if(over?.id === 'curated'){
                          const itemIndex = pinnedList.findIndex((item)=>item.id === (parseInt(e.active.id)-1))
                          if(itemIndex !== -1){
-                           console.log('updating the list')
                            setMyCurated((prevState:CuratedSpaceNotSync)=>{
                                if(prevState){
                                     const newState = Object.assign({}, prevState)
@@ -148,6 +199,9 @@ const Layout = ({children}:Props) =>{
                      setActiveId(e.active.id)
                     }}>
                     <StyledHeader css={{position:'sticky', height:'160px'}}>
+                        <StyledNavControls layout='flexBoxColumn'>
+                            <Portal/>
+                        </StyledNavControls>  
                         <PinnedList 
                             activeId={activeId}
                             pinnedList={pinnedList}
@@ -158,11 +212,9 @@ const Layout = ({children}:Props) =>{
                                 publication:router.query.publication?.toString()
                             }}
                             isPinnedList={isPinnedList} 
-                            setIsPinnedList={setIsPinnedList}
                             setReadLater={setReadLater}
                         />
                     </StyledHeader>
-                    
                     <StyledMain>
                         {children}
                     </StyledMain>

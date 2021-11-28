@@ -1,15 +1,18 @@
 import { createStitches } from "@stitches/react";
 import { sand, indigo, indigoDark, bronze, sandDark, red } from '@radix-ui/colors'
 
+
+
 export const { styled, css, globalCss, getCssText, keyframes, createTheme } = createStitches({
     prefix:'light-cream',
     theme: {
         colors: {
             // ...sand,
             background: sand.sand1,
-            foreground: sand.sand7,
+            foreground: sand.sand8,
             foregroundBorder: sand.sand8,
-            highlight: sand.sand3,
+            highlight: sand.sand4,
+            tint:sand.sand2,
             foregroundText: sand.sand9,
             text: sand.sand12,
             //bronze
@@ -17,6 +20,7 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             foregroundBronze: bronze.bronze7,
             foregroundTintBronze: bronze.bronze5,
             highlightBronze:bronze.bronze3,
+            tintBronze: bronze.bronze2,
             foregroundTextBronze: bronze.bronze9,
             textBronze: bronze.bronze12,
             error:red.red10
@@ -64,6 +68,7 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             5: "48px",
             6: "96px",
             7: "124px",
+            'body':'1152px'
         },
         borderWidths: {},
         borderStyles: {},
@@ -84,13 +89,17 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             background: "background 0.8s ease-out, color 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
         },
     },
+    utils:{
+
+    },
     media: {
         dark: "(prefers-color-scheme: dark)",
-        bp1: "(max-width: 544)",
-        bp2: "(max-width: 544), (min-width: 768px)",
-        bp3: "(min-width: 1024px)",
+        bp1: "(width < 720px)",
+        bp2: "(720px <= width < 1024px)",
+        bp3: "(1024px <= width)",
     },
 });
+
 
 export const lightThemePlain =  createTheme('light-plain', {
        colors: {
@@ -98,7 +107,8 @@ export const lightThemePlain =  createTheme('light-plain', {
             background: sand.sand1,
             foreground: sand.sand9,
             foregroundBorder: sand.sand8,
-            highlight: sand.sand3,
+            highlight: sand.sand4,
+            tint:sand.sand2,
             foregroundText: sand.sand9,
             text: sand.sand12,
             //bronze
@@ -124,7 +134,8 @@ export const lightThemeBlue =  createTheme('light-blue', {
             background: sand.sand1,
             foreground: sand.sand9,
             foregroundBorder: sand.sand8,
-            highlight: sand.sand3,
+            highlight: sand.sand4,
+            tint:sand.sand2,
             foregroundText: sand.sand9,
             text: sand.sand12,
             //bronze
@@ -151,6 +162,7 @@ export const darkThemePlain= createTheme('dark-plain', {
             foreground: sandDark.sand9,
             foregroundBorder: sandDark.sand8,
             highlight: sandDark.sand3,
+            tint:sandDark.sand2,
             foregroundText: sandDark.sand9,
             text: sandDark.sand12,
             //bronze
@@ -176,6 +188,7 @@ export const darkTheme = createTheme('dark-blue', {
             foreground: sandDark.sand8,
             foregroundBorder: sandDark.sand8,
             highlight: sandDark.sand3,
+            tint:sandDark.sand2,
             foregroundText: sandDark.sand9,
             text: sandDark.sand12,
             //bronze
@@ -259,3 +272,16 @@ export const globalStyles = globalCss({
     },
 ],
 });
+
+
+export const dialogShow = keyframes({
+    '0%': { opacity:0,  transform:'translate(-50%, -50%) scale(1.1)'},
+    '100%':{ opacity:1, transform:'translate(-50%, -50%) scale(1)',}
+})
+
+
+export const overlayShow = keyframes({
+  '0%': { opacity: 0 },
+  '100%': { opacity: 0.65 },
+});
+

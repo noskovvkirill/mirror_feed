@@ -1,6 +1,6 @@
 import {styled} from 'stitches.config'
 import Remove from '@/design-system/icons/Remove'
-import {useState, useEffect, useLayoutEffect} from 'react'
+import {useState, useEffect, useLayoutEffect, useRef} from 'react'
 import Button from '@/design-system/primitives/Button'
 import Box from '@/design-system/primitives/Box'
 import useLockBodyScroll from 'hooks/useLockBodyScroll'
@@ -183,6 +183,7 @@ const OnBoarding = () => {
     const [isOnboarded, setIsOnboarded] = useState(true)
     const [step, setStep] = useState(1)
     const router = useRouter()
+    const video = useRef<HTMLVideoElement>(null)
 
     useEffect(()=>{
         if(router.pathname !== '/'){
@@ -218,8 +219,22 @@ const OnBoarding = () => {
             overflow:'hidden'
             }}>
             <Box layout='flexBoxRow' css={{gap:'$0', overflow:'hidden'}}>
-                <Box css={{minWidth:'192px', background:'#EBEBEB', overflow:'hidden', boxSizing:'border-box', height:'100%', objectFit:'cover'}}>
-                    <Image alt='onboarding' quality='100' src='/onboarding.png' width='192px' height='192px' layout='responsive'/>
+                <Box css={{minWidth:'192px', background:'$highlight', overflow:'hidden', boxSizing:'border-box', height:'100%', objectFit:'cover'}}>
+                     <Box css={{width:'192px', 
+                        overflow:'hidden',
+                        opacity:0.75,
+                        mixBlendMode:'multiply'
+                        }}>
+                        <video 
+                        ref={video}
+                        width='100%'
+                        onEnded={()=>{
+                            setTimeout(()=>{
+                                if(video.current) video.current.play()
+                            },2000)
+                        }}
+                        src='/try2.mp4' autoPlay muted/>
+                        </Box>
                 </Box>
                 <StyledBody css={{padding:'$2', gap:'$1'}}>
                     <StyledHeader>

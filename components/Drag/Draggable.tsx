@@ -1,6 +1,6 @@
 import {useDraggable} from '@dnd-kit/core'
-import PinnedComponent  from '@/design-system/PinnedItem' 
 import Handler from '@/design-system/Drag/Handler';
+import Pinned from '@/design-system/Pinned'
 
 function Draggable(props:any) {  
     const Element = props.element || 'div';  
@@ -8,11 +8,14 @@ function Draggable(props:any) {
     return (
         <Element 
         ref={setNodeRef}>
-              <PinnedComponent  
+              <Pinned.Root  
+                item={props.item}
                 isActive={props.isActive}
-                item={props.item}>
-                <Handler  {...listeners} {...attributes}/>
-            </PinnedComponent>
+                >
+                <Pinned.ControlsNotSync>
+                    <Handler  {...listeners} {...attributes}/>
+                </Pinned.ControlsNotSync>
+            </Pinned.Root>
         </Element>  
     );
 }

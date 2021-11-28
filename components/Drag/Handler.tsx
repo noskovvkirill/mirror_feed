@@ -28,9 +28,9 @@ const StyledHandler = styled('button', {
                 cursor:'grabbing'
             },
             false:{
-                background:'$highlightBronze',
-                color:'$foregroundTextBronze',
-                border:'1px solid $foregroungBronze',
+                background:'$highlight',
+                color:'$foregroundText',
+                border:'1px solid $foreground',
                 cursor:'grab',
             }
         }

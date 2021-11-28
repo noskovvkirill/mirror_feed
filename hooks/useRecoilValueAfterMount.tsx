@@ -11,12 +11,14 @@ function useComponentDidMount() {
   return componentDidMount;
 }
 
+
+
 export function useRecoilValueAfterMount<T>(
   recoilValue: RecoilValue<T>,
-  valueBeforeMount: T,
+  valueBeforeMount: T
 ) {
   const didMount = useComponentDidMount();
-  const realValue = useRecoilValue(recoilValue);
+  const realValue = useRecoilValue(recoilValue)
 
   return didMount ? realValue : valueBeforeMount;
 }

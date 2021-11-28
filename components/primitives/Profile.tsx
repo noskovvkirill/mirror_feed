@@ -2,20 +2,19 @@ import * as Avatar from '@radix-ui/react-avatar';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import {styled} from 'stitches.config'
 import type {SubscribedPublication} from 'contexts'
+import type {SpaceTypeProfile} from 'contexts/spaces'
+import type {UserTypeProfile} from 'contexts/user'
 import {AddressPrettyPrint} from 'src/utils'
-export type User = {
-    avatarURL:string | undefined,
-    displayName: string | undefined,
-    address:string 
-}
 
+export type ProfileTypes = UserTypeProfile | SubscribedPublication | SpaceTypeProfile
 
 interface IProfile {
-    profile:User | SubscribedPublication,
-    size?:'og' | 'lg' | 'md'| 'sm'
+    profile:ProfileTypes,
+    size?:'og' | 'lg' | 'md'| 'sm',
+    isSelected?:boolean,
 }
 
-const StyledAvatar = styled(Avatar.Root, {
+export const StyledAvatar = styled(Avatar.Root, {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -25,42 +24,56 @@ const StyledAvatar = styled(Avatar.Root, {
   borderRadius: '100%',
   backgroundColor:'$backgroundText',
   variants:{
+      isSelected:{
+        true:{
+            outlineColor:'$foregroundBronze',
+            outlineOffsetColor:'$foreground',
+            outlineStyle:'solid',
+             outlineWidth:'3px',
+        },
+        false:{
+            outlineStyle:'solid',
+            outlineColor:'$foreground',
+            outlineOffsetColor:'$foreground',
+        }
+      },
       size:{
            og:{
                 width: 'calc($4 * 3)',
                 height: 'calc($4 * 3)',
                 '&:hover':{
-                    outline:'4px solid $foreground',
+                    outline:'4px solid inherit',
                 },
            },
             lg:{
-                outline:'3px solid $foreground',
+                outlineWidth:'3px',
                 width: 'calc($4 * 1.5)',
                 height: 'calc($4 * 1.5)',
                 '&:hover':{
-                    outline:'4px solid $foreground',
+                    outlineWidth:'4px',
                 },
             },
              md:{
-                outline:'3px solid $foreground',
+                outlineWidth:'2px',
                 width: '$4',
                 height: '$4',
                 '&:hover':{
-                    outline:'4px solid $foreground',
+                    outlineWidth:'4px',
                 },
              },
              sm:{
-                outline:'3px solid $foreground',
+                outlineWidth:'3px',
                 width: 'calc($4 * 0.8)',
                 height: 'calc($4 * 0.8)',
                 '&:hover':{
-                    outline:'4px solid $foreground',
+                    outlineWidth:'4px',
                 },
              }
       }
   },
   defaultVariants:{
-      size:'md'
+      size:'md',
+      isSelected:false,
   }
 });
 
@@ -137,28 +150,31 @@ const StyledTrigger = styled(Tooltip.Trigger, {
     border:'0px'
 })
 
-export const isUser = (x: any): x is User => x && x.address;
+export const isUser = (x: any): x is UserTypeProfile => x && x.address;
 export const isPublication = (x: any): x is SubscribedPublication => x && x.ensLabel;
+export const isSpace = (x: any): x is SpaceTypeProfile => x && x.name;
 
-
-const Profile = ({profile, size='md'}:IProfile) => {
+const Profile = ({profile, size='md', isSelected=false}:IProfile) => {
     return(
         <Tooltip.Root>
             <StyledTrigger>
-                <StyledAvatar size={size}>
+                <StyledAvatar size={size} isSelected={isSelected}>
                    
-                          
-                            <StyledImage 
-                            src={profile?.avatarURL && profile.avatarURL}
-                            alt={'user avatar'}
-                            />
+                    
+                    <StyledImage 
+                    src={profile?.avatarURL && profile.avatarURL}
+                    alt={'user avatar'}
+                    />
                            
                     <StyledFallback size={size} delayMs={600}>
                         {profile && isUser(profile) && (
                             <>
                             {profile.displayName 
                             ? <>{profile?.displayName.match(/(\b\S)?/g)?.join("")?.match(/(^\S|\S$)?/g)?.join("").toUpperCase()} </>
-                            : <>{AddressPrettyPrint(profile.address, 4)}</>
+                            : <>{profile.address && 
+                                <>{AddressPrettyPrint(profile.address, 4)}</>
+                                }
+                                </>
                             }
                             </>
                         )}
@@ -168,6 +184,15 @@ const Profile = ({profile, size='md'}:IProfile) => {
                             {profile?.ensLabel.match(/(\b\S)?/g)?.join("")?.match(/(^\S|\S$)?/g)?.join("").toUpperCase()} 
                             </>
                         )}
+
+                        {profile && isSpace(profile) && (
+                            <>
+                            {profile?.name?.slice(0,9)}
+                            </>
+                        )
+                        }
+
+
                     
                     
                     </StyledFallback>
@@ -177,6 +202,7 @@ const Profile = ({profile, size='md'}:IProfile) => {
             <StyledContentTooltip side="top">
                {isUser(profile) && profile.displayName}
                {isPublication(profile) && profile.ensLabel}
+               {isSpace(profile) && profile.name}
             </StyledContentTooltip>
         </Tooltip.Root>
     )

@@ -15,7 +15,7 @@ const StyledControl = styled(Button,{
     padding:'$1', 
     display:'flex',
     gap:'$0',
-    overflow:'hidden',
+    overflow:'visible',
     alignItems:'center',
     fontSize:'$6',
     boxSizing:'border-box',
@@ -45,10 +45,13 @@ const StyledControl = styled(Button,{
             },
             false:{
                   border:'1px solid $foregroundBorder', 
-                  color:'$foregroundText', 
+                  color:'$foregroundText',
+                //   background:'$tint', 
                   '&:hover':{
-                    background:'$foreground',
-                    color:'$background'
+                    // background:'$foreground',
+                    // color:'$background'
+                    background:'$foregroundBronze',
+                    color:'$backgroundBronze'
                 },
             }
         },
@@ -67,7 +70,7 @@ const StyledControl = styled(Button,{
               background:'$foregroundBronze',
               color:'$backgroundBronze',
               //transition changed to make it more visually pleasant when ArticlePreview appears. 
-              //default transition stands out and irritating for the eye 
+              //default transition stands out and they are irritating
                transition:  "background",
                transitionTimingFunction:'ease-in-out',
                transitionDuration:'1.0s',
@@ -77,7 +80,26 @@ const StyledControl = styled(Button,{
                 color:'$backgroundBronze'
               }
         }
-    }],
+    },
+    {
+        selected:true,
+        isHighlighted:false,
+        css:{
+              border:'1px solid $foreground', 
+              background:'$foreground',
+              color:'$background',
+              transition:  "background",
+              transitionTimingFunction:'ease-in-out',
+             transitionDuration:'1.0s',
+              '&:hover':{
+                border:'1px solid $foreground', 
+                background:'$foreground',
+                color:'$background'
+              }
+        }
+    }
+
+],
      defaultVariants:{
         isHighlighted:false,
         selected:false,
@@ -85,15 +107,38 @@ const StyledControl = styled(Button,{
 })
 
 const Control = ({children, direction, label, pos}:{
-    children:ReactChild,label:string, pos:{
+    children:ReactChild,label?:string, pos:{
         x:number, y:number
-    },  direction?:'right' | 'left'
+    },  direction?:'right' | 'left' | 'top' | 'bottom'
 }) => {
 
+    if(direction === 'top' || direction === 'bottom'){
+        return(
+        <Portal.Root>
+               <StyledControl
+                aria-label={label}
+                css={{
+                position:'absolute', 
+                // width:'auto',
+                background:'$foregroundBronze',
+                color:'$backgroundBronze',
+                pointerEvents:'none', top:'100%', left:'100%',
+                transform:`translate(calc(${pos.x}px + 0%), ${pos.y}px) translateY(${100}%)`
+            }}
+                isHighlighted={true}
+                >   
+                 <>
+                    {/* {children} */}
+                    {label}
+                    </>
+                </StyledControl>
+        </Portal.Root>)
+    }
 
     return(
         <Portal.Root>
                 <StyledControl
+                aria-label={label}
                 css={{
                 position:'absolute', 
                 background:'$foregroundBronze',
@@ -123,25 +168,42 @@ const Control = ({children, direction, label, pos}:{
 
 const ButtonControl = (
     {children, selected, 
+    css,
     direction='right',
-    label, isHighlighted, onClick}:{children:ReactChild,label:string, direction?:'right' | 'left',selected?:boolean, isHighlighted:boolean, onClick?: (e:React.MouseEvent<HTMLButtonElement> | never) => void;
+    label, isHighlighted, onClick}:{children:ReactChild,label?:string, css?:any; direction?:'right' | 'left' | 'bottom' | 'top',selected?:boolean, isHighlighted:boolean, onClick?: (e:React.MouseEvent<HTMLButtonElement> | never) => void;
     }) => {
     const [isHover, setIsHover] = useState(false)
     const [pos, setPos] = useState({x:-99999, y:-99999})
-    
+    const [isFocused, setIsFocused] = useState(false)
     return(
         <>
             <StyledControl
+            tabIndex={0}
+            aria-label={label}
             selected={selected}
-            css={{position:'relative'}}
+            css={{position:'relative', ...css}}
             onClick={onClick}
+            // onBeforeInput={()=>alert('focus')}
+            // onKeyDown={()=>alert('focus')}
+            // onSelect={()=>alert('focus')}
+            
+            onFocus={(e)=>{setIsFocused(true)
+                const target = e.target as HTMLElement;
+                 const coord = target.getBoundingClientRect()
+                 if(direction === 'right' || direction === 'top' || direction === 'bottom'){
+                    setPos({x:coord.x+window.scrollX, y:coord.y+window.scrollY})
+                 } else {
+                     setPos({x:coord.x+window.scrollX+coord.width, y:coord.y+window.scrollY})
+                 }
+        }}
+            onBlur={()=>{setIsFocused(false);  setPos({x:-999999, y:-999999})}}
             onTouchStart={()=>setIsHover(true)} 
             onTouchEnd={()=>setIsHover(false)}
             onMouseEnter={(e)=>{
                 setIsHover(true)
                  const target = e.target as HTMLElement;
                  const coord = target.getBoundingClientRect()
-                 if(direction === 'right'){
+                 if(direction === 'right' || direction === 'top' || direction === 'bottom'){
                     setPos({x:coord.x+window.scrollX, y:coord.y+window.scrollY})
                  } else {
                      setPos({x:coord.x+window.scrollX+coord.width, y:coord.y+window.scrollY})
@@ -154,7 +216,7 @@ const ButtonControl = (
             isHighlighted={isHighlighted}>
                 {children}
             </StyledControl>
-            {isHover && (
+            {(isHover || isFocused) && (
                 <Control direction={direction} label={label} pos={pos}>{children}</Control>
             )}
         </>

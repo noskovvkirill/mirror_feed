@@ -1,99 +1,128 @@
 import type { GetStaticProps } from 'next'
 import Layout from '@/design-system/Layout'
 import Box from '@/design-system/primitives/Box'
-import { request, gql } from 'graphql-request';
-import ExternalIcon from '@/design-system/icons/External'
-import { getContributorsAvatar } from 'src/publication-contents';
-import Profile from '@/design-system/primitives/Profile'
-import {useRouter} from 'next/router'
+import CuratedArticle from '@/design-system/Curation/CuratedArticle'
+import * as Header from '@/design-system/Feed/Header'
+import Heading from '@/design-system/primitives/Heading'
 
-//I can use skip for the infintie swr
-const query = gql`
- {
-  domain(id:"0x1aaf79d9b3323ad0212f6a2f34f8c627d8d45e45a55c774d080e3077334bfad9") {
-    id
-    name
-    subdomains(first:20) {
-      name
-      labelName
-    }
-  }
-}
-`;
+import { createClient } from '@supabase/supabase-js'
+import {request} from 'graphql-request'
+import { queryEntry } from 'src/queries'
+//state
+import {pinnedItems, PinnedItem, settings} from 'contexts'
+import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
+import { useRecoilValue } from 'recoil'
+//types
+import {SpaceTypeProfile} from 'contexts/spaces'
 
-type EnsDomain = {
-    name:string,
-    labelName:string
-}
 
-export const getStaticProps: GetStaticProps = async () => {
-  let data:EnsDomain[] = await request('https://api.thegraph.com/subgraphs/name/ensdomains/ens', query).then(({ domain }) =>{
-      return domain.subdomains
-        .filter((i:any) => i.labelName !== null)
-  });
 
-  const contributors = await Promise.all(data.map(async (item:EnsDomain, i:number)=>{
-      return await getContributorsAvatar({
-        type:'ens',
-        ensLabel:item.labelName
-      }).then((item)=>item).catch(()=>{
-        data = [...data.slice(0, i), ...data.slice(i + 1)];
-        return null
-      })
+export const getStaticProps: GetStaticProps = async () => { 
+    const supabaseUrl = 'https://tcmqmkigakxeiuratohw.supabase.co'
+    const supabaseKey = process.env.SERVICE_KEY || ''
+    const supabase = createClient(supabaseUrl, supabaseKey) 
+     const { data, error } = await supabase
+    .from('top')
+    .select()
+    .order('totalStaked', {ascending: false})
+    
+    if(error || !data){
+         return({notFound:true})
+    } 
+    const entries = await Promise.all(data.map(async (item:any) => {
+    return(await request('https://mirror-api.com/graphql', queryEntry, {
+       digest: item.cid
+    }).then((data:any) =>
+      ({entry:data.entry, 
+        staked:item.totalStaked,
+        spaces:item?.spaces && item.spaces as SpaceTypeProfile[],        
+    })
+    ).catch((e)=>{console.log(e); return})
+    )
   }))
 
-    const contributorsExists = contributors.filter((item)=>item)
-    return { props: { data, contributors:contributorsExists } }
-};
+    const entrieFiltered = entries.filter(function( element:any ) {
+        return element !== undefined;
+    });
+
+    return {props: {entries: entrieFiltered},  revalidate: 10}
+    
+}
 
 type Props = {
-    data: any;
-    contributors: any;
+    entries: any;
 }
 
 
+const Home = ({entries}:Props) => {
+    
+    const appSettings = useRecoilValue(settings)
+    const getData = async () => {
+       await fetch('/api/syncStaked').then(res=>res.json()).then(res=>console.log('res sync', res))
+    }
 
-const Home = ({ data, contributors }: Props) => {
-    const router = useRouter()
+    const pinnedList = useRecoilValueAfterMount(pinnedItems, null) //we set the items to null to prevent initial rendering with empty values and waiting for the list to load
+
+
     return (
         <Layout>
             <Box layout='flexBoxColumn' >
-                <Box layout='flexBoxRow' css={{ flexWrap: 'wrap', gap: '$2' }}>
-                    {data.map((item:any, i:any) => (
-                        <Box
-                            layout='flexBoxColumn'
-                            css={{
-                                backgroundColor:'$highlightBronze',
-                                color:'$foregroundTextBronze',
-                                gap: '$1',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: '256px',
-                                boxSizing: 'border-box',
-                                padding: '16px',
-                                borderRadius: '$2',
-                                // border: '1px solid lightgray'
-                            }}
-                            key={i}>
-                            <h5 onClick={()=>{
-                                router.push(`${item.labelName}?type=ens`)
-                            }}>{item.name}</h5>
-                            <Box layout='flexBoxRow' css={{flexWrap:'wrap'}}>
-                            {contributors[i].map((contributor)=>{
-                                return(
-                                    <Profile 
-                                    profile={contributor}
-                                    key={contributor.address+'contributors'}/>
-                              
-                                )
-                            })}
-                            </Box>
-           
-                        </Box>
-                    ))}
-
-
+            <Header.Root controls={<Header.ViewControls/>}>
+             <Box layout='flexBoxColumn' css={{width:'100%'}}>
+                <Box layout='flexBoxRow'>
+                    <Heading 
+                    size={'h1'}
+                    color={"foregroundText"}>
+                        Explore&nbsp;
+                    </Heading>
+                    <Heading 
+                    size={'h1'}
+                    color={"highlight"}>
+                        Top in 7 days
+                    </Heading>
+                    </Box>
+                    <Header.TopCurators/>
                 </Box>
+            </Header.Root>
+                
+                <button onClick={getData}>DATA</button>
+
+                {entries.length === 0 && (
+                    <Box>
+                        Nothing is here yet. Be first to curate && stake!
+
+                    </Box>
+                )}
+
+               <Box css={{
+            display:appSettings.view === 'card' ? 'grid' : 'list',
+            gridColumnGap:'32px',
+            height:'fit-content',
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            gridTemplateRows: "repeat(3, minmax(0, 1fr))",
+            width:'$body',
+            overflow:'visible',
+          }}>
+                {entries.map((entry:any)=>{
+                    if(pinnedList?.findIndex((item:PinnedItem)=>item.type === 'entry' && item.item.digest === entry.entry.digest) !== -1){
+                        return;
+                    } else {
+                    return(
+                      <CuratedArticle
+                        key={'my_space_item_synced'+entry.entry.id+appSettings.view}
+                        view={appSettings.view}
+                        isPinned={true}
+                        entry={entry.entry}
+                        isPreview={true}
+                        stacked={entry.staked}
+                        spaces={entry.spaces}
+                        />
+                    )
+                    }
+                })}
+            </Box>
+           
+       
             </Box>
         </Layout>
     )

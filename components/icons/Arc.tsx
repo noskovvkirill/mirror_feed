@@ -6,7 +6,7 @@ function Icon() {
       xmlns="http://www.w3.org/2000/svg"
       width="15"
       height="15"
-      style={{position:'relative', top:'-1px', userSelect:'none'}}
+      style={{position:'relative', top:'-1px', userSelect:'none', pointerEvents:'none'}}
       fill="none"
       viewBox="0 0 15 15"
     >

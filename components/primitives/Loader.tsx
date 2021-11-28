@@ -1,4 +1,5 @@
 import Box from '@/design-system/primitives/Box'
+import React from 'react';
 import { keyframes } from 'stitches.config'
 
 const textAnimation = keyframes({
@@ -6,7 +7,7 @@ const textAnimation = keyframes({
   'to': {  backgroundPosition: '300% center' },
 });
 
-const Loader = ({size='default'}:{size:'small' | 'default'}) =>{
+const Loader = ({size='default', children}:{size:'small' | 'default', children?:React.ReactNode}) =>{
     return(
         <Box css={{transition:'$all', 
         fontSize:size === 'small' ? '$6' : '$p',
@@ -19,7 +20,7 @@ const Loader = ({size='default'}:{size:'small' | 'default'}) =>{
         animationDirection:'alternate',
         mixBlendMode:'multiply'
         }}>
-            Patience
+          {children ? children : 'Patience'}
           </Box>
     )
 }

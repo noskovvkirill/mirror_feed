@@ -3,7 +3,7 @@ import Box from '@/design-system/primitives/Box'
 import { request } from 'graphql-request';
 import type { GetServerSideProps } from 'next'
 import Article from '@/design-system/Article';
-import type {Entry} from '@/design-system/Article'
+import type {EntryType} from '@/design-system/Entry'
 // import type {CurrentArticle} from 'contexts'
 import {Current} from 'contexts'
 import { useSetRecoilState } from 'recoil';
@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 type Props = {
-    entry:Entry;
+    entry:EntryType;
 }
 
 

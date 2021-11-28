@@ -4,12 +4,12 @@ import { request } from 'graphql-request';
 import type { GetServerSideProps } from 'next'
 import type { SubscribedPublication} from 'contexts';
 import Article from '@/design-system/Article';
-import type {Entry} from '@/design-system/Article'
+import type {EntryType} from '@/design-system/Entry'
 import { Current, PinnedItem,pinnedItems } from 'contexts';
 import { useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
-import  { User } from '@/design-system/primitives/Profile';
+import type {UserTypeProfile} from 'contexts/user'
 import { queryPersonal, queryEntry, queryPublication } from 'src/queries';
 import { getContributorsListAvatars} from 'src/publication-contents'
 import Contributors from '@/design-system/Contributors';
@@ -36,7 +36,7 @@ const { publication, type} = ctx.query;
       type:'personal'
     }
 
-    const profiles:User[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
+    const profiles:UserTypeProfile[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
 
     const content = entries.map(({node:{tags}}:{node:{tags:any}})=>{
       return tags.find((c:any)=>c.name === 'Original-Content-Digest').value
@@ -76,7 +76,7 @@ const { publication, type} = ctx.query;
       type:'ens'
     }
 
-    const profiles:User[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
+    const profiles:UserTypeProfile[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
 
     const content = entries.map((item:any)=>item.digest)
     
@@ -101,7 +101,7 @@ const { publication, type} = ctx.query;
 type Props = {
     pbl: SubscribedPublication,
     entries:any;
-    profiles:User[] | SubscribedPublication[];
+    profiles:UserTypeProfile[] | SubscribedPublication[];
 }
 
 
@@ -131,11 +131,12 @@ const Data = ({pbl, entries, profiles}:Props) =>{
               {entries.length === 0 && (
                 <Box layout='flexBoxRow' css={{width:'100%',
                 boxSizing:'border-box',
-                alignItems:'center', justifyContent:'center'}}>There is nothing just yet</Box>
+                alignItems:'center',
+                justifyContent:'center'}}>There is nothing just yet</Box>
               )}
               {pinnedList !== null && (
                 <>
-                {entries.map((entry:Entry)=>{
+                {entries.map((entry:EntryType)=>{
                     if(pinnedList.findIndex((item:PinnedItem)=>item.type === 'entry' && item.item.digest === entry.digest) !== -1){
                       return;
                     } else {

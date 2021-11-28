@@ -11,18 +11,33 @@ const StyledTrigger = styled(Popover.Trigger, {
     height:'auto',
     minHeight:'33px',
     maxHeight:'33px',
+    overflow:'hidden',
+    maxWidth:'33px',
     borderRadius:'$round', 
     display:'flex',
     gap:'$0',
-    overflow:'hidden',
+    objectFit:'scale-down',
     alignItems:'center',
     fontSize:'$6',
     boxSizing:'border-box',
-    padding:'$1', 
     lineHeight:'$6',
     background:'transparent',
     cursor:'pointer',
     variants:{
+       isAvatar:{
+          true:{
+            padding:'0',
+            outline:'1px solid $foreground',
+            border:'3px solid $highlight', 
+            '&:hover':{
+              outline:'1px solid $foregroundBronze',
+              border:'3px solid $foregroundBronze', 
+            }
+          },
+          false:{
+             padding:'$1', 
+          }
+       },
         isHighlighted:{
             true:{
                  border:'1px solid $foregroundBronze', 
@@ -48,7 +63,8 @@ const StyledTrigger = styled(Popover.Trigger, {
         },
     },
     defaultVariants:{
-      isHighlighted:false
+      isHighlighted:false,
+      isAvatar:false,
     }
 })
 
@@ -76,10 +92,10 @@ const StyledContent = styled(Popover.Content, {
   },
 })
 
-const ButtonPopover = ({icon, children, label='', isHighlighted=true}:{icon:ReactElement, children:ReactNode | ReactNode[], label:string, isHighlighted:boolean}) =>{
+const ButtonPopover = ({icon, children, label='', isHighlighted=true, isAvatar}:{icon:ReactElement, children:ReactNode | ReactNode[], label:string, isAvatar?:boolean, isHighlighted:boolean}) =>{
     return(
           <Popover.Root modal={true}>    
-              <StyledTrigger>
+              <StyledTrigger isAvatar={isAvatar}>
                   {icon}
               </StyledTrigger>
               <StyledContent side='left' align='start'>

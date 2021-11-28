@@ -79,7 +79,7 @@ I want everyone to be able to create and share curated spaces. But I don't want 
 
 #### Social experience, moldable & fluid interface
 
-- [ ] Authentication
+- [x] Authentication
 - [ ] Link previews
 - [x] Multiple Themes
 - [ ] Custom theming
@@ -100,10 +100,16 @@ I want everyone to be able to create and share curated spaces. But I don't want 
 
 ### Curation
 
-- [ ] Separate page for the personal/group curation. Similar to the ownership of publication on Mirror.
-- [ ] Drag and drop functionality from Pinned Items to that space
-- [ ] Authenticatio-
-- [ ] ERC-20 token, governance // https://docs.openzeppelin.com/contracts/4.x/api/governance 
-- [ ] Test contract interaction. Can stacking be a smooth experience?
-- [ ]  How do we fetch and see the articles based on stacking? Do we sort by day/by week/both?
-- [ ]   .. Rest of the mechanics/design should follow.
+- [x] In Progress Separate page for the personal/group curation. Similar to the ownership of publication on Mirror.
+- [x] Drag and drop functionality from Pinned Items to that space
+- [x] Authenticatio-
+- [x] ERC-20 token, governance // https://docs.openzeppelin.com/contracts/4.x/api/governance
+- [x] Test contract interaction. Can stacking be a smooth experience?
+- [x] How do we fetch and see the articles based on stacking? Do we sort by day/by week/both?
+      Immediate actions:
+      — [ ] Pinned Items sort on drag
+      — [ ] Remove curated items not sync produces null values
+      — [ ] Add the article card size configuration on a left bar
+      — [ ] Body freezes after the portal interaction (?)
+      — [ ] Bottom Right side for the toasts/contract interactions/notifications
+- [ ] .. Rest of the mechanics/design should follow.

@@ -31,7 +31,7 @@ query Contributor($name: String!) {
   }
 `
 
-//contributor 
+//profile  
 export const queryContributor = gql`
 query Contributor($address: String!) {
   userProfile(address: $address) {
@@ -119,7 +119,7 @@ query Transaction($contributor:String!){
 
 export const queryAll = gql`
 {
-		transactions(first:5, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
+		transactions(first:10, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
 			edges {
 				node {
 					id
@@ -179,6 +179,25 @@ query Entry($digest: String!) {
             }
           }
         }
+        author{
+          address
+          displayName
+        }
+        publication{
+          ensLabel
+        }
+    }
+}`
+
+
+//single Entry
+export const queryEntryPreview = gql`
+query Entry($digest: String!) {
+  entry(digest: $digest) {
+        id
+        digest
+        timestamp
+        title
         author{
           address
           displayName

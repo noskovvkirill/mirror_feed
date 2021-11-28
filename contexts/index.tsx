@@ -1,7 +1,13 @@
-import {atom,  AtomEffect} from 'recoil'
+import {atom,  atomFamily, AtomEffect, selectorFamily} from 'recoil'
 import {history} from '@/design-system/Layout'
-import {Entry} from '@/design-system/Article'
-import localForage from 'localforage' //async localstorage
+import {EntryType} from '@/design-system/Entry'
+import {queryEntry} from 'src/queries'
+import { spaceEntries } from 'src/queriesFEED'
+import {userSpaces as queryUserSpaces} from 'src/queriesFEED'
+
+import {request} from 'graphql-request'
+import { ethers } from 'ethers'
+import {SpaceType} from 'contexts/spaces'
 
 export type Publication = {
      type: 'personal' | 'ens',
@@ -28,31 +34,13 @@ export type SubscribedPublication  =  Publication & {
     avatarURL?:string
 }
 
-
-export type Attachment = {
-    mimeType:string
-    url:string
-}
-
-type PinnedItemEntry = {
+export type PinnedItem =  {
     id:number
     type:'entry'
-    item:Entry
+    item:EntryType
 }
 
-type PinnedItemPublication = {
-    id:number
-    type:'publication'
-    item:Publication
-}
 
-export type PinnedItemAttachment = {
-    id:number
-    type:'attachment'
-    item: Attachment
-}
-
-export type PinnedItem = PinnedItemEntry | PinnedItemAttachment | PinnedItemPublication 
 
 
 export type ReadingListItem = {
@@ -71,6 +59,16 @@ export type ReadSettings = {
     isProposal:boolean,
     isAuction:boolean,
 }
+
+export type Notification = {
+    label:string,
+    tx:any,
+}
+
+export const NotificationList = atom({
+    key: 'notificationList',
+    default: [] as Notification[],
+})
 
 
 export const Current = atom({
@@ -308,7 +306,22 @@ export const readSettings = atom({
     effects_UNSTABLE: [SettingsEffect()]
 })
 
+type AppSettings = {
+    view:'card' | 'list'
+}
 
+export const settings = atom({
+    key:'app-settings',
+    default: {
+        view:'card'
+    } as AppSettings,
+})
+
+
+export const curatedSpaceNotSyncSelected = atom({
+    key:'curatedSpaceNotSyncSelected',  
+    default:0 as number,   
+})
 
 export type CuratedSpaceItem = PinnedItem 
 
@@ -316,19 +329,20 @@ export type CuratedSpaceItem = PinnedItem
 export type CuratedSpaceNotSync = {
     items:CuratedSpaceItem[]
 }
+ 
 
-const CuratedSpaceNotSyncEffect = ():AtomEffect<CuratedSpaceNotSync> => ({setSelf, onSet, trigger}) => {
-    const loadPersisted = async () => {
-        if(trigger === 'get' && typeof localForage !== 'undefined' && typeof window !== 'undefined'){
-            const curatedItemsList:CuratedSpace | null = await localForage.getItem('mirror-curated-space-item-not-synced')
-            if(curatedItemsList !== null){
-                setSelf(curatedItemsList)
+const CuratedSpaceNotSyncEffect = (params:any):AtomEffect<CuratedSpaceNotSync> => ({setSelf, onSet, trigger}) => {
+    const loadPersisted = () => {
+        if(trigger === 'get' && typeof localStorage !== 'undefined'){
+            const curatedItemsList = localStorage.getItem(`mirror-curated-space-item-not-synced-${params}`)
+            if(curatedItemsList){
+                setSelf(JSON.parse(curatedItemsList))
             } 
         }   
     }   
     loadPersisted();
     onSet((newValue:CuratedSpaceNotSync, oldValue:any) => {
-            localForage.setItem('mirror-curated-space-item-not-synced', newValue)
+            localStorage.setItem(`mirror-curated-space-item-not-synced-${params}`, JSON.stringify(newValue))
             history.push({
                 label: `${JSON.stringify(oldValue)} -> ${JSON.stringify(newValue)}`,
                 undo: () => {
@@ -339,14 +353,13 @@ const CuratedSpaceNotSyncEffect = ():AtomEffect<CuratedSpaceNotSync> => ({setSel
 }
 
 
-export const curatedSpaceNotSync = atom({
+export const curatedSpaceNotSync = atomFamily({
     key:'curatedSpaceNotSync',
     default: {
         items:[]
     } as CuratedSpaceNotSync,
-    effects_UNSTABLE:[CuratedSpaceNotSyncEffect()]
+    effects_UNSTABLE: (params:any) => [CuratedSpaceNotSyncEffect(params)]
 })
-
 
 
 export type CuratedSpace = {
@@ -354,40 +367,63 @@ export type CuratedSpace = {
     items:CuratedSpaceItem[]
 }
 
-const CuratedSpaceEffect = ():AtomEffect<CuratedSpace | undefined> => ({setSelf, onSet, trigger}) => {
-    const loadPersisted = async () => {
-        if(trigger === 'get' && typeof localForage !== 'undefined' && typeof window !== 'undefined'){
-            const curatedItemsList:CuratedSpace | null = await localForage.getItem('mirror-curated-space-item')
-            if(curatedItemsList !== null){
-                setSelf(curatedItemsList)
-            } 
-        }   
-    }   
-    loadPersisted();
-    onSet((newValue:CuratedSpace | undefined, oldValue:any) => {
-            if(newValue !== undefined){
-                localForage.setItem('mirror-curated-space-item', newValue)
-                history.push({
-                    label: `${JSON.stringify(oldValue)} -> ${JSON.stringify(newValue)}`,
-                    undo: () => {
-                        setSelf(oldValue);
-                    },
-                });
-        }
-    })   
+export const userSpaces = selectorFamily({
+    key:'userSpaces',
+    get: (address:string) => async() => {
+        const endpoint = process.env.NEXT_PUBLIC_GRAPH_ENDPOINT
+        if(!endpoint) throw "graphql endpoint was not found";
+        const {spaces}:{spaces:SpaceType[]} = await request(endpoint, queryUserSpaces, {owner:address})
+        return spaces
+    }
+})
+
+const FetchCurated = async (id:number) => {
+ const endpoint = process.env.NEXT_PUBLIC_GRAPH_ENDPOINT
+   if(!endpoint) return;
+   const {space} = await request(endpoint, spaceEntries, {id:id.toString()})
+    const items = space.items.map(({entry, totalStaked}:any)=>{
+        return {
+            cid: entry.cid,
+            staked: ethers.utils.formatEther(totalStaked.toString()),
+            totalStaked: ethers.utils.formatEther(entry.totalStaked.toString())
+        };
+    })
+
+    return items
 }
 
-export const curatedSpace = atom({
-    key:'curatedSpace',
-    default: undefined as CuratedSpace | undefined,
-    effects_UNSTABLE:[CuratedSpaceEffect()]
+
+export const curatedSpaceSynced = selectorFamily({
+    key:'curatedSpaceSync',
+    get: (address:string) => async({get}) => {
+        const selectedSpace = get(curatedSpaceNotSyncSelected)
+        const spaces = get(userSpaces(address))
+        const spaceId = spaces[selectedSpace].tokenId
+        const items:{cid:string, stacked:number}[] = await FetchCurated(parseInt(spaceId))
+        const entries = await Promise.all(items.map(async (item:any) => {
+        return(await request('https://mirror-api.com/graphql', queryEntry, {
+        digest: item.cid
+        }).then((data) =>
+            { return ({entry:data.entry as EntryType, staked:item.staked as number, totalStaked:item?.totalStaked as number | undefined})}
+        ).catch(()=>{return undefined})
+        )
+        }))
+        const entriesFiltered:{entry:EntryType, staked:number, totalStaked?:number}[] = entries.filter(function(element):element is {entry:EntryType, staked:number, totalStaked:number} {
+            return element !== undefined;
+        });
+        return entriesFiltered;
+    }
 })
 
 
+type StakingSelectedItem = {
+    isOpen:boolean;
+    item:{entry:EntryType, staked:number};
+    space:SpaceType;
+}
 
-// export const curatedSpaceSelector = selector({
-//   key: 'curatedSpaceItem',
-//   get:  spaceId => async () => {
 
-//   },
-// });
+export const stakeSelectedItem = atom({
+    key:'stakeSelectedItem',
+    default:null as StakingSelectedItem | null,
+})

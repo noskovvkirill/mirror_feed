@@ -1,6 +1,6 @@
 import Box from "@/design-system/primitives/Box"
 import Button from "@/design-system/primitives/Button"
-import { styled } from "stitches.config"
+import { styled, keyframes } from "stitches.config"
 import ButtonPopover from "@/design-system/primitives/ButtonPopover"
 import * as Tabs from '@radix-ui/react-tabs';
 import Profile from '@/design-system/icons/Profile'
@@ -11,7 +11,6 @@ import {useRouter} from 'next/router'
 // import ColorPicker from '@/design-system/primitives/ColorPicker'
 // import AdjustIcon from '@/design-system/icons/Adjust'
 
-import {StyledTabsList, StyledTabsTrigger, StyledTabsContent} from '@/design-system/Spaces/SpacesSelector'
 import {useAuth} from 'contexts/user'
 import {AddressPrettyPrint} from 'src/utils'
 
@@ -20,6 +19,65 @@ interface ISettings {
     themes?:string[],
     theme?:string
 }
+
+const AnimationRotation = keyframes({
+    '0%':{transform:'rotate(0deg)'},    
+    '100%':{transform:'rotate(360deg)'}
+})
+const AnimationContentDisplay = keyframes({
+    '0%':{opacity:0, transform:`scale(0.25)`},
+    '100%':{opacity:1, transform:`scale(1)`}
+})
+
+const AnimationContenPortal = keyframes({
+    '0%':{opacity:0.5},
+    '100%':{opacity:1}
+})
+
+
+export const StyledTabsContent = styled(Tabs.Content, {
+    transition:'$all',
+    gap:'$1',
+    display:'flex',
+    flexDirection:'column',
+     '&[data-state="active"]':{
+        animationName:AnimationContentDisplay,
+        animationDuration: '400ms',
+        animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        willChange: 'transform, opacity',
+     }
+})
+
+export const StyledTabsList = styled(Tabs.List, {
+    width:'100%',
+    boxSizing:'border-box',
+    overflow:'hidden',
+    display:'flex',
+    flexDirection:'row',
+    gap:'$0'
+})
+
+export const StyledTabsTrigger = styled(Tabs.Trigger, {
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'center',
+    fontSize:'$6',
+    padding:'$0 $2',
+    boxSizing:'border-box',
+    height:'33px',
+    // width:'100%',
+    cursor:'pointer',
+    borderRadius:'$2',
+    '&:hover':{
+        color:'$foregroundTextBronze',
+        background:'$highlightBronze',
+    },
+    '&[data-state="active"]':{
+        color:'$background',
+        backgroundColor:'$foregroundBronze'
+    }
+})
+
 
 
 const StyledSign = styled('button', {
@@ -48,11 +106,38 @@ declare let window: any;
 
 const Settings = ({UpdateTheme, themes, theme}:ISettings) => {
 
-    const {user, Disconnect, Connect} = useAuth()
+    const {user, isLoading, Disconnect, Connect} = useAuth()
     const router = useRouter()
-
+    
+    if(isLoading){
+        return(
+               <Box css={{
+                    minWidth:"33px",
+                    width:"33px",
+                    height:"33px",
+                    display:'flex',
+                     outline:'1px solid $foreground',
+                     border:'3px solid $foreground',
+                    alignItems:'center',
+                    justifyContent:'center',
+                    boxSizing:'border-box',
+                    overflow:'hidden',
+                    animation:`${AnimationRotation} 2s linear`,
+                    animationIterationCount: 'infinite',
+                    // padding:'$1', 
+                    objectFit:'scale-down',
+                    color:'$text',
+                    fontSize:'$5',
+                    lineHeight:'$6',
+                    borderRadius:'$round', background:'$foreground'}}>
+                   ✸
+                    </Box>
+        )
+    }
     return(
-        <ButtonPopover icon={<Profile/>} label='change' isHighlighted={true}>
+        <ButtonPopover
+        isAvatar={user?.avatarURL ? true : false}
+        icon={user?.avatarURL ? <img src={user.avatarURL} width='100%' height='auto' alt='Current user avatar'/>: <Profile/>} label='change' isHighlighted={true}>
           <Tabs.Root defaultValue={(user && user.isConnected) ? 'login' :'settings'}>
               <Box layout='flexBoxRow' css={{alignItems:'center', boxSizing:'border-box', padding:'$2 $2', justifyContent:'space-between'}}>
                 <StyledTabsList css={{boxSizing:'border-box', color:'$foregroundText'}}>
@@ -60,16 +145,21 @@ const Settings = ({UpdateTheme, themes, theme}:ISettings) => {
                     <StyledTabsTrigger value='settings'>Settings</StyledTabsTrigger>
                 </StyledTabsList>
                 <Box css={{
-                    minWidth:33,
-                    height:33,
+                    minWidth:"33px",
+                    width:"33px",
+                    height:"33px",
                     display:'flex',
+                     outline:'1px solid $foreground',
+                     border:'3px solid $foreground',
                     alignItems:'center',
                     justifyContent:'center',
                     boxSizing:'border-box',
-                    padding:'$1', 
+                    overflow:'hidden',
+                    // padding:'$1',
+                    objectFit:'scale-down',
                     lineHeight:'$6',
                     borderRadius:'$round', color:'$background', background:'$foreground'}}>
-                    <Profile/>
+                    {user?.avatarURL ? <img src={user.avatarURL} width='100%' height='auto' alt='Current user avatar'/>: <Profile/>}
                 </Box>
              </Box>
                 <StyledTabsContent value='login' css={{overflow:'hidden'}}>
@@ -91,7 +181,7 @@ const Settings = ({UpdateTheme, themes, theme}:ISettings) => {
                                                 whiteSpace:'nowrap',
                                                 wordBreak:'break-all', background:'$highlightBronze', color:'$foregroundTextBronze'}}>
                                                 <Box as='span' css={{whiteSpace:'nowrap', fontSize:'$6'}}>
-                                                    {user.address ? AddressPrettyPrint(user.address) : ''}
+                                                    {user.displayName ? user.displayName : AddressPrettyPrint(user?.address || '')}
                                                 </Box>
                                                 <Box as='span' css={{whiteSpace:'nowrap', fontSize:'$6'}}>
                                                     {user?.balance?.toString().slice(0,5)}&thinsp;●
@@ -107,8 +197,8 @@ const Settings = ({UpdateTheme, themes, theme}:ISettings) => {
                             })()}
                         
                             <Button tabIndex={0} 
-                            onClick={()=>router.push('/my')}
-                            css={{width:'100%',  border:'1px solid transparent'}}>My Curation Space</Button>
+                            onClick={()=>router.push('/list')}
+                            css={{width:'100%',  border:'1px solid transparent'}}>Reading List</Button>
                             <Button tabIndex={0}  onClick={Disconnect} css={{width:'100%', border:'1px solid transparent'}}>Sign Out</Button>
                         </Box>
                     )}

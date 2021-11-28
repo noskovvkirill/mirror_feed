@@ -6,7 +6,7 @@ import {RecoilRoot} from 'recoil'
 import { LazyMotion } from "framer-motion"
 import {ThemeProvider} from 'next-themes'
 import {darkTheme, darkThemePlain, lightThemePlain, lightThemeBlue} from 'stitches.config'
-import {useState} from 'react'
+import {useEffect} from 'react'
 import {UserProvider, UserType} from 'contexts/user'
 
 // import dynamic from 'next/dynamic'
@@ -42,11 +42,31 @@ function MyApp({ Component, pageProps }: AppProps) {
 
  
 
-
-
   // const [theme, changeTheme] = useState(initialState)
 
   globalStyles();
+
+  useEffect(()=>{
+      if("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js",  { type: "module" }).then(
+            async function (registration) {
+              console.log("Service Worker registration successful with scope: ", registration.scope);
+              const status = await navigator.permissions.query({
+                name: 'periodic-background-sync',
+              });
+              if (status.state === 'granted') {
+                console.log('sw status granted')
+              } else {
+                  console.log('sw status NOT_granted')
+              }
+
+            },
+            function (err) {
+              console.log("Service Worker registration failed: ", err);
+            }
+          );
+    }
+  },[])
 
   
  
