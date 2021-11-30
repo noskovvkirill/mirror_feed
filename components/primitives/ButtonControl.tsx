@@ -21,6 +21,7 @@ const StyledControl = styled(Button,{
     boxSizing:'border-box',
     lineHeight:'$6',
     '&[data-state="open"]':{
+        border:'1px solid $foregroundBronze', 
         backgroundColor:'$foregroundBronze',
         color:'$background'
     },

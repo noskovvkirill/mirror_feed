@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import {queryPublications, queryPublication} from 'src/queries'
 import {request} from 'graphql-request'
 import { EntryType } from "@/design-system/Entry";
+import jwt from 'jsonwebtoken'
 
 const supabaseUrl = 'https://tcmqmkigakxeiuratohw.supabase.co'
 const supabaseKey = process.env.SERVICE_KEY || ''
@@ -16,8 +17,31 @@ export default async function handler(
     const govAddress = process.env.NEXT_PUBLIC_GOV_CONTRACT;
     const endpoint = process.env.NEXT_PUBLIC_GRAPH_ENDPOINT;
     const mirrorendpoint = process.env.NEXT_PUBLIC_MIRROR_API;
-    if(!govAddress || !endpoint || !mirrorendpoint) return res.status(500).json({error: 'gov contract address is not defined'});
-  
+    const secret = req.headers.authorization
+    const signature = process.env.JWT_SECRET
+
+    if(!govAddress || !endpoint || !mirrorendpoint || !secret || !signature) return res.status(500).json({error: 'gov contract address is not defined'});
+   
+
+    jwt.verify(secret, signature, async (err, decoded) => {
+        if(err){
+            res.status(403).json({
+                success: false,
+                error: `could not verify jwt signature.`,
+            });
+            return;
+        }
+        const {name} = decoded as {name: string}
+        if(name !== 'Mirror Feed'){
+            res.status(403).json({
+                success: false,
+                error: `could not verify jwt signature.`,
+            });
+            return;
+        }
+    })
+
+
     const { data:dataLast, error:errorLast } = await supabase
     .from('mirroritems')
     .select('id')

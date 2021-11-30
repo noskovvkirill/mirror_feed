@@ -104,12 +104,13 @@ interface IMetadata {
     entry:EntryType,
     spaces?:SpaceTypeProfile[],
     SetStakeSelected?:(entry:EntryType)=>void;
+    SetUnStakeSelected?:(entry:EntryType)=>void;
 }
 
 
 const Metadata = (
     {stacked, spaces, isPreview, isHover, isFocused, entry,
-    SetStakeSelected,
+    SetStakeSelected,SetUnStakeSelected
     }:IMetadata) => {
     return(
         <StyledMetadata>
@@ -134,7 +135,7 @@ const Metadata = (
                     size={'sm'} profiles={spaces}/>   
                 :   
                 <>
-                    {SetStakeSelected && (
+                    {(SetStakeSelected && SetUnStakeSelected) && (
                         <Box layout='flexBoxRow' css={{gap:'$1'}}>
                             <StyledAdd 
                             onClick={()=>SetStakeSelected(entry)}
@@ -142,6 +143,7 @@ const Metadata = (
                             <Box css={{transform:'scale(1) translateY(5%)'}}> <AddIcon/></Box>
                             </StyledAdd>
                             <StyledAdd 
+                             onClick={()=>SetUnStakeSelected(entry)}
                             css={{marginRight:'$2'}}
                             isHighlighted={(isHover || isFocused || !isPreview) ? true : false}>
                             <Box css={{transform:'scale(1) translateY(5%)'}}> <DecreaseIcon/></Box>
@@ -153,12 +155,6 @@ const Metadata = (
                 }
                
             </StyledStakeContainer>
-
-
-            {/* <StakeExtraTokens
-            
-            /> */}
-
         </StyledMetadata>
     )
 }

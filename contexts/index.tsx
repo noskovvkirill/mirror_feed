@@ -419,6 +419,7 @@ export const curatedSpaceSynced = selectorFamily({
 
 type StakingSelectedItem = {
     isOpen:boolean;
+    type:'stake' | 'unstake'
     item:{entry:EntryType, staked:number};
     space:SpaceType;
 }

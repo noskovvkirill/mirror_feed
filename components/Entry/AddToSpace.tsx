@@ -1,5 +1,5 @@
 //utils
-import {styled} from 'stitches.config'
+import {styled, keyframes} from 'stitches.config'
 import {useRef, useEffect, useState, memo} from 'react'
 // import Fuse from 'fuse.js'
 
@@ -31,8 +31,14 @@ import type {EntryType} from '@/design-system/Entry'
 interface IAddToSpace{
     item:EntryType,
     setReadLater?:(fn:(prevState:ReadingListItem[]) => ReadingListItem[]) => void;
-    direction?:'top' | 'left'| 'right' | 'bottom'
+    direction?:'top' | 'left'| 'right' | 'bottom',
+    isHighlighted?:boolean,
 }
+
+const AnimationContentDisplay = keyframes({
+    '0%':{opacity:0, transform:`scale(0.90) `},
+    '100%':{opacity:1, transform:`scale(1)`}
+})
 
 
 
@@ -85,7 +91,7 @@ const StyledContainer = styled(DropdownMenu.Content, {
     background:'$background',
     '@media (prefers-reduced-motion: no-preference)': {
         '&[data-state="open"]': {
-            // animationName:`${AnimationContentDisplay}`,
+            animationName:`${AnimationContentDisplay}`,
             animationDuration: '400ms',
             animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
             animationFillMode:'forwards',
@@ -94,38 +100,9 @@ const StyledContainer = styled(DropdownMenu.Content, {
     }
 })
 
-const StyledCurationButton = styled(DropdownMenu.Trigger, {
-    display:'flex',
-    width:'fit-content',
-    alignItems:'center',
-    justifyContent:'center',
-    background:'none',
-    borderRadius:'$round',
-    border:'1px solid $foregroundBronze',
-    color:'$foregroundTextBronze',
-    padding:'$1', 
-    transition:'$background',
-    cursor:'pointer',
-    '&:hover':{
-        background:'$foregroundBronze',
-         color:'$background',
-    },
-    variants: {
-        isOpen:{
-            true:{
-                color:'$background',
-                background:'$foregroundBronze',
-            },
-            false:{}
-        }
-    },
-    defaultVariants:{
-        isOpen:false
-    }
-})
 
 
-const AddToSpace = ({item, setReadLater, direction='bottom'}:IAddToSpace)=>{
+const AddToSpace = ({item, setReadLater, isHighlighted=true, direction='bottom'}:IAddToSpace)=>{
 
     const search = useRef<HTMLInputElement | null>(null)
     const {user} = useAuth()
@@ -174,7 +151,7 @@ const AddToSpace = ({item, setReadLater, direction='bottom'}:IAddToSpace)=>{
             <DropdownMenu.Trigger asChild>
                 <ButtonControl
                 direction={direction}
-                isHighlighted={true} label={'Save'}>
+                isHighlighted={isHighlighted} label={'Save'}>
                     <AddIcon/>
                  </ButtonControl>
             </DropdownMenu.Trigger>

@@ -3,6 +3,7 @@ import Layout from '@/design-system/Layout'
 import StakeTokens from '@/design-system/StakeTokens'
 import UnStakeTokens from '@/design-system/UnStakeTokens'
 import ExtraStakeTokens from '@/design-system/StakeTokens/ExtraStake'
+import UnstakeOne from '@/design-system/UnStakeTokens/UnstakeOne'
 //TODO replace under one component import 
 import CreateMySpaceBody from '@/design-system/CreateSpace/Body'
 import CreateMySpaceContainer from '@/design-system/CreateSpace/Container'
@@ -118,6 +119,18 @@ const SpaceBody = ({isStake, setIsStake, isUnstake, setIsUnstake, UpdateBalance,
         }
     },[])
 
+    const UnStakeOneCallback = useCallback(async (tx:TransactionResponse) => {
+        setSyncState("loading")
+        try{
+            await tx.wait()
+            setSyncState("default")
+            refreshCurated()
+        } catch(e){
+             setSyncState("error")
+        }
+    },[])
+
+
     if(spaces.state === "hasValue"){
         return(
             <AnimatePresence>
@@ -128,6 +141,7 @@ const SpaceBody = ({isStake, setIsStake, isUnstake, setIsUnstake, UpdateBalance,
                 {spaces.contents.length>0
                 ?   <m.div key='curation'>
                         <ExtraStakeTokens stakeCallback={ExtraStakeCallback}/>
+                        <UnstakeOne unstakeCallback={UnStakeOneCallback}/>
                         <StakeTokens 
                         stakeCallback={StakeCallback}
                         selectedId={selectedSpace}

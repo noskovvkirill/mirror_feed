@@ -73,7 +73,6 @@ const ExtraStake = ({stakeCallback}:IOnAddCurated) => {
     const {user, UpdateAllowance} = useAuth()
 
  
-
     const ApproveSpend = async () =>{
         try{
             setApproved("loading")
@@ -116,7 +115,7 @@ const ExtraStake = ({stakeCallback}:IOnAddCurated) => {
     
     return(
         <Root
-        open={(selectedItem && selectedItem?.isOpen) ? true :false}
+        open={(selectedItem && selectedItem?.isOpen && selectedItem.type === 'stake') ? true :false}
         onOpenChange={()=>{
             setSelectedItem(null)
         }}

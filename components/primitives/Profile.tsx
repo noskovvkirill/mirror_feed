@@ -211,7 +211,7 @@ const Profile = ({profile, size='md', isSelected=false}:IProfile) => {
                      <Box layout='flexBoxRow' css={{width:'320px', gap:'$2', alignItems:'flex-start'}}>
 
                     
-                            <Box layout='flexBoxRow' css={{overflow:'hidden', alignItems:'center', justifyContent:'center', borderRadius:'$round', backgroundColor:'$highlight', width:'64px', height:'64px'}}>
+                            <Box layout='flexBoxRow' css={{overflow:'hidden',  border:'1px solid $foregroundBorder', alignItems:'center', justifyContent:'center', borderRadius:'$round', backgroundColor:'$highlight', width:'64px', height:'64px'}}>
                                 {profile.avatarURL && (
                                 <Image src={profile?.avatarURL} alt='image' width={'64'} height={'64'}/>
                                 )}
@@ -263,7 +263,7 @@ const Profile = ({profile, size='md', isSelected=false}:IProfile) => {
                }
                {isSpace(profile) && 
                <Box layout='flexBoxRow' css={{width:'320px', gap:'$2', alignItems:'center'}}>
-                        <Box css={{overflow:'hidden', borderRadius:'$round', width:'64px', height:'64px'}}>
+                        <Box css={{overflow:'hidden', border:'1px solid $foregroundBorder', borderRadius:'$round', width:'64px', height:'64px'}}>
                             <Image src={profile?.avatarURL} alt='image' width={'64'} height={'64'}/>
                         </Box>
                     <Box layout='flexBoxColumn' css={{}}>

@@ -124,6 +124,16 @@ export const SpaceMethodsProvider = ({children, user}:{children:React.ReactNode[
     //     return entriesFiltered
     // },[])   
 
+    const UnsyncFromSpace = useCallback(async (spaceId:number, cid:string, author:string)=>{
+        if(!govAddress || !ERC20address) throw "Spaces:contract address is not found";
+        if(!user.provider) throw "user was not found"
+        const signer = user.provider.getSigner();
+        const govContract = await new ethers.Contract(govAddress, GovAbi, signer);
+        if(!govContract) throw "gov contract was not found"
+        return govContract.unstake(spaceId, cid, author)
+    },[])
+
+
     const BatchUnSyncFromSpace = useCallback(async (spaceId:number, items:{cid:string, author:string}[])=>{
         console.log('batch unstake to space', spaceId, items)
         if(!govAddress || !ERC20address) throw "Spaces:contract address is not found";
@@ -187,8 +197,9 @@ export const SpaceMethodsProvider = ({children, user}:{children:React.ReactNode[
         UpdateFEEDContract_INTERNAL,
         BatchSyncToSpace,
         BatchUnSyncFromSpace,
-        SyncToSpace
-    }), [CreateSpace, UpdateFEEDContract_INTERNAL, GrabTestBalance, CheckMyStake, Approve, CreateSpace, BatchSyncToSpace, BatchUnSyncFromSpace, SyncToSpace])
+        SyncToSpace,
+        UnsyncFromSpace,
+    }), [CreateSpace, UpdateFEEDContract_INTERNAL, GrabTestBalance, CheckMyStake, Approve, CreateSpace, BatchSyncToSpace, BatchUnSyncFromSpace, SyncToSpace, UnsyncFromSpace])
 
  
 

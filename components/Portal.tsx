@@ -20,8 +20,8 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 
 const AnimationContentDisplay = keyframes({
-    '0%':{opacity:0, transform:`scale(1) `},
-    '100%':{opacity:1, transform:`scale(1)`}
+    '0%':{opacity:0, transform:`scaleY(0.90) `},
+    '100%':{opacity:1, transform:`scaleY(1)`}
 })
 
 
@@ -77,6 +77,7 @@ const StyledContainer = styled(DropdownMenu.Content, {
     padding:'$1',
     borderRadius:'$2',
     color:'red', 
+    transformOrigin:'top center',
     position:'absolute',
     border:'1px solid $foregroundBorder',
     background:'$background',

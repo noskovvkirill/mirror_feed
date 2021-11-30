@@ -58,7 +58,7 @@ const StyledNavControls = styled(Box, {
     alignItems:'flex-start', 
     justifyContent:'center', 
     marginRight:'$5', 
-    background:'transparent'
+    background:'transparent',
 })
 
 

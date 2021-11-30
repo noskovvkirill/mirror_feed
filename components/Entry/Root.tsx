@@ -111,7 +111,7 @@ const Root = forwardRef<HTMLElement, Container>(
             exit={isPreview && {opacity:0, position:'absolute'}}
             layout='position'
             type={view}
-            layoutId={isPreview && `layout-${entry.digest}`} //transitions animations using framer motion
+            layoutId={isPreview && `layout-${entry.digest}+${view}`} //transitions animations using framer motion
             key={`key-${entry.digest}`} //transitions animations using framer motion
             id={`preview-${entry.digest}`}
             onTouchStart={()=>setIsHover(true)} 

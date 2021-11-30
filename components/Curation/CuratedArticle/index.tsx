@@ -56,12 +56,27 @@ const CuratedArticle = ({
             setStakeSelectedItem({
                 isOpen:true,
                 item:{entry:entry, staked:stacked},    
-                space:space
+                space:space,
+                type:'stake'
             })
         } else {
             alert('current space is unavailable')
         }
     },[space, entry])
+
+    const SetUnStakeSelected = useCallback((entry:EntryType) => {
+        if(space){
+            setStakeSelectedItem({
+                isOpen:true,
+                item:{entry:entry, staked:stacked},    
+                space:space,
+                type:'unstake'
+            })
+        } else {
+            alert('current space is unavailable')
+        }
+    },[space, entry])
+
     // const [isStake, setIsStake] = useState(false)
     // const [isUnstake, setIsUnstake] = useState(false)
 
@@ -105,6 +120,7 @@ const CuratedArticle = ({
                  view={view}
                 metadata={<Metadata
                     SetStakeSelected={SetStakeSelected}
+                    SetUnStakeSelected={SetUnStakeSelected}
                     spaces={spaces}
                     isPreview={isPreview}
                     isHover={isHover}

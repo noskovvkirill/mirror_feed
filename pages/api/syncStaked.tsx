@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {GovAbi} from 'contracts/Gov'
-import {ethers, BigNumber} from 'ethers'
+import {ethers} from 'ethers'
 import { createClient } from '@supabase/supabase-js'
 import {entriesSpaces} from 'src/queriesFEED'
 import {request} from 'graphql-request'
+import jwt from 'jsonwebtoken'
 
 const supabaseUrl = 'https://tcmqmkigakxeiuratohw.supabase.co'
 const supabaseKey = process.env.SERVICE_KEY || ''
@@ -17,7 +18,29 @@ export default async function handler(
 
     const govAddress = process.env.NEXT_PUBLIC_GOV_CONTRACT;
     const endpoint = process.env.NEXT_PUBLIC_GRAPH_ENDPOINT;
-    if(!govAddress || !endpoint) return res.status(500).json({error: 'gov contract address is not defined'});
+    const secret = req.headers.authorization
+    const signature = process.env.JWT_SECRET
+    if(!govAddress || !endpoint || !secret || !signature) return res.status(500).json({error: 'gov contract address is not defined'});
+
+    jwt.verify(secret, signature, async (err, decoded) => {
+        if(err){
+            res.status(403).json({
+                success: false,
+                error: `could not verify jwt signature.`,
+            });
+            return;
+        }
+        const {name} = decoded as {name: string}
+        if(name !== 'Mirror Feed'){
+            res.status(403).json({
+                success: false,
+                error: `could not verify jwt signature.`,
+            });
+            return;
+        }
+    })
+
+
     const provider = new ethers.providers.InfuraProvider("rinkeby", '87ff3775011f44d1ad3ae2c38d63d950')
     const govContract = await new ethers.Contract(govAddress, GovAbi, provider);
     const oneBlock = 13.39 //time in seconds 

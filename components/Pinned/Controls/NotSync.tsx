@@ -4,6 +4,7 @@ import OpenIcon from '@/design-system/icons/Open'
 import SuccessMarkIcon from '@/design-system/icons/Success'
 import UnPinIcon from '@/design-system/icons/UnPin'
 import ButtonControl from '@/design-system/primitives/ButtonControl'
+import AddToSpace from '@/design-system/Entry/AddToSpace'
 //global state
 import { pinnedItems, readLaterList,  ReadingListItem} from 'contexts'
 import { useSetRecoilState} from 'recoil'
@@ -17,7 +18,7 @@ interface IControlsNotSync {
     children:React.ReactNode | React.ReactNode[];
     isHighlighted?:boolean;
 }
-
+ 
 const ControlsNotSync = ({item, children, isHighlighted=false}:IControlsNotSync) => {
 
     const setPinnedItem = useSetRecoilState(pinnedItems)
@@ -39,7 +40,14 @@ const ControlsNotSync = ({item, children, isHighlighted=false}:IControlsNotSync)
                     ?  router.push(`/${item.item.publication?.ensLabel ? item.item.publication?.ensLabel : item.item.author.address}/${item.item.digest}`)
                     :  router.push(`/${item.item.author.address}/${item.item.digest}`)
             }}><OpenIcon/></ButtonControl>
-            {readingList.findIndex((itemL:ReadingListItem)=>itemL.entryDigest === item.item.digest) === -1 
+
+            <AddToSpace 
+            isHighlighted={isHighlighted}
+            direction={'bottom'}
+            setReadLater={setReadLater}
+            item={item.item}/>
+
+            {/* {readingList.findIndex((itemL:ReadingListItem)=>itemL.entryDigest === item.item.digest) === -1 
             ? <ButtonControl
             label='to reading list'
             direction='top'
@@ -59,7 +67,7 @@ const ControlsNotSync = ({item, children, isHighlighted=false}:IControlsNotSync)
             }}>
                 <SuccessMarkIcon/>
             </ButtonControl>
-            }
+            } */}
             <ButtonControl
                 label='unpin'
                 direction='top'
