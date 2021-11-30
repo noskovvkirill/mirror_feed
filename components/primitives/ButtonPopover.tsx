@@ -12,7 +12,7 @@ const StyledTrigger = styled(Popover.Trigger, {
     minHeight:'33px',
     maxHeight:'33px',
     overflow:'hidden',
-    maxWidth:'33px',
+    width:'33px',
     borderRadius:'$round', 
     display:'flex',
     gap:'$0',

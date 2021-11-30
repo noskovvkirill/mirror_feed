@@ -103,18 +103,19 @@ interface IMetadata {
     isFocused:boolean;
     entry:EntryType,
     spaces?:SpaceTypeProfile[],
+    totalSpaces?:number,
     SetStakeSelected?:(entry:EntryType)=>void;
     SetUnStakeSelected?:(entry:EntryType)=>void;
 }
 
 
 const Metadata = (
-    {stacked, spaces, isPreview, isHover, isFocused, entry,
+    {stacked, spaces, totalSpaces, isPreview, isHover, isFocused, entry,
     SetStakeSelected,SetUnStakeSelected
     }:IMetadata) => {
     return(
         <StyledMetadata>
-            <Box layout='flexBoxRow'>
+            <Box layout='flexBoxRow' css={{alignItems:'center'}}>
                 <Tag isHighlighted={(isHover || isFocused || !isPreview) ? true : false}>{entry.author?.displayName ? entry.author.displayName : entry.author?.address?.slice(0,8)}</Tag>
                 <Tag isHighlighted={(isHover || isFocused || !isPreview) ? true : false}>{dayjs.unix(entry.timestamp).fromNow() }</Tag>
                 {entry.publication?.ensLabel && (
@@ -132,6 +133,7 @@ const Metadata = (
                 {spaces
                 ?   <ProfileList 
                     key={entry.id}
+                    total={totalSpaces}
                     size={'sm'} profiles={spaces}/>   
                 :   
                 <>

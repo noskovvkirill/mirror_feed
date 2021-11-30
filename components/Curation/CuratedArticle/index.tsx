@@ -29,7 +29,8 @@ type ArticleNewType = {
     stacked:number,
     space?:SpaceType,
     spaces?:SpaceTypeProfile[]
-    isPinned?:boolean
+    isPinned?:boolean,
+    totalSpaces?:number
 }
 
 
@@ -38,7 +39,7 @@ const CuratedArticle = ({
     space,
     view='list',
     isPinned=false,
-    isPreview=true, stacked, spaces}:ArticleNewType) => {
+    isPreview=true, stacked, spaces, totalSpaces}:ArticleNewType) => {
     const router = useRouter()
     const ref = useRef<HTMLDivElement | null>(null)
     const el = useOnScreen(ref, {threshold:1})
@@ -122,6 +123,7 @@ const CuratedArticle = ({
                     SetStakeSelected={SetStakeSelected}
                     SetUnStakeSelected={SetUnStakeSelected}
                     spaces={spaces}
+                    totalSpaces={totalSpaces}
                     isPreview={isPreview}
                     isHover={isHover}
                     isFocused={isFocused}

@@ -13,17 +13,38 @@ import {pinnedItems, PinnedItem, settings} from 'contexts'
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
 import { useRecoilValue } from 'recoil'
 //types
-import {SpaceTypeProfile} from 'contexts/spaces'
+import type {SpaceTypeProfile, SpaceTop} from 'contexts/spaces'
 
 
+export type TopType = {
+    id:number,
+    synced_at:string,
+    totalStaked:number,
+    topCurators:Array<SpaceTop>
+}
 
 export const getStaticProps: GetStaticProps = async () => { 
     const supabaseUrl = 'https://tcmqmkigakxeiuratohw.supabase.co'
     const supabaseKey = process.env.SERVICE_KEY || ''
     const supabase = createClient(supabaseUrl, supabaseKey) 
+
+    const { data:top, error:e } = await supabase
+    .from('topSync')
+    .select('*')
+    .order('synced_at', {ascending: false})
+    .limit(1)
+    .single()
+
+    if(e){
+        return({
+            notFound: true
+        })
+    }
+
      const { data, error } = await supabase
     .from('top')
     .select()
+    .eq('syncId', top.id)
     .order('totalStaked', {ascending: false})
     
     if(error || !data){
@@ -35,7 +56,8 @@ export const getStaticProps: GetStaticProps = async () => {
     }).then((data:any) =>
       ({entry:data.entry, 
         staked:item.totalStaked,
-        spaces:item?.spaces && item.spaces as SpaceTypeProfile[],        
+        spaces:item?.spaces && item.spaces.slice(0,3) as SpaceTypeProfile[],
+        totalCurators:item?.spaces && item.spaces.length        
     })
     ).catch((e)=>{console.log(e); return})
     )
@@ -45,29 +67,24 @@ export const getStaticProps: GetStaticProps = async () => {
         return element !== undefined;
     });
 
-    return {props: {entries: entrieFiltered},  revalidate: 10}
+    return {props: {entries: entrieFiltered, top:top},  revalidate: 10}
     
 }
 
 type Props = {
     entries: any;
+    top:TopType
 }
 
 
-const Home = ({entries}:Props) => {
+const Home = ({entries, top}:Props) => {
     
     const appSettings = useRecoilValue(settings)
-    const getData = async () => {
-       await fetch('/api/syncStaked').then(res=>res.json()).then(res=>console.log('res sync', res))
-    }
-
     const pinnedList = useRecoilValueAfterMount(pinnedItems, null) //we set the items to null to prevent initial rendering with empty values and waiting for the list to load
-
 
     return (
         <Layout>
             <Box layout='flexBoxColumn'>
-                
             <Header.Root controls={<Header.ViewControls/>}>
              <Box layout='flexBoxColumn' css={{width:'100%'}}>
                 <Box layout='flexBoxRow'>
@@ -82,47 +99,42 @@ const Home = ({entries}:Props) => {
                         Top in 7 days
                     </Heading>
                     </Box>
-                    <Header.TopCurators/>
+                    <Header.TopCurators top={top}/>
                 </Box>
             </Header.Root>
-                
-                {/* <button onClick={getData}>DATA</button> */}
-
                 {entries.length === 0 && (
                     <Box>
                         Nothing is here yet. Be first to curate && stake!
                     </Box>
                 )}
-
-               <Box css={{
-                display:appSettings.view === 'card' ? 'grid' : 'list',
-                gridColumnGap:'32px',
-                height:'fit-content',
-                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-                gridTemplateRows: "repeat(auto, minmax(0, 1fr))",
-                width:'$body',
-                overflow:'visible',
-            }}>
-                {entries.map((entry:any)=>{
-                    if(pinnedList?.findIndex((item:PinnedItem)=>item.type === 'entry' && item.item.digest === entry.entry.digest) !== -1){
-                        return;
-                    } else {
-                    return(
-                      <CuratedArticle
-                        key={'my_space_item_synced'+entry.entry.id+appSettings.view}
-                        view={appSettings.view}
-                        isPinned={true}
-                        entry={entry.entry}
-                        isPreview={true}
-                        stacked={entry.staked}
-                        spaces={entry.spaces}
-                        />
-                    )
-                    }
-                })}
-            </Box>
-           
-       
+                <Box css={{
+                    display:appSettings.view === 'card' ? 'grid' : 'list',
+                    gridColumnGap:'32px',
+                    height:'fit-content',
+                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                    gridTemplateRows: "repeat(auto, minmax(0, 1fr))",
+                    width:'$body',
+                    overflow:'visible',
+                }}>
+                    {entries.map((entry:any)=>{
+                        if(pinnedList?.findIndex((item:PinnedItem)=>item.type === 'entry' && item.item.digest === entry.entry.digest) !== -1){
+                            return;
+                        } else {
+                        return(
+                        <CuratedArticle
+                            key={'my_space_item_synced'+entry.entry.id+appSettings.view}
+                            view={appSettings.view}
+                            isPinned={true}
+                            entry={entry.entry}
+                            totalSpaces={entry.totalCurators}
+                            isPreview={true}
+                            stacked={entry.staked}
+                            spaces={entry.spaces}
+                            />
+                        )
+                        }
+                    })}
+                </Box>
             </Box>
         </Layout>
     )

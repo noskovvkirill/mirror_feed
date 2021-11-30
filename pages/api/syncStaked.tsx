@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import {GovAbi} from 'contracts/Gov'
 import {ethers} from 'ethers'
 import { createClient } from '@supabase/supabase-js'
-import {entriesSpaces} from 'src/queriesFEED'
+import {entriesSpaces, spaceInfo} from 'src/queriesFEED'
 import {request} from 'graphql-request'
 import jwt from 'jsonwebtoken'
 
@@ -53,37 +53,59 @@ export default async function handler(
     const filterT = govContract.filters.Unstaked(null, null, null, null);
     const eventsRawT = await govContract.queryFilter(filterT, parseInt(weekAgoBlock), currentBlock)
     //unstaked don't work atm 
-    
+
 
     const events = eventsRaw.map((item:any)=>{
         return({
-            id:`${item.args?.cid}_${item.args?.author.toLowerCase()}`,
+            id:`${item.args?.cid} ${item.args?.author.toLowerCase()}`,
             cid:item.args?.cid,
             author:item.args?.author,
             amount:item.args?.amount?.toString(),
+            spaceid:item.args?.spaceid?.toString(),
         })
     })
 
     //we don't consider unstaked, but we should to prevent manipulation 
     // i.e movement back and forth :)
 
+    // Entry -> Tokens staked  
     const combined = events.reduce((a, b) =>
     a.set(b.id, (a.get(b.id) || 0) + Number(b.amount)), new Map);
 
+    //Space -> Tokens staked
+    const spacesCombined =  events.reduce((a,b) => {
+        return a.set(b.spaceid.toString(), (a.get(b.spaceid) || 0) + Number(b.amount))
+    }, new Map)
 
+    let spaces:{tokenId:number, staked:number}[] = []
+    for (let [key, value] of spacesCombined.entries()) {
+        spaces.push({
+            tokenId:parseInt(key),
+            staked:parseInt(ethers.utils.formatEther(value.toString()))
+        })
+    }
+    
+     const spacesExtended = await Promise.all(spaces.map(async (item)=>{
+        const {space} = await request(endpoint, spaceInfo, {spaceId:`${item.tokenId}`})
+        return({
+            ...item,
+            avatarURL:space.avatarURL,
+            totalStaked:parseInt(ethers.utils.formatEther(space.totalStaked.toString())),
+            owner:space.owner,
+            name:space.name,
+            createdAtTimestamp:space.createdAtTimestamp,
+        })
+     }))
 
     let obj = []
-    let i = 0;
     for (let [key, value] of combined.entries()) {
         obj.push(
             {
-            id:i,
             key:key,
-            cid:key.split('_')[0],
-            author:key.split('_')[1],
+            cid:key.split(' ')[0],
+            author:key.split(' ')[1],
             totalStaked:ethers.utils.formatEther(value.toString())
         })
-        i++;
     }
 
     const totalStaked = obj.reduce((a,b)=>({totalStaked:a.totalStaked + Number(b.totalStaked)}), {totalStaked:0})
@@ -91,23 +113,24 @@ export default async function handler(
     
     const { data:sync, error:errorsync } = await supabase
     .from('topSync')
-    .insert({synced_at:new Date().toISOString(), totalStaked:totalStaked.totalStaked, topCurators:[{}]})
-    console.log('sync', sync)
+    .insert({synced_at:new Date().toISOString(), totalStaked:totalStaked.totalStaked, topCurators:spacesExtended})
 
     const objExtended = await Promise.all(obj.map(async (item)=>{
         try{
         const {entry} = await request(endpoint, entriesSpaces, {id:`${item.cid}-${item.author}`})
-        const spaces = entry.spaces.map(({space}:any)=>space).filter((space:any)=>space)
-        //need to extend spaces with the amount of staked
+        const spaces = entry?.spaces.map((space:any)=>Object.assign({staked:space.totalStaked},space.space)).filter((space:any)=>space)
+        //need to extend spaces with the amount of stake
         return({
             ...item,
-            spaces:spaces,
+            spaces:spaces ? spaces : [],
             syncId:sync && sync[0]?.id || 0
         })} catch(e){
             console.log('error fetch', e)
             return {item}
         }
     }))
+
+    // console.log('objExtended', objExtended)
 
     // const { data:dataDelete, error:errorDelete } = await supabase.from('top').delete()
 
@@ -120,7 +143,7 @@ export default async function handler(
     .upsert(objExtended)
     
     if(error || errorsync){
-        return res.status(500).json({error: error ? error.toString() : errorsync?.toString()})
+        return res.status(500).json({error: error ? error.message.toString() : errorsync?.message.toString()})
     }
 
     return res.status(200).json({data});

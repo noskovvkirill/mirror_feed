@@ -2,8 +2,13 @@ import {gql} from 'graphql-request'
 
 export const spaceInfo = gql`
     query spaceInfo($spaceId: ID!) {
-        spaceEntries(id: $spaceId) {
+        space(id: $spaceId) {
             id
+            name
+            avatarURL
+            owner
+            totalStaked
+            createdAtTimestamp
         }
     }
 `
@@ -34,6 +39,7 @@ export const entriesSpaces = gql`
             id
             spaces{
                 id
+                totalStaked
                 space{
                     name
                     tokenId

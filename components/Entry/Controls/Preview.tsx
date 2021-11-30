@@ -195,9 +195,11 @@ const ControlsPreview = (
                     <OpenIcon/>
             </ButtonControl>
             <AddToSpace 
-             direction={view==='list' ? 'right' :'bottom'}
-            setReadLater={setReadLater}
-            item={entry}/>
+                isHighlighted={(isHover || isFocused) ? true : false}
+                direction={view==='list' ? 'right' :'bottom'}
+                setReadLater={setReadLater}
+                item={entry}
+            />
             {!isReadingList
                 // ? <ButtonControl
                 //         direction={view==='list' ? 'right' :'bottom'}

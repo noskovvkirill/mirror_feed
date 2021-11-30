@@ -1,7 +1,5 @@
 
 //components
-import Box from '@/design-system/primitives/Box'
-import Heading from '@/design-system/primitives/Heading'
 import Root from '@/design-system/Feed/Header/Root'
 
 import ViewControls from '@/design-system/Feed/Header/ViewControls'

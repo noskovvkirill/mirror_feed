@@ -17,7 +17,7 @@ import type {CuratedSpaceNotSync, CuratedSpaceItem, PinnedItem} from 'contexts'
 const StyledContainer = styled('div', {
       display:'flex',
       flexDirection:'row',
-      width:'100%',
+      width:'$body',
       maxWidth:'$body',
       borderRadius:'$2',
       overflow:'hidden',

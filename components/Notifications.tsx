@@ -21,7 +21,7 @@ const Toast = ({updateList, item}:{updateList:(fn:(oldState:Notification[])=>Not
                         return notification.tx !== item.tx
                     })
                 })
-            }, 1500)
+            }, 4500)
         } catch(e){ 
             console.log('error toast tx', e)
         }
@@ -68,7 +68,7 @@ const Notifications = () => {
                 width:'256px',
                 height:'fit-content',
                 color:'$text',
-                right:'calc($4 + $2)', bottom:'$2'}}>
+                right:'calc($4 + $4)', bottom:'$2'}}>
                     {list[0].map((item:Notification, index)=>{
                     return(
                             <Toast 

@@ -4,7 +4,7 @@ import Box from '@/design-system/primitives/Box'
 import Image from 'next/image'
 import Heading from '@/design-system/primitives/Heading'
 import Label from '@/design-system/primitives/Label'
-import Button from '@/design-system/primitives/Button'
+// import Link from 'next/link'
 import Tag from '@/design-system/primitives/Tag'
 
 import {styled} from 'stitches.config'
@@ -100,7 +100,7 @@ const StyledFallback = styled(Avatar.Fallback, {
   fontSize: '$6',
   lineHeight: 1,
   fontWeight: 500,
-   variants:{
+  variants:{
       size:{
            og:{
                 width: 'calc($4 * 3)',
@@ -163,60 +163,16 @@ export const isSpace = (x: any): x is SpaceTypeProfile => x && x.name;
 
 const Profile = ({profile, size='md', isSelected=false}:IProfile) => {
     return(
-        <Tooltip.Root>
-            <StyledTrigger>
-                <StyledAvatar size={size} isSelected={isSelected}>
-                   
-                    
-                    <StyledImage 
-                    src={profile?.avatarURL && profile.avatarURL}
-                    alt={'user avatar'}
-                    />
-                           
-                    <StyledFallback size={size} delayMs={600}>
-                        {profile && isUser(profile) && (
-                            <>
-                            {profile.displayName 
-                            ? <>{profile?.displayName.match(/(\b\S)?/g)?.join("")?.match(/(^\S|\S$)?/g)?.join("").toUpperCase()} </>
-                            : <>{profile.address && 
-                                <>{AddressPrettyPrint(profile.address, 4)}</>
-                                }
-                                </>
-                            }
-                            </>
-                        )}
-
-                        {profile && isPublication(profile) && (
-                            <>
-                            {profile?.ensLabel.match(/(\b\S)?/g)?.join("")?.match(/(^\S|\S$)?/g)?.join("").toUpperCase()} 
-                            </>
-                        )}
-
-                        {profile && isSpace(profile) && (
-                            <>
-                            {profile?.name?.slice(0,9)}
-                            </>
-                        )
-                        }
-
-
-                    
-                    
-                    </StyledFallback>
-                </StyledAvatar>
-            </StyledTrigger>
-
-            <StyledContentTooltip side="top">
-               {isUser(profile) && 
-                     <Box layout='flexBoxRow' css={{width:'320px', gap:'$2', alignItems:'flex-start'}}>
-
-                    
-                            <Box layout='flexBoxRow' css={{overflow:'hidden',  border:'1px solid $foregroundBorder', alignItems:'center', justifyContent:'center', borderRadius:'$round', backgroundColor:'$highlight', width:'64px', height:'64px'}}>
-                                {profile.avatarURL && (
-                                <Image src={profile?.avatarURL} alt='image' width={'64'} height={'64'}/>
-                                )}
-                                {!profile.avatarURL && (
-                                <Heading size={'h3'}>
+            <Tooltip.Root>
+                <StyledTrigger>
+                    <StyledAvatar size={size} isSelected={isSelected}>
+                        <StyledImage 
+                        src={profile?.avatarURL && profile.avatarURL}
+                        alt={'user avatar'}
+                        />      
+                        <StyledFallback size={size} delayMs={600}>
+                            {profile && isUser(profile) && (
+                                <>
                                 {profile.displayName 
                                 ? <>{profile?.displayName.match(/(\b\S)?/g)?.join("")?.match(/(^\S|\S$)?/g)?.join("").toUpperCase()} </>
                                 : <>{profile.address && 
@@ -224,54 +180,86 @@ const Profile = ({profile, size='md', isSelected=false}:IProfile) => {
                                     }
                                     </>
                                 }
-                                </Heading>
-                                
-                                )}
-                            </Box>
-                            <Box layout='flexBoxColumn'>
-                                <Box layout='flexBoxRow' css={{width:'100%', gap:'$4', alignItems:'center', justifyContent:'space-between'}}>
-                                    <Heading size={'h5'}>
-                                        {profile.displayName 
-                                        ? <>{profile?.displayName} </>
-                                        : <>{profile.address 
-                                            }
-                                            </>
-                                        }
-                                    </Heading>
-                                    <Box layout='flexBoxRow' css={{alignItems:'center'}}><Label css={{fontWeight:'800'}}>Publications</Label><Label css={{borderRadius:'$round', backgroundColor:'$highlight', padding:'0 $1'}}>{profile.publications?.length || 0}</Label></Box>
-                                </Box>
+                                </>
+                            )}
 
-                                <Box as='ul' css={{listStyle:'none', color:'$foregroundText'}}>
-                                {profile.publications?.map((publication)=>{
-                                    return(<Tag 
-                                        // isHighlighted
-                                      
-                                        as={'li'} key={publication.id}>{publication.ensLabel}</Tag>)
-                                })}
+                            {profile && isPublication(profile) && (
+                                <>
+                                {profile?.ensLabel.match(/(\b\S)?/g)?.join("")?.match(/(^\S|\S$)?/g)?.join("").toUpperCase()} 
+                                </>
+                            )}
+
+                            {profile && isSpace(profile) && (
+                                <>
+                                {profile?.name?.slice(0,9)}
+                                </>
+                            )
+                            }
+                        </StyledFallback>
+                    </StyledAvatar>
+                </StyledTrigger>
+
+                <StyledContentTooltip side="top">
+                {isUser(profile) && 
+                        <Box layout='flexBoxRow' css={{width:'320px', gap:'$2', alignItems:'flex-start'}}>
+                                <Box layout='flexBoxRow' css={{overflow:'hidden',  border:'1px solid $foregroundBorder', alignItems:'center', justifyContent:'center', borderRadius:'$round', backgroundColor:'$highlight', width:'64px', height:'64px'}}>
+                                    {profile.avatarURL && (
+                                    <Image src={profile?.avatarURL} objectFit={'cover'} alt='image' width={'64'} height={'64'}/>
+                                    )}
+                                    {!profile.avatarURL && (
+                                    <Heading size={'h3'}>
+                                    {profile.displayName 
+                                    ? <>{profile?.displayName.match(/(\b\S)?/g)?.join("")?.match(/(^\S|\S$)?/g)?.join("").toUpperCase()} </>
+                                    : <>{profile.address && 
+                                        <>{AddressPrettyPrint(profile.address, 4)}</>
+                                        }
+                                        </>
+                                    }
+                                    </Heading>
+                                    
+                                    )}
                                 </Box>
-                            </Box>
-                            
-                   
-                     
-                    </Box>
-                    }
-               {isPublication(profile) && 
-                    <Box>
-                        {profile.ensLabel}
-            
-                    </Box>
-               }
-               {isSpace(profile) && 
-               <Box layout='flexBoxRow' css={{width:'320px', gap:'$2', alignItems:'center'}}>
-                        <Box css={{overflow:'hidden', border:'1px solid $foregroundBorder', borderRadius:'$round', width:'64px', height:'64px'}}>
-                            <Image src={profile?.avatarURL} alt='image' width={'64'} height={'64'}/>
+                                <Box layout='flexBoxColumn'>
+                                    <Box layout='flexBoxRow' css={{width:'100%', gap:'$4', alignItems:'center', justifyContent:'space-between'}}>
+                                        <Heading size={'h5'}>
+                                            {profile.displayName 
+                                            ? <>{profile?.displayName} </>
+                                            : <>{profile.address 
+                                                }
+                                                </>
+                                            }
+                                        </Heading>
+                                        <Box layout='flexBoxRow' css={{alignItems:'center'}}><Label css={{fontWeight:'800'}}>Publications</Label><Label css={{borderRadius:'$round', backgroundColor:'$highlight', padding:'0 $1'}}>{profile.publications?.length || 0}</Label></Box>
+                                    </Box>
+
+                                    <Box as='ul' css={{listStyle:'none', color:'$foregroundText'}}>
+                                        {profile.publications?.map((publication)=>{
+                                            return(<Tag as={'li'} key={publication.id}>{publication.ensLabel}</Tag>)
+                                        })}
+                                    </Box>
+                                </Box>
+                                
+                    
+                        
                         </Box>
-                    <Box layout='flexBoxColumn' css={{}}>
-                        <Heading size={'h5'}>{profile?.name}</Heading>
-                    </Box>
-                </Box>}
-            </StyledContentTooltip>
-        </Tooltip.Root>
+                        }
+                {isPublication(profile) && 
+                        <Box>
+                            {profile.ensLabel}
+                
+                        </Box>
+                }
+                {isSpace(profile) && 
+                <Box layout='flexBoxRow' css={{width:'320px', gap:'$2', alignItems:'center'}}>
+                            <Box css={{overflow:'hidden', border:'1px solid $foregroundBorder', borderRadius:'$round', width:'64px', height:'64px'}}>
+                                <Image src={profile?.avatarURL} objectFit={'cover'}  alt='image' width={'64'} height={'64'}/>
+                            </Box>
+                        <Box layout='flexBoxColumn' css={{}}>
+                            <Heading size={'h5'}>{profile?.name}</Heading>
+                        </Box>
+                    </Box>}
+                </StyledContentTooltip>
+            </Tooltip.Root>
     )
 }
 
