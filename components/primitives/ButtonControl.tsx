@@ -1,6 +1,6 @@
 import Button from '@/design-system/primitives/Button'
 import {styled} from 'stitches.config'
-import { ReactChild,useState, memo} from 'react'
+import React, { ReactChild,useState, memo,forwardRef} from 'react'
 import * as Portal from '@radix-ui/react-portal';
 
 const StyledControl = styled(Button,{
@@ -11,7 +11,7 @@ const StyledControl = styled(Button,{
     minHeight:'33px',
     maxHeight:'33px',
     borderRadius:'$round', 
-    transformOrigin:'center center',
+    // transformOrigin:'center center',
     padding:'$1', 
     display:'flex',
     gap:'$0',
@@ -20,6 +20,10 @@ const StyledControl = styled(Button,{
     fontSize:'$6',
     boxSizing:'border-box',
     lineHeight:'$6',
+    '&[data-state="open"]':{
+        backgroundColor:'$foregroundBronze',
+        color:'$background'
+    },
     variants:{
         monochrome:{
             true:{
@@ -166,28 +170,27 @@ const Control = ({children, direction, label, pos}:{
     )
 }
 
-const ButtonControl = (
-    {children, selected, 
-    css,
+const ButtonControl = forwardRef((
+    {children, selected,
+    css, 
     direction='right',
-    label, isHighlighted, onClick}:{children:ReactChild,label?:string, css?:any; direction?:'right' | 'left' | 'bottom' | 'top',selected?:boolean, isHighlighted:boolean, onClick?: (e:React.MouseEvent<HTMLButtonElement> | never) => void;
-    }) => {
+    label, isHighlighted, onClick, ...props}:
+    { children:ReactChild,label?:string, css?:any; direction?:'right' | 'left' | 'bottom' | 'top',selected?:boolean, isHighlighted:boolean, onClick?: (e:React.MouseEvent<HTMLButtonElement> | never) => void;
+    }, ref:React.Ref<any>) => {
     const [isHover, setIsHover] = useState(false)
     const [pos, setPos] = useState({x:-99999, y:-99999})
     const [isFocused, setIsFocused] = useState(false)
     return(
         <>
             <StyledControl
+            {...props}
             tabIndex={0}
             aria-label={label}
             selected={selected}
             css={{position:'relative', ...css}}
             onClick={onClick}
-            // onBeforeInput={()=>alert('focus')}
-            // onKeyDown={()=>alert('focus')}
-            // onSelect={()=>alert('focus')}
-            
-            onFocus={(e)=>{setIsFocused(true)
+            onFocus={(e)=>{
+                setIsFocused(true)
                 const target = e.target as HTMLElement;
                  const coord = target.getBoundingClientRect()
                  if(direction === 'right' || direction === 'top' || direction === 'bottom'){
@@ -213,7 +216,9 @@ const ButtonControl = (
                 setIsHover(false)
                 setPos({x:-999999, y:-999999})
             }}
-            isHighlighted={isHighlighted}>
+            isHighlighted={isHighlighted}
+            ref={ref}
+            >
                 {children}
             </StyledControl>
             {(isHover || isFocused) && (
@@ -221,6 +226,6 @@ const ButtonControl = (
             )}
         </>
     )
-}
+})
 
 export default memo(ButtonControl)

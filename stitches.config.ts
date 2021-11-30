@@ -11,7 +11,7 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             background: sand.sand1,
             foreground: sand.sand8,
             foregroundBorder: sand.sand8,
-            highlight: sand.sand4,
+            highlight: sand.sand5,
             tint:sand.sand2,
             foregroundText: sand.sand9,
             text: sand.sand12,
@@ -19,7 +19,7 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             backgroundBronze: bronze.bronze1,
             foregroundBronze: bronze.bronze7,
             foregroundTintBronze: bronze.bronze5,
-            highlightBronze:bronze.bronze3,
+            highlightBronze:bronze.bronze4,
             tintBronze: bronze.bronze2,
             foregroundTextBronze: bronze.bronze9,
             textBronze: bronze.bronze12,
@@ -78,7 +78,7 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             round: "9999px",
         },
         shadows: {
-            normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
+            normal: `0px 4px 4px 1px rgba(0,0,0, 0.15)`,
             large: `0px 1px 8px ${sand.sand6}`,
         },
         zIndices: {},
@@ -249,6 +249,9 @@ export const globalStyles = globalCss({
         height: "1px",
         margin: "0",
         padding: "0",
+    },
+    a:{
+        color:'$text'
     },
    '@font-face': [{
     fontFamily: 'Satoshi-Variable',

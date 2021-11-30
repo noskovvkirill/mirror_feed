@@ -29,6 +29,7 @@ const Droppable = ({id, children}:{id:string, children:React.ReactElement[] | Re
        return(
          <Box ref={setNodeRef} css={{
             position:'relative',
+            boxShadow:'$normal',
             padding:'', borderRadius:'8px', minHeight:'60vh', 
             backgroundColor: isOver ? "$foregroundBronze" : '$tint',
             opacity: isOver ? '0.5' : '1',

@@ -7,7 +7,7 @@ import * as Header from '@/design-system/Feed/Header'
 import { request } from 'graphql-request';
 import type { GetServerSideProps } from 'next'
 import useSWRInfinite from 'swr/infinite'
-import {useRef, useEffect} from 'react'
+import {useRef, useEffect, useState} from 'react'
 import useOnScreen from 'hooks/useOnScreen'
 import Loader from '@/design-system/primitives/Loader'
 //global state
@@ -16,37 +16,40 @@ import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 import {useRecoilValue} from 'recoil'
 import {queryEntry, queryAll} from 'src/queries'
 
+import { createClient } from '@supabase/supabase-js'
 
+import {styled} from 'stitches.config'
 
 export const getServerSideProps: GetServerSideProps = async () => {
+  const supabaseUrl = 'https://tcmqmkigakxeiuratohw.supabase.co'
+    const supabaseKey = process.env.SERVICE_KEY || ''
+    const supabase = createClient(supabaseUrl, supabaseKey) 
+     const { data, error } = await supabase
+    .from('mirroritems')
+    .select()
+    .order('timestamp', {ascending: false})
+    .limit(19)
 
 
-  const data = await request('https://arweave.net/graphql', queryAll).then(({ transactions }) =>{
-      return transactions.edges
-  });
-
-  let lastCursor 
-  const content = data.map(({node:{tags}, cursor}:{node:{tags:any},cursor:string})=>{
-    lastCursor = cursor;
-     return tags.find((c:any)=>c.name === 'Original-Content-Digest').value
-  })
-
-
-
-const entries = await Promise.all([...new Set(content)].map(async (item:any) => {
+     const entries = await Promise.all(data.map(async (item:any) => {
     return(await request('https://mirror-api.com/graphql', queryEntry, {
-       digest: item
-    }).then((data) =>
-      data.entry
-    ).catch(()=>{return})
+       digest: item.digest
+    }).then((data:any) =>
+      ({entry:data.entry,       
+    })
+    ).catch((e)=>{console.log(e); return})
     )
   }))
 
-  const entrieFiltered = entries.filter(function( element:any ) {
-   return element !== undefined;
-});
+    const entrieFiltered = entries.filter(function( element:any ) {
+        return element !== undefined;
+    });
+    
+    if(error || !data){
+         return({notFound:true})
+    } 
 
-  return {props:{entries:entrieFiltered, lastCursor:lastCursor}}
+  return {props:{entries:entrieFiltered}}
  
 };
 type Props = {
@@ -54,61 +57,75 @@ type Props = {
     lastCursor:string | undefined
 }
 
-
-const getKey = (_:any, previousPageData:any) => {
-  if (previousPageData && !previousPageData.length) return null // reached the end
-
-  return `{
-		transactions(first:10, ${previousPageData ? 'after:"'+previousPageData[1]+'"' : ''}, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
-			edges {
-				node {
-					id
-					tags {
-						name
-						value
-					}
-				}
-        cursor
-			}
-		}
-	}`                  
+const getKey = (pageIndex:number, previousPageData:any) => {
+    try{
+    console.log('get key', pageIndex, previousPageData)
+//  if (previousPageData && !previousPageData.length) return null // reached the end
+    const key =  `/api/getMirrorItems?from=${20*pageIndex+1}&to=${20*pageIndex+1+19}`
+  return key 
+    } catch(e){
+        console.log(e)
+    }
 }
 
-const fetcher = async (query:string) => {
-    const data =  await request('https://arweave.net/graphql', query).then(({ transactions }) =>{
-      return transactions.edges
-  });
-
-  let lastCursor
-
-  const content = data.map(({node:{tags}, cursor}:{node:{tags:any}, cursor:string})=>{
-     lastCursor = cursor
-     return tags.find((c:any)=>c.name === 'Original-Content-Digest').value
-  })
-
-  const entries = await Promise.all([...new Set(content)].map(async (item:any) => {
+const fetcher = async (url:string) => {
+    const data =  await fetch(url).then(res => res.json()).then(({data})=>data)
+      const entries = await Promise.all(data.map(async (item:any) => {
     return(await request('https://mirror-api.com/graphql', queryEntry, {
-       digest: item
-    }).then((data) =>
-      data.entry
-    ).catch(()=>{return})
+       digest: item.digest
+    }).then((data:any) =>
+      ({entry:data.entry,       
+    })
+    ).catch((e)=>{console.log(e); return})
     )
   }))
 
-  const entriesFiltered = entries.filter(function( element:any ) {
-   return element !== undefined;
-});
-
-return ([entriesFiltered, lastCursor as string | undefined])
-
+  return entries
 
 }
 
+const StyledSelect = styled('select', {
+    background:'$background',
+    appearance:'none',
+    border:'0',
+        color:'$highlight',
+    outline:'none',
+     width: '100%',
+     padding:'0 $2',
+     margin:'1px 0 0 0',
+  fontFamily: 'inherit',
+  fontWeight: 'inherit',
+  fontSize: 'inherit',
+  cursor: 'inherit',
+  lineHeight: '100%'
+})
 
-const Data = ({entries, lastCursor}:Props) =>{
+const StyledOption = styled('option', {
+    fontSize:'$1',
+    border:'0',
+    color:'$highlight',
+      backgroundColor:'red!important',
+      '&:focus':{
+        backgroundColor:'red!important',
+      },
+    '&[data-state="active"]':{
+        color:'$highlight',
+          backgroundColor:'red!important',
+        WebkitAppearance: 'none',
+        appearance: 'none',
+        outline: 'none',
+    }
+
+})
+
+
+
+
+const Data = ({entries}:Props) =>{
     const ref = useRef<HTMLDivElement | null>(null)
     const entry = useOnScreen(ref, {
-    threshold: 0.25,
+    threshold: 0,
+    rootMargin:'100%'
   })
     const isVisible = !!entry?.isIntersecting
 
@@ -117,15 +134,16 @@ const Data = ({entries, lastCursor}:Props) =>{
 
     const appSettings = useRecoilValue(settings)
 
-    const { data, error, isValidating, setSize } = useSWRInfinite(getKey, fetcher, {fallbackData: [[entries, lastCursor]]}) // tslint:disable-line
+    const { data, error, isValidating, setSize, size } = useSWRInfinite(getKey, fetcher, {fallbackData: [entries]}) // tslint:disable-line
     
+    const [fetchOption, setFetchOption] = useState<string>('publications')
 
     useEffect(()=>{
       if(isVisible){
          setSize((s)=>s+=1)
       }
     },[isVisible, setSize])
-
+ 
   
     if(error) return <Layout>Error ocurred..</Layout>
     if (!data) return <Layout>Patience...</Layout>
@@ -141,12 +159,18 @@ const Data = ({entries, lastCursor}:Props) =>{
                     <Heading 
                     size={'h1'}
                     color={"foregroundText"}>
-                        Latest&nbsp;
+                        Show
                     </Heading>
                     <Heading 
                     size={'h1'}
                     color={"highlight"}>
-                        Mirror.xyz
+                       <StyledSelect 
+                       onChange={(e)=>setFetchOption(e.target.value)}
+          
+                       > 
+                          <StyledOption value={"publications"} data-state={fetchOption==='publications' ? "active" : ""}>Publications</StyledOption>
+                           <StyledOption value={"all"} data-state={fetchOption==='all' ? "active" : ""}>All</StyledOption>
+                        </StyledSelect>
                     </Heading>
                     </Box>
                 </Box>
@@ -162,17 +186,17 @@ const Data = ({entries, lastCursor}:Props) =>{
             gridTemplateRows: "repeat(auto, minmax(0, 1fr))",
             width:'$body',
             overflow:'visible',
-          }}>
-            {data.map((page:any)=>{
-              return page[0].map((entry:any)=>{
+          }}>   
+            {data.map((page:any, indexPage:number)=>{
+              return page?.map(({entry, index}:any)=>{
                 if(ignoredList.findIndex((item:IgnoredPublication)=>entry.publication?.ensLabel === item.ensLabel || entry.author.address === item.ensLabel) === -1){
                     if(pinnedList.findIndex((item:PinnedItem)=>item.type === 'entry' && item.item.digest === entry.digest) !== -1){
-                      return;
+                      return <></>;
                     } else {
                         return(
                           <Article 
                           view={appSettings.view}
-                          key={entry.digest+appSettings.view} entry={entry}/>
+                          key={entry.digest+appSettings.view+index*indexPage} entry={entry}/>
                         )
                       }
                 } else {
@@ -181,7 +205,8 @@ const Data = ({entries, lastCursor}:Props) =>{
               })
             })}
              </Box>
-           )}
+           )
+           }
           
     
           <Box css={{padding:'$2 calc($4 * 4 + $1)', boxSizing:'border-box', height:'48px', transition:'$all', color:'$foregroundText'}}>
@@ -189,7 +214,9 @@ const Data = ({entries, lastCursor}:Props) =>{
               (<Loader size='default'/>)
               }
             </Box>
-            <div ref={ref}> &nbsp;</div>
+            <div 
+            style={{backgroundColor:'red', opacity:0, bottom:0, height:'256px'}}
+            ref={ref}> &nbsp;</div>
           </Box>
         </Box>
     </Layout>

@@ -29,7 +29,8 @@ export default async function handler(
 
     const filterT = govContract.filters.Unstaked(null, null, null, null);
     const eventsRawT = await govContract.queryFilter(filterT, parseInt(weekAgoBlock), currentBlock)
-    console.log('events raw T', eventsRawT)
+    //unstaked don't work atm 
+    
 
     const events = eventsRaw.map((item:any)=>{
         return({
@@ -45,6 +46,9 @@ export default async function handler(
 
     const combined = events.reduce((a, b) =>
     a.set(b.id, (a.get(b.id) || 0) + Number(b.amount)), new Map);
+
+
+
     let obj = []
     let i = 0;
     for (let [key, value] of combined.entries()) {
@@ -59,32 +63,41 @@ export default async function handler(
         i++;
     }
 
-   
+    const totalStaked = obj.reduce((a,b)=>({totalStaked:a.totalStaked + Number(b.totalStaked)}), {totalStaked:0})
+
+    
+    const { data:sync, error:errorsync } = await supabase
+    .from('topSync')
+    .insert({synced_at:new Date().toISOString(), totalStaked:totalStaked.totalStaked, topCurators:[{}]})
+    console.log('sync', sync)
+
     const objExtended = await Promise.all(obj.map(async (item)=>{
         try{
         const {entry} = await request(endpoint, entriesSpaces, {id:`${item.cid}-${item.author}`})
         const spaces = entry.spaces.map(({space}:any)=>space).filter((space:any)=>space)
+        //need to extend spaces with the amount of staked
         return({
             ...item,
-            spaces:spaces
+            spaces:spaces,
+            syncId:sync && sync[0]?.id || 0
         })} catch(e){
             console.log('error fetch', e)
             return {item}
         }
     }))
 
-    const { data:dataDelete, error:errorDelete } = await supabase.from('top').delete()
+    // const { data:dataDelete, error:errorDelete } = await supabase.from('top').delete()
 
-    if(errorDelete){
-        return res.status(500).json({error: errorDelete.toString()})
-    }
+    // if(errorDelete){
+    //     return res.status(500).json({error: errorDelete.toString()})
+    // }
 
     const { data, error } = await supabase
     .from('top')
-    .insert(objExtended)
+    .upsert(objExtended)
     
-    if(error){
-        return res.status(500).json({error: error.toString()})
+    if(error || errorsync){
+        return res.status(500).json({error: error ? error.toString() : errorsync?.toString()})
     }
 
     return res.status(200).json({data});

@@ -121,10 +121,10 @@ const SpaceBody = ({isStake, setIsStake, isUnstake, setIsUnstake, UpdateBalance,
     if(spaces.state === "hasValue"){
         return(
             <AnimatePresence>
-                <button onClick={async ()=>{
+                {/* <button onClick={async ()=>{
                     const tx = await UpdateFEEDContract_INTERNAL()
                     console.log('tx', tx)
-                }}>Update Gov</button>
+                }}>Update Gov</button> */}
                 {spaces.contents.length>0
                 ?   <m.div key='curation'>
                         <ExtraStakeTokens stakeCallback={ExtraStakeCallback}/>

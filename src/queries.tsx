@@ -156,6 +156,7 @@ query Publication($ensLabel: String!) {
        entries{
          id
          digest
+         timestamp
        }
     }
 }`
@@ -300,8 +301,35 @@ query Edition($editionId: Int!, $editionContractAddress: String!) {
 }
 `
 
+export const queryVerifiedAccounts = gql`
+  query VerifiedAccounts {
+    verifiedAccounts {
+      username
+      account
+      signature
+    }
+  }
+`
+
+export const queryPublications = gql`
+query Publications {
+  publications{
+      ensLabel
+  }
+}
+`
 
 
-
-
-
+export const UnverifiedProfiles = gql`
+query UnverifiedTwitterProfiles {
+  unverifiedTwitterProfiles {
+    address
+    twitterProfile {
+      username
+      avatarURL
+      __typename
+    }
+    __typename
+  }
+}
+`

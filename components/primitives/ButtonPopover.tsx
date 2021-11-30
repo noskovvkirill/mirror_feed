@@ -53,7 +53,7 @@ const StyledTrigger = styled(Popover.Trigger, {
 
             },
             false:{
-                  border:'1px solid $foreground', 
+                  border:'1px solid $foregroundBorder', 
                   color:'$foregroundText', 
                   '&:hover':{
                     background:'$foreground',

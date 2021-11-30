@@ -51,7 +51,7 @@ const StyledContainerAll = styled('div', {
                     // boxShadow:'$large',
                     backgroundColor:'$highlightBronze',
                     cursor:'initial',
-                    color:'$foregroundBronze',
+                    color:'$foregroundTextBronze',
                 }
             }
         },
@@ -68,7 +68,7 @@ const StyledContainerByItem = styled('div', {
     variants:{
         collapsed:{
             true:{
-                color:'$foregroundBronze',
+                color:'$foregroundTextBronze',
                 backgroundColor:'$highlightBronze', 
                 cursor:'initial'    
             },
@@ -269,7 +269,7 @@ const StakeTokens = ({spaceId, selectedId, spaceTitle, isOpen, setIsOpen, stakeC
                         margin:0,
                         outline:'none',
                         width:'100%',
-                        color: !isCollapsed ? '$foregroundBronze' : '$foreground',
+                        color: !isCollapsed ? '$foregroundTextBronze' : '$foreground',
                         minWidth:'$2',
                         border:0, 
                         padding:'0'

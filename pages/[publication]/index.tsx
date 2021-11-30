@@ -3,7 +3,7 @@ import Box from '@/design-system/primitives/Box'
 import { request } from 'graphql-request';
 import type { GetServerSideProps } from 'next'
 import type { SubscribedPublication} from 'contexts';
-import Article from '@/design-system/Article';
+import Article from '@/design-system/Article/ArticleShort';
 import type {EntryType} from '@/design-system/Entry'
 import { Current, PinnedItem,pinnedItems } from 'contexts';
 import { useSetRecoilState } from 'recoil';
@@ -25,6 +25,8 @@ const { publication, type} = ctx.query;
   if(!publication) {
     return {notFound:true}
   }
+
+  console.log('publication & type', publication)
 
   if(type === 'personal') {
     const entries = await request('https://arweave.net/graphql', queryPersonal, {contributor:publication}).then(({ transactions }) =>{

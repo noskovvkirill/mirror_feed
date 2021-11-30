@@ -43,7 +43,7 @@ const StyledContainerAll = styled('div', {
                     // boxShadow:'$large',
                     backgroundColor:'$highlightBronze',
                     cursor:'initial',
-                    color:'$foregroundBronze',
+                    color:'$foregroundTextBronze',
                 }
             }
         },
@@ -60,7 +60,7 @@ const StyledContainerByItem = styled('div', {
     variants:{
         collapsed:{
             true:{
-                color:'$foregroundBronze',
+                color:'$foregroundTextBronze',
                 backgroundColor:'$highlightBronze', 
                 cursor:'initial'    
             },
@@ -192,7 +192,7 @@ const UnStakeTokens = ({
                        <span>Batch unstake all the tokens</span>
                        <Heading 
                        css={{fontFamily:'Inter', userSelect:'none'}}
-                       size={'h2'}>{parseInt(ethers.utils.formatEther(totalStaked))}</Heading>
+                       size={'h2'}>{totalStaked && parseInt(ethers.utils.formatEther(totalStaked?.toString()))}</Heading>
                         <span>● Tokens staked in total</span>
                     {/* {JSON.stringify(items)} */}
                 </StyledContainerAll>
@@ -272,7 +272,7 @@ const UnStakeTokens = ({
                  <Box layout='flexBoxRow'>
                      <Label size='normal'>You will receive 
                       &thinsp;
-                        {isCollapsed ? unstakeList.length>0 ? parseInt(unstakeList?.reduce((prev, current)=>({stake: prev.stake+current.stake, author:'', cid:''})).stake.toString()) : <>0</>: parseInt(ethers.utils.formatEther(totalStaked))}&thinsp;●
+                        {isCollapsed ? unstakeList?.length>0 ? parseInt(unstakeList?.reduce((prev, current)=>({stake: prev.stake+current.stake, author:'', cid:''})).stake.toString()) : <>0</>: totalStaked && parseInt(ethers.utils.formatEther(totalStaked.toString()))}&thinsp;●
                      </Label> 
                         {/* <Label size='normal'
                         color={(user?.balance && CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed) >= user?.balance) ? 'error' : 'default'}

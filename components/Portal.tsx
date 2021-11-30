@@ -3,6 +3,8 @@
 
 import {styled, keyframes} from 'stitches.config'
 import {useState} from 'react'
+
+
 import SearchIcon from '@/design-system/icons/Search'
 import ArcIcon from '@/design-system/icons/Arc'
 import PointIcon from '@/design-system/icons/Point'
@@ -90,17 +92,22 @@ const StyledContainer = styled(DropdownMenu.Content, {
 })
 
 
+
+
+
 const PortalBody = ({setIsSearch, setIsOpen}:any) => {
     const router = useRouter()
     return(
+
                 <StyledContainer 
                 sideOffset={-42}>
                     <StyledCurationButton as={'button'} isOpen={true}>
                         <ArcIcon/>
                     </StyledCurationButton>
-                    <DropdownMenu.Item 
-                    onFocus={(e)=>{console.log('focus', e, e.isPropagationStopped())}}
-                    onSelect={()=>router.push('/')}>
+ 
+                    <DropdownMenu.Item
+                    onSelect={()=>router.push('/')}
+                    >
                         <ButtonControl 
                             isHighlighted={router.pathname==='/' ? true :false}
                             selected={router.pathname==='/' ? true :false}

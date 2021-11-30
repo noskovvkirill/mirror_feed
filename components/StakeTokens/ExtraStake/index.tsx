@@ -38,16 +38,11 @@ const StyledContainerAll = styled('div', {
         },
         variants:{
             collapsed:{
-                true:{
-                    backgroundColor:'$tint',
-                    cursor:'pointer',
-                    color:'$foreground'
-                },
                 false:{
                     // boxShadow:'$large',
                     backgroundColor:'$highlightBronze',
                     cursor:'initial',
-                    color:'$foregroundBronze',
+                    color:'$foregroundTextBronze',
                 }
             }
         },
@@ -173,7 +168,7 @@ const ExtraStake = ({stakeCallback}:IOnAddCurated) => {
                         margin:0,
                         outline:'none',
                         width:'100%',
-                        color: '$foregroundBronze',
+                        color: '$foregroundTextBronze',
                         minWidth:'$2',
                         border:0, 
                         padding:'0'
@@ -198,7 +193,7 @@ const ExtraStake = ({stakeCallback}:IOnAddCurated) => {
                                 {selectedItem.item.entry.digest.slice(0,5)}...
                             </Tag>
                         </Box>
-                          <Box as='p' css={{padding:'0', margin:'0', width:'100%'}}>
+                          <Box as='p' css={{padding:'$1', margin:'0', width:'100%'}}>
                                 {selectedItem.item.entry.title}
                           </Box>
                     </StyledContainer>
@@ -207,13 +202,13 @@ const ExtraStake = ({stakeCallback}:IOnAddCurated) => {
                         <Heading size={'h3'} 
                         css={{ 
                             fontFamily:'Inter',
-                            color: '$foregroundBronze',
+                            color: '$foregroundTextBronze',
                             margin:'0!important',
                             padding:'0'}}>
                             {parseInt(selectedItem.item.staked.toString())}
                         </Heading>
                         <Heading size={'h3'} css={{ 
-                              color: '$foregroundBronze',
+                              color: '$foregroundTextBronze',
                             fontFamily:'Inter',
                             margin:'0!important',
                             padding:'0'}}>
@@ -223,13 +218,13 @@ const ExtraStake = ({stakeCallback}:IOnAddCurated) => {
                         css={{ 
                             fontFamily:'Inter',
                             margin:'0!important',
-                            color: '$foregroundBronze',
+                            color: '$foregroundTextBronze',
                             padding:'0'}}
                         >
                             {priceBatch}
                         </Heading>
                         </Box>
-                        <Box css={{width:'100%',color:'$foregroundBronze', alignItems:'center', justifyContent:'flex-start'}} layout='flexBoxRow'>
+                        <Box css={{width:'100%',color:'$foregroundTextBronze', alignItems:'center', justifyContent:'flex-start'}} layout='flexBoxRow'>
                               <span style={{whiteSpace:'nowrap'}}>●&thinsp;Staked</span>&nbsp;<span style={{whiteSpace:'nowrap'}}>●&thinsp;Extra</span>
                         </Box>
                     </Box>

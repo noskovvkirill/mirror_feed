@@ -15,9 +15,13 @@ import { queryEntry } from 'src/queries';
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   // const { article, publication} = ctx.query;
   const { article} = ctx.query;
+  console.log('article', article)
   const entry = await request('https://mirror-api.com/graphql', queryEntry, {
         digest: article
-      }).then((data) =>data.entry).catch(()=>{return { notFound:true}})
+      }).then((data) =>data.entry).catch((e)=>{
+  
+        return { notFound:true}})
+
     return {
       props:{entry:entry},
     }

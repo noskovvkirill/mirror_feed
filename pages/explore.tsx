@@ -66,7 +66,8 @@ const Home = ({entries}:Props) => {
 
     return (
         <Layout>
-            <Box layout='flexBoxColumn' >
+            <Box layout='flexBoxColumn'>
+                
             <Header.Root controls={<Header.ViewControls/>}>
              <Box layout='flexBoxColumn' css={{width:'100%'}}>
                 <Box layout='flexBoxRow'>
@@ -85,24 +86,23 @@ const Home = ({entries}:Props) => {
                 </Box>
             </Header.Root>
                 
-                <button onClick={getData}>DATA</button>
+                {/* <button onClick={getData}>DATA</button> */}
 
                 {entries.length === 0 && (
                     <Box>
                         Nothing is here yet. Be first to curate && stake!
-
                     </Box>
                 )}
 
                <Box css={{
-            display:appSettings.view === 'card' ? 'grid' : 'list',
-            gridColumnGap:'32px',
-            height:'fit-content',
-            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-            gridTemplateRows: "repeat(3, minmax(0, 1fr))",
-            width:'$body',
-            overflow:'visible',
-          }}>
+                display:appSettings.view === 'card' ? 'grid' : 'list',
+                gridColumnGap:'32px',
+                height:'fit-content',
+                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                gridTemplateRows: "repeat(auto, minmax(0, 1fr))",
+                width:'$body',
+                overflow:'visible',
+            }}>
                 {entries.map((entry:any)=>{
                     if(pinnedList?.findIndex((item:PinnedItem)=>item.type === 'entry' && item.item.digest === entry.entry.digest) !== -1){
                         return;

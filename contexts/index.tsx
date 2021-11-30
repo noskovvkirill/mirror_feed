@@ -371,6 +371,7 @@ export const userSpaces = selectorFamily({
     key:'userSpaces',
     get: (address:string) => async() => {
         const endpoint = process.env.NEXT_PUBLIC_GRAPH_ENDPOINT
+        if(!address || address === '') return []
         if(!endpoint) throw "graphql endpoint was not found";
         const {spaces}:{spaces:SpaceType[]} = await request(endpoint, queryUserSpaces, {owner:address})
         return spaces

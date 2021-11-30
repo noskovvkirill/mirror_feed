@@ -6,11 +6,12 @@ import Button from '@/design-system/primitives/Button'
 import Loader from '@/design-system/primitives/Loader'
 import Label from '@/design-system/primitives/Label'
 import Image from 'next/image'
+import Bg from '@/design-system/CreateSpace/Bg'
 //context & state
 import { useSetRecoilState } from 'recoil'
 import {NotificationList} from 'contexts'
 import { useState, useRef } from 'react'
-
+import {create} from 'ipfs-http-client'
 //types
 import type {TransactionResponse} from '@ethersproject/abstract-provider'
 
@@ -27,8 +28,12 @@ interface IMint {
     }
 }
 
+ const client = create({
+    host: 'ipfs.infura.io',
+    port: 5001,
+    protocol: 'https',
+    })
 
-// 'https://ipfs.infura.io:5001/api/v0'
 
 const Mint = ({GrabTestBalance, newSpaceCallback, Approve, NewSpace, UpdateBalance, balance, allowance }:IMint) => {
 
@@ -110,25 +115,20 @@ const Mint = ({GrabTestBalance, newSpaceCallback, Approve, NewSpace, UpdateBalan
         if(isImageLoading) return
         if(!fileList || fileList.length === 0) return;
         try{
+    
             setIsImageLoading(true)
             const file = fileList[0];
-            //secrets don't work —> move to server
-            console.log('file', file, `Basic ${btoa(process.env.INFURA_SECRET)}`)
-            // const added = await client.add(file)
-            // console.log('addded', added)
-            // const url = `https://ipfs.infura.io/ipfs/${added.path}`
-            const data = new FormData()
-            data.append('file', file)
-            const url = await fetch('https://ipfs.infura.io:5001/api/v0/add', {
-            method: 'POST',
-            headers: new Headers({
-            "Authorization": `Basic ${btoa(process.env.INFURA_SECRET)}`
-            }),
-            body: data
-            }).then(res => res.json()).then(i=>i.Hash) 
-            console.log('file url', url)           
-            updateFileUrl(url)
-            setIsImageLoading(false)
+            const {cid} = await client.add(file)
+            const {data, error} = await fetch(
+            `/api/uploadAvatar?cid=${cid.toString()}`
+            ).then((r) => r.json());
+            if(data && !error){
+                updateFileUrl(cid.toString())
+                setIsImageLoading(false)
+            }
+            if(error){
+                throw "something went wrong"
+            }
         } catch(e){
             console.log('error', e)
         }   
@@ -140,9 +140,9 @@ const Mint = ({GrabTestBalance, newSpaceCallback, Approve, NewSpace, UpdateBalan
                         borderRadius:'$2', padding:'$2', boxSizing:'border-box',
                         position:'relative', color:'$foregroundBronze'
                         }}>Space settings
-                        {/* <Box css={{position:'absolute', color:'$foreground',width:'65%', opacity:0.25,right:0, top:0}}>
+                        <Box css={{position:'absolute', color:'$foreground',width:'auto',height:'100%', opacity:1, mixBlendMode:'multiply', right:0, top:0}}>
                             <Bg/>
-                        </Box> */}
+                        </Box>
                         </Box>
                         <Box layout='flexBoxRow' css={{gap:'$2', 
                         borderRadius:'$2',

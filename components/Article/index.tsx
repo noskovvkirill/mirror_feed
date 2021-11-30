@@ -7,6 +7,7 @@ import useOnScreen from 'hooks/useOnScreen'
 import {useRef, useState} from 'react'
 // text processor
 import processorFull from '@/design-system/text/Processors/FullBody'
+import processorShort from '@/design-system/text/Processors/FullBody'
 //state
 import {ignoredPublication, pinnedItems, readLaterList } from 'contexts'
 //types
@@ -92,7 +93,7 @@ const ArticleNew = ({entry, isPreview=true, view='list'}:ArticleNewType) => {
                 isHover={isHover}
                 isFocused={isFocused}
             >
-                {(isPreview && bodyText) ? bodyText.props.children.slice(0,5) : bodyText}
+                {bodyText && bodyText}
             </Entry.Body>
         </Entry.Root>
     )

@@ -6,7 +6,7 @@ import { AddressPrettyPrint } from 'src/utils'
 export const StyledContainer = styled('div', {
     display:'flex',
     flexDirection:'column',
-    color:'$foregroundBronze',
+    color:'$foregroundTextBronze',
     background:'$highlightBronze',
     padding:'$1 $2',
     borderRadius:'0'

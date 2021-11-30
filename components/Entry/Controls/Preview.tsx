@@ -194,35 +194,38 @@ const ControlsPreview = (
                     }}>
                     <OpenIcon/>
             </ButtonControl>
-            <AddToSpace item={entry}/>
+            <AddToSpace 
+             direction={view==='list' ? 'right' :'bottom'}
+            setReadLater={setReadLater}
+            item={entry}/>
             {!isReadingList
-                ? <ButtonControl
-                        direction={view==='list' ? 'right' :'bottom'}
-                        selected={false}
-                        key={'reading control'}
-                        label='to reading list'
-                        isHighlighted={(isHover || isFocused) ? true : false}
-                        onClick={()=>{
-                            setReadLater((prevState:ReadingListItem[])=>{
-                                //check for dublicates just in case 
-                                if(prevState.findIndex((item:ReadingListItem)=>item.entryDigest === entry.digest) !== -1) return prevState
-                            return [...prevState, {entryDigest:entry.digest, title:entry.title, ensLabel: entry.publication?.ensLabel ? entry.publication.ensLabel : entry.author.address}]})
-                        }}>
-                        <AddIcon/>
-                    </ButtonControl>
-                : <ButtonControl
-                        direction={view==='list' ? 'right' :'bottom'}
-                        selected={true}
-                        label='remove from the reading list'
-                        isHighlighted={true}
-                        onClick={()=>{
-                        setReadLater((prevState:ReadingListItem[])=>{
-                        const indexUnPin = prevState.findIndex((item:ReadingListItem)=>item.entryDigest=== entry.digest)
-                        const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
-                        return newArray
-                    })}}>
-                    <SuccessMarkIcon/>
-                </ButtonControl>
+                // ? <ButtonControl
+                //         direction={view==='list' ? 'right' :'bottom'}
+                //         selected={false}
+                //         key={'reading control'}
+                //         label='to reading list'
+                //         isHighlighted={(isHover || isFocused) ? true : false}
+                //         onClick={()=>{
+                //             setReadLater((prevState:ReadingListItem[])=>{
+                //                 //check for dublicates just in case 
+                //                 if(prevState.findIndex((item:ReadingListItem)=>item.entryDigest === entry.digest) !== -1) return prevState
+                //             return [...prevState, {entryDigest:entry.digest, title:entry.title, ensLabel: entry.publication?.ensLabel ? entry.publication.ensLabel : entry.author.address}]})
+                //         }}>
+                //         <AddIcon/>
+                //     </ButtonControl>
+                // : <ButtonControl
+                //         direction={view==='list' ? 'right' :'bottom'}
+                //         selected={true}
+                //         label='remove from the reading list'
+                //         isHighlighted={true}
+                //         onClick={()=>{
+                //         setReadLater((prevState:ReadingListItem[])=>{
+                //         const indexUnPin = prevState.findIndex((item:ReadingListItem)=>item.entryDigest=== entry.digest)
+                //         const newArray =[...prevState.slice(0, indexUnPin), ...prevState.slice(indexUnPin + 1)];
+                //         return newArray
+                //     })}}>
+                //     <SuccessMarkIcon/>
+                // </ButtonControl>
             }
                 <br style={{userSelect:'none'}}/>
                 {setPinnedItem && (
@@ -235,7 +238,7 @@ const ControlsPreview = (
                     }>
                         <PinIcon/>
                 </ButtonControl>)}
-                {setIgnoredList && (
+                {/* {setIgnoredList && (
                 <ButtonControl
                     direction={view==='list' ? 'right' :'bottom'}
                     label='ignore this publication'
@@ -244,7 +247,7 @@ const ControlsPreview = (
                     setIgnoredList((prevState:IgnoredPublication[])=>[...prevState, {ensLabel:entry.publication?.ensLabel ?  entry.publication?.ensLabel : entry.author.address}])
                     }>
                         <RemoveIcon/>
-                </ButtonControl>)}
+                </ButtonControl>)} */}
                 {entry.publication?.ensLabel 
                 ? <StyledHeader
                 type={view}

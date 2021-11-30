@@ -44,27 +44,27 @@ const TopCurators = ({}) => {
                   <Profile
                size={'lg'}
                profile={
-                  { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/200/200'}
+                  { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/250/200'}
                }/>
                   <Profile
                size={'lg'}
                profile={
-                  { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/200/200'}
+                  { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/260/200'}
                }/>
                   <Profile
                size={'lg'}
                profile={
-                  { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/200/200'}
+                  { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/280/200'}
                }/>
                   <Profile
                size={'lg'}
                profile={
-                  { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/200/200'}
+                  { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/290/200'}
                }/>
                   <Profile
                size={'lg'}
                profile={
-                  { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/200/200'}
+                  { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/300/200'}
                }/>
                </Box>
 

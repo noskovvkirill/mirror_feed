@@ -11,7 +11,7 @@ import {request} from 'graphql-request'
  
 declare let window: any;
 
-export type UserTypeProfile = Pick<UserType, 'avatarURL' | 'displayName' | 'address'>
+export type UserTypeProfile = Pick<UserType, 'avatarURL' | 'displayName' | 'address'> & {publications?:{id:number, ensLabel:string}[]}
 
 export type UserType = {
     address?:string,
