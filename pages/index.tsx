@@ -64,23 +64,27 @@ const getKey = (pageIndex:number, previousPageData:any) => {
 }
 
 const fetcher = async (url:string) => {
-    const data =  await fetch(url).then(res => res.json()).then(({data})=>data)
-    const entries:{entry:EntryType}[] | null= await Promise.all(data.map(async (item:any) => {
-    return(await request('https://mirror-api.com/graphql', queryEntry, {
-       digest: item.digest
-    }).then((data:any) =>
-      ({entry:data.entry,       
-    })
-    ).catch((e)=>{console.log(e); return null})
-    )
-  }))
+    try{
+        const data =  await fetch(url).then(res => res.json()).then(({data})=>data)
+        const entries:{entry:EntryType}[] | null= await Promise.all(data?.map(async (item:any) => {
+        return(await request('https://mirror-api.com/graphql', queryEntry, {
+        digest: item.digest
+        }).then((data:any) =>
+        ({entry:data.entry,       
+        })
+        ).catch((e)=>{console.log(e); return null})
+        )
+    }))
 
-  const entrieFiltered:{entry:EntryType}[] = entries.filter(function( element:{entry:EntryType} | null):element is {entry:EntryType} {
-        return element !== null && element !== undefined;
-    });
-    
+    const entrieFiltered:{entry:EntryType}[] = entries.filter(function( element:{entry:EntryType} | null):element is {entry:EntryType} {
+            return element !== null && element !== undefined;
+        });
+        
 
-  return entrieFiltered
+    return entrieFiltered
+    } catch(e){
+       throw e 
+    }
 
 }
 
@@ -134,7 +138,7 @@ const RenderList = ({defaultState, ignoredList, pinnedList}:{defaultState:{entry
       }
     },[isVisible, setSize])
     if (!data) return <Loader size='default'>Patience...</Loader>
-    if(error) return <Box>Something went wrong...Refresh the page</Box>
+    if(error) return <Box>Something went wrong...Refresh the page  {JSON.stringify(error)}</Box>
     return(
          <Box css={{
             display:'flex',
@@ -188,7 +192,8 @@ const RenderCard= ({defaultState, ignoredList, pinnedList}:{defaultState:{entry:
       }
     },[isVisible, setSize])
     if (!data) return <Loader size='default'>Patience...</Loader>
-    if(error) return <Box>Something went wrong...Refresh the page</Box>
+    if(error) return <Box>Something went wrong...Refresh the page  {JSON.stringify(error)}</Box>
+
     return(
          <Box css={{
             display:'grid',
@@ -199,6 +204,7 @@ const RenderCard= ({defaultState, ignoredList, pinnedList}:{defaultState:{entry:
             width:'$body',
             overflow:'visible',
           }}>   
+
             {data?.map((page:any, indexPage:number)=>{
                 return page?.map(({entry, index}:any)=>{
                     if(ignoredList?.findIndex((item:IgnoredPublication)=>entry.publication?.ensLabel === item.ensLabel || entry.author.address === item.ensLabel) === -1){

@@ -26,8 +26,8 @@ export default async function handler(
     .range(parseInt(from), parseInt(to))
   
     
-     if(error) return res.status(500).json({message: error.message.toString()})
+     if(error) return res.status(500).json({error: error.message.toString()})
     
 
-    return res.status(200).json({message:"OK"});
+    return res.status(200).json({data});
 }

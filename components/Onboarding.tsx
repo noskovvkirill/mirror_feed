@@ -233,7 +233,7 @@ const OnBoarding = () => {
                                 if(video.current) video.current.play()
                             },2000)
                         }}
-                        src='/try2.mp4' autoPlay muted/>
+                        src='/logo-small.mp4' autoPlay muted/>
                         </Box>
                 </Box>
                 <StyledBody css={{padding:'$2', gap:'$1'}}>

@@ -73,6 +73,6 @@ export default async function handler(
      const { data, error } = await supabase
     .from('mirroritems')
     .upsert(sorted)
-    if(error) return res.status(500).json({error: error})
-    return res.status(200).json({data});
+    if(error) return res.status(500).json({error: error.message.toString()})
+    return res.status(200).json({message:"OK"});
 }
