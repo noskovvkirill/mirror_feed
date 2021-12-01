@@ -54,8 +54,8 @@ const StyledContainer = styled('div',{
                 gridColumn:'span 1',
                 margin:'calc($2 * 1) 0',
                 overflow:'hidden',
-                height:'448px',
-                textOverflow:"fade(10px)" 
+                // height:'448px',
+                // textOverflow:"fade(10px)" 
             }, 
             list:{
                 margin:'calc($4 * 1) 0',

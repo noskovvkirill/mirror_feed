@@ -2,19 +2,19 @@ import {createPortal} from 'react-dom'
 import {styled} from 'stitches.config'
 import {dialogShow, overlayShow} from 'stitches.config'
 import {useRef, useState, useEffect} from 'react'
+import useSWR from 'swr'
 //components
 import Box from '@/design-system/primitives/Box'
 import Input from '@/design-system/primitives/Input'
-import Profile from '@/design-system/primitives/Profile'
+import {TopCurators} from '@/design-system/Feed/Header'
 //hooks
 import { useOnClickOutside } from 'hooks/useClickOutside'
 import useLockBodyScroll from 'hooks/useLockBodyScroll'
 import SearchPublication from '@/design-system/Search/SearchPublication'
 
-import CreateSpace from '@/design-system/Spaces/SpaceCreate'
-import {curationItems, CurationList, portalState} from 'contexts'
+import {curationItems, CurationList} from 'contexts'
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
-import { useSetRecoilState, useRecoilState } from 'recoil'
+import { useSetRecoilState } from 'recoil'
 import {useRouter} from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useThrottleCallback} from '@react-hook/throttle'
@@ -135,8 +135,13 @@ const SpaceItem = ({index, isActive, title, Open}:{index:number, isActive:boolea
     )
 }
 
+const fetcher = async(url:string) => {return await fetch(url).then(res => res.json())}
+
 
 const SearchPanel = ({setIsOpen}:ISearch) => {
+
+    const {data:topCurators, error} = useSWR('/api/getTopCurators', fetcher)
+
     useLockBodyScroll()
     const ref=useRef(null)
     const search = useRef<any>()
@@ -194,47 +199,15 @@ const SearchPanel = ({setIsOpen}:ISearch) => {
                                     onChange={thottleSearch}
                                     placeholder='Search user address or publication'/>
                                  </StyledSearchHeader>
-                
+                                
+                                {topCurators && (
                                 <Box css={{
-                                    padding:'$2 0 0 0'
+                                    padding:'0 0 0 0',
+                                    marginBottom:'-$2'
                                 }}>
                                     <Box as='p' css={{padding:'0', color:'$foregroundText'}}>Trending Spaces</Box>
-
-                                    <Box 
-                                    layout='flexBoxRow'
-                                    css={{
-                                        gap:'$2',
-                                        alignItems:'center',
-                                        padding:'0 $1', borderRadius:'$2',
-                                        // backgroundColor:'$tint', 
-                                        width:'100%'}}>
-                                    <Profile
-                                    size={'lg'}
-                                    profile={
-                                    { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/200/200'}
-                                    }/>
-                                    <Profile
-                                    size={'lg'}
-                                    profile={
-                                    { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/220/220'}
-                                    }/>
-                                    <Profile
-                                    size={'lg'}
-                                    profile={
-                                    { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/230/230'}
-                                    }/>
-                                    <Profile
-                                    size={'lg'}
-                                    profile={
-                                    { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/240/240'}
-                                    }/>
-                                    <Profile
-                                    size={'lg'}
-                                    profile={
-                                    { name: 'Kirill Noskov', tokenId:'1', avatarURL:'https://picsum.photos/200/200'}
-                                    }/>
-                                    </Box>
-                                </Box>
+                                    <TopCurators top={topCurators}/>
+                                </Box>)}
 
                                 <Box layout='flexBoxColumn'>
                                     {isFavourites && (

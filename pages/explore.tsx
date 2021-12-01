@@ -18,8 +18,8 @@ import type {SpaceTypeProfile, SpaceTop} from 'contexts/spaces'
 
 export type TopType = {
     id:number,
-    synced_at:string,
-    totalStaked:number,
+    synced_at?:string,
+    totalStaked?:number,
     topCurators:Array<SpaceTop>
 }
 

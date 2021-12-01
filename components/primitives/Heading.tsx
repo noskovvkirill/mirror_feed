@@ -11,6 +11,7 @@ interface IStyledHeading {
 const Heading = styled('h1', {
     margin:'0!important',
     padding:0,
+   
     variants:{
         size:{
             h1:{

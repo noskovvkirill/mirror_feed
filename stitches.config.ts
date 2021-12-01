@@ -1,10 +1,9 @@
 import { createStitches } from "@stitches/react";
-import { sand, indigo, indigoDark, bronze, sandDark, red } from '@radix-ui/colors'
+import { sand, indigo, indigoDark, bronze, sandDark, red, tomatoDark } from '@radix-ui/colors'
 
 
 
 export const { styled, css, globalCss, getCssText, keyframes, createTheme } = createStitches({
-    prefix:'light-cream',
     theme: {
         colors: {
             // ...sand,
@@ -206,14 +205,37 @@ export const darkTheme = createTheme('dark-blue', {
         },
 });
 
-export const fontWeightAnimation = keyframes({
-    '0%': { fontWeight: '$min' },
-    '100%': { fontWeight: '$max' },
-});
+// export const redTheme = createTheme('dark-red', {
+//        colors: {
+//             // ...sand,
+//             background: sandDark.sand1,
+//             foreground: tomatoDark.tomato8,
+//             foregroundBorder: sandDark.sand8,
+//             highlight: tomatoDark.tomato3,
+//             tint:tomatoDark.tomato2,
+//             foregroundText: tomatoDark.tomato9,
+//             text:tomatoDark.tomato8,
+//             //bronze
+//             backgroundBronze: tomatoDark.tomato1,
+//             foregroundTintBronze: tomatoDark.tomato5,
+//             foregroundBronze: tomatoDark.tomato8,
+//             highlightBronze:tomatoDark.tomato3,
+//             foregroundTextBronze: tomatoDark.tomato9,
+//             textBronze: tomatoDark.tomato11,
+//             error:red.red10
+//         },
+//         shadows: {
+//             normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
+//             large: `0px 4px 8px ${tomatoDark.tomato1}`,
+//         },
+// });
 
 
 //font weights are from 300—900 
 export const globalStyles = globalCss({
+    '*, *::before, *::after': {
+        boxSizing: 'border-box'
+    },
     "*": {
         margin: 0,
         padding: 0,
@@ -224,14 +246,21 @@ export const globalStyles = globalCss({
             background:'$foregroundBronze',
         }
     },
+    'img, picture, video, canvas': {
+        display: 'block',
+        maxWidth: '100%'
+    },
+    'p, h1, h2, h3, h4, h5, h6': {
+        overflowWrap: 'break-word'
+    },
     "body":{background:'$background'},
     "body, html, #__next": { minHeight: "100%", height: "100%" },
     h1: { fontSize: "$1",  letterSpacing:'-1px', fontKerning:'normal', fontStretch:'semi-condensed', fontOpticalSizing:'auto', WebkitFontSmoothing:'antialiased', lineHeight: "$6", fontWeight: "500",  margin:'calc($4 * 1) 0 $3 0', fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif' },
-    h2: { fontSize: "$2", lineHeight: "$5", fontWeight: "500", margin:'calc($4 * 1.5) 0 $2 0',fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'calc($2 * 1.5) 0 $2 0'} },
-    h3: { fontSize: "$3", lineHeight: "$4", margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'} },
-    h4: { fontSize: "$4", lineHeight: "$3",   margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'}},
-    h5: { fontSize: "$5", lineHeight: "$2",  margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif', '&:first-child':{margin:'$2 0 $2 0'} },
-    p: { fontSize: "$p", lineHeight: "$p",  margin:'$2 0', fontWeight: "300", '&:first-child':{margin:'0 0 $2 0'} },
+    h2: { fontSize: "$2", lineHeight: "$5", fontWeight: "500", margin:'calc($4 * 1.5) 0 $2 0',fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif'},
+    h3: { fontSize: "$3", lineHeight: "$4", margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif' },
+    h4: { fontSize: "$4", lineHeight: "$3",   margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif'},
+    h5: { fontSize: "$5", lineHeight: "$2",  margin:'$4 0 $2 0', fontWeight: "500",fontFamily:'Satoshi-Variable, Inter, Helvetica, sans-serif'},
+    p: { fontSize: "$p", lineHeight: "$p",  margin:'$2 0', fontWeight: "300"},
     span: { fontSize: "$p", lineHeight: "$p", fontWeight: "300" },
     b: {
         fontWeight: "700",

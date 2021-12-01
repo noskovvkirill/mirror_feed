@@ -34,11 +34,12 @@ const TopCurators = ({top}:{top:TopType}) => {
                      )
                   })}
                </Box>
-
-               <Box layout='flexBoxRow' css={{padding:'0 calc($4 * 2) 0 0'}}>
-                  <Tag css={{borderRadius:'$2'}}>Total Staked {top.totalStaked} ●</Tag>
-                  <Tag css={{borderRadius:'$2'}}>Synced {dayjs(top.synced_at).fromNow()}</Tag>
-               </Box>
+               {top.totalStaked && top.synced_at && (
+                  <Box layout='flexBoxRow' css={{padding:'0 calc($4 * 2) 0 0'}}>
+                     <Tag css={{borderRadius:'$2'}}>Total Staked {top.totalStaked} ●</Tag>
+                     <Tag css={{borderRadius:'$2'}}>Synced {dayjs(top.synced_at).fromNow()}</Tag>
+                  </Box>
+               )}
       </Box>
     )
 }

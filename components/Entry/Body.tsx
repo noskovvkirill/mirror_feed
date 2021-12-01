@@ -24,9 +24,10 @@ export interface BodyInternal{
 }
 
 
-const StyledTitle = styled('div', {
+const StyledTitle = styled('h1', {
     display:'flex',
     gap:'$1',
+    marginTop:'0',
     alignItems:'center',
     width:'100%',
     '@bp1':{
@@ -68,7 +69,7 @@ const StyledBody = styled('div', {
     width:'100%',
     boxSizing:'border-box',
     maxHeight:'100%',
-    overflow:'hidden',
+    // overflow:'hidden',
     variants:{
         isPreview:{
             true:{
@@ -107,15 +108,24 @@ const StyledArticle = styled('section', {
                     width:'700px',
                 },
             }
-        }
+        },
+          type:{
+              card:{
+                    WebkitLineClamp:'4',
+                    display:'-webkit-box',
+                    WebkitBoxOrient:'vertical',
+              },
+              list:{}
+          }
     },
     defaultVariants:{
-        isPreview:true
+        isPreview:true,
+        type:'list'
     }
 })
 
 const StyledText = styled('article', {
-    textOverflow:"fade(10px)" ,
+    maxHeight:'100%',
     variants:{
         type:{
             card:{
@@ -229,7 +239,7 @@ const BodyComponent = (
     <StyledBody 
     isPreview={isPreview}>
         <StyledContents isPreview={isPreview}>
-                <StyledArticle isPreview={isPreview}>
+                <StyledArticle type={view} isPreview={isPreview}>
                 {!isPreview && (<RenderImage featuredImage={entry.featuredImage}/>)}
                 {metadata}
                 <StyledText type={view}>
@@ -259,17 +269,19 @@ const BodyComponent = (
                     {/* <Box css={{
                         width:'100%',
                         zIndex:2,
-                        height:'calc($4 * 2)',
-                        mixBlendMode:'soft-light',
+                        height:'48px',
+                        mixBlendMode:'darken',
+                        backdropFilter:'opacity(0.9)',
                         position:'absolute', 
                         left:0,
                         bottom:0, 
                         // backgroundColor:'$'
-                        // background:'$foregroundBronze',
-                        background:'linear-gradient(0deg, $highlightBronze 56%, rgba(255,255,255,0.15) 100%)'}}
-                        >
+                        // background:'$highlightBronze',
+                        background:'linear-gradient(0deg, $highlightBronze 26%, rgba(255,255,255,1) 100%)'
+                    }}
+                        > */}
 
-                    </Box> */}
+                    {/* </Box> */}
                     </StyledText>
                 </StyledArticle>
            {/* </Box> */}
