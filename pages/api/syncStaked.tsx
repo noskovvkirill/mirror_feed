@@ -143,8 +143,8 @@ export default async function handler(
     .upsert(objExtended)
     
     if(error || errorsync){
-        return res.status(500).json({error: error ? error.message.toString() : errorsync?.message.toString()})
+        return res.status(500).json({message: error ? error.message.toString() : errorsync?.message.toString()})
     }
 
-    return res.status(200).json({data});
+    return res.status(200).json({message:"OK"});
 }
