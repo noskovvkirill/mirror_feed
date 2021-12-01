@@ -141,7 +141,7 @@ const Updates = () => {
     useEffect(()=>{
         getItems()
         if(user?.isConnected && user.provider){
-           Sync()
+        //    Sync()
         }
     },[user])
 

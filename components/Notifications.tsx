@@ -46,7 +46,7 @@ const Toast = ({updateList, item}:{updateList:(fn:(oldState:Notification[])=>Not
                             //     if(video.current) video.current.play()
                             // },2000)
                         }}
-                        src='/loader.mp4' loop autoPlay muted/>
+                        src='/loader-small.mp4' loop autoPlay muted/>
                     </Box>
                 </Box>
                   

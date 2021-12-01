@@ -6,6 +6,17 @@ import Box from '@/design-system/primitives/Box'
 import useLockBodyScroll from 'hooks/useLockBodyScroll'
 import {useRouter} from 'next/router'
 import Image from 'next/image'
+import {portalState} from 'contexts'
+import {useRecoilState} from 'recoil'
+const StyledKey = styled('span', {
+    display:'inline-flex',
+    padding:'0 $0',
+    borderRadius:'$1',
+    backgroundColor:'$highlight',
+    color:'$foregroundText',
+    fontSize:'$6'
+})
+
 const StyledToast = styled('div', {
     zIndex:'100',
     borderRadius:'$2',
@@ -49,6 +60,19 @@ const StyledArrowRight= styled('div', {
   height: '0',
   borderTop: '10px solid transparent',
   borderLeft: '10px solid $foreground',
+  borderBottom:' 10px solid transparent'
+})
+
+const StyledArrowDown= styled('div', {
+  position:'absolute',
+  right:'50%',
+  top:'100%',
+  transform:'translateX(-50%)',
+  width: '0',
+  height: '0',
+  borderTop: '10px solid $foreground',
+  borderLeft: '10px solid transparent',
+  borderRight:'10px solid transparent',
   borderBottom:' 10px solid transparent'
 })
 
@@ -102,6 +126,9 @@ const StyledContent = styled('p', {
 
 //the reason to  separate the components is to have a bodylockscroll working only after the first step 
 const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevState:number) => number) => void, setIsOnboarded:(newState:boolean) => void}) => {
+    
+
+
       useLockBodyScroll()
       useLayoutEffect(()=>{
           window.scrollTo(0,0)
@@ -110,15 +137,16 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
         return(
              <StyledToast css={{  
             top:'calc($4 + $0)',
-            right:'calc($4 * 8)'
+            right:'calc($4 * 5)',
+            zIndex:100000000,
             }}>
             <StyledArrowRight/>
             <StyledBody>
                 <StyledHeader>
-                    <Box as='h5' css={{color:'$text'}}>Reading List</Box>
+                    <Box as='h5' css={{color:'$text'}}>Your control panel</Box>
                     <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                 </StyledHeader>
-                <StyledContent>All saved items are accessible from one place.</StyledContent>
+                <StyledContent>Login to your wallet or multisig here. Check your balance. Toggle themes settings. Find your reading list.</StyledContent>
                 <StyledFooter>
                     <Button onClick={()=>setStep(prevStep=>prevStep-=1)}>Prev</Button>
                     <Button onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"); setIsOnboarded(true)}}>Finish</Button>
@@ -130,17 +158,19 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
 
     if(step === 3){
         return(
-             <StyledToast css={{  
-            top:'calc($5 * 4 + $3)',
+             <StyledToast css={{ 
+            width:'calc($body / 1.8)', 
+            top:'calc($5 * 4 + $2)',
             left:'calc($4 * 4)'
             }}>
-            <StyledArrowLeft/>
+            <StyledArrowDown/>
             <StyledBody>
                 <StyledHeader>
-                    <Box as='h5' css={{color:'$text'}}>Control Panel</Box>
+                    <Box as='h5' css={{color:'$text'}}>Mirror Feed. Discovery begins here.</Box>
                     <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                 </StyledHeader>
-                <StyledContent>Add items to the reading list, pin to keep them around while you scroll, ignore publications that you don&apos;t want to see.</StyledContent>
+                <StyledContent css={{maxWidth:'548px'}}>On the main page, you see <b>the newest articles</b> from Mirror.xyz contributors. <b>Explore</b> page (find it in the door) shows you only curated content.
+                Save items ➕ to your space or add them to pinned list 📌 and sort them later.</StyledContent>
                 <StyledFooter>
                     <Button onClick={()=>setStep(prevStep=>prevStep-=1)}>Prev</Button>
                     <Button onClick={()=>setStep(prevStep=>prevStep+=1)}>Next</Button>
@@ -153,20 +183,19 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
     if(step === 2){
         return(
             <StyledToast css={{  
-                top:'calc(-$1 + $0)',
+                top:'calc(-1px + $3)',
                 left:'calc($4 * 4)'
                 }}>
                 <StyledArrowLeft/>
                 <StyledBody>
                     <StyledHeader>
-                        <Box as='h5' css={{color:'$text'}}>Curation Spaces</Box>
+                        <Box as='h5' css={{color:'$text'}}>Magical Door</Box>
                     <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                     </StyledHeader>
                     <StyledContent>
-                        Create your personalized feed by adding favorite authors & publications to the Spaces. Click the Portal Icon to add the Space or move around.
-                        <br/>
-                        <br/>
-                        We&apos;ve added <b>&quot;Tokenomics&quot;</b> and <b>&quot;IRL Crypto&quot;</b> for you to get an idea.
+                       Remember the magical door in “Howl&apos;s Castle”? You can use it to move around.
+           
+                       Press <StyledKey>ALT</StyledKey> or <StyledKey>Option&thinsp;⌥</StyledKey> to open it from anywhere. 
                     </StyledContent>
                     <StyledFooter>
                         <Button onClick={()=>setStep(prevStep=>prevStep-=1)}>Prev</Button>
@@ -184,16 +213,17 @@ const OnBoarding = () => {
     const [step, setStep] = useState(1)
     const router = useRouter()
     const video = useRef<HTMLVideoElement>(null)
+    const [isPortal, setIsPortal] = useRecoilState(portalState)
 
     useEffect(()=>{
         if(router.pathname !== '/'){
             return 
         }
-        const onbooardingState = localStorage.getItem('mirror-feed-onboarding-state')
+        const onbooardingState = localStorage.getItem('mirror-feed-onboarding-state-new')
         if(onbooardingState || onbooardingState === "true") setIsOnboarded(true)
         if(onbooardingState === "false") setIsOnboarded(false)
         if(!onbooardingState) {
-            localStorage.setItem('mirror-feed-onboarding-state', "false")
+            localStorage.setItem('mirror-feed-onboarding-state-new', "false")
             setIsOnboarded(false)
         }
     },[router])
@@ -242,10 +272,10 @@ const OnBoarding = () => {
                         <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                     </StyledHeader>
                     <StyledContent>
-                        Reading client for the decentralized publishing platform Mirror.xyz. Our focus is <b>discovery, curation, and reading experience.</b>
+                        We <b>discover, curate, and read together. <br/> The content is sourced from decentralized publishing platform Mirror.xyz.</b>
                     </StyledContent>
                     <StyledFooter css={{justifyContent:'flex-start'}}>
-                        <Button onClick={()=>setStep(prevStep=>prevStep+=1)}>Show me around</Button>
+                        <Button onClick={()=>{setStep(prevStep=>prevStep+=1); setIsPortal(true)}}>Show me around</Button>
                     </StyledFooter>
                 </StyledBody>
             </Box>
