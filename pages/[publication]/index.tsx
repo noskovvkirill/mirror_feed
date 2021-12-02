@@ -95,40 +95,42 @@ const { publication} = ctx.params as IParams;
 
   // }
 
+  try{
+    const entries = await request('https://mirror-api.com/graphql', queryPublication, {
+          ensLabel: publication
+      }).then((data) =>data.publication.entries).catch(()=>{return []});
+      
+      if(!entries){
+        return { notFound:true}
+      }
 
+      const pbl:SubscribedPublication = {
+        ensLabel:publication.toString(),
+        type:'ens'
+      }
 
-  const entries = await request('https://mirror-api.com/graphql', queryPublication, {
-        ensLabel: publication
-    }).then((data) =>data.publication.entries).catch(()=>{return {notFound:true}});
-    
-    if(!entries){
-      return { notFound:true}
+      const profiles:UserTypeProfile[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
+
+      const content = entries?.map((item:any)=>item.digest)
+      
+      const entriesData = await Promise.all([...new Set(content)].map(async (item:any) => {
+        return(await request('https://mirror-api.com/graphql', queryEntry, {
+          digest: item
+        }).then((data) =>
+          data.entry
+        ).catch(()=>{return})
+        )
+      }))
+
+      const entrieFiltered = entriesData.filter(function( element:any ) {
+        return element !== undefined;
+      });
+      
+    return {
+      props:{pbl:pbl, entries:entrieFiltered, profiles:profiles},
     }
-
-    const pbl:SubscribedPublication = {
-      ensLabel:publication.toString(),
-      type:'ens'
-    }
-
-    const profiles:UserTypeProfile[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
-
-    const content = entries.map((item:any)=>item.digest)
-    
-    const entriesData = await Promise.all([...new Set(content)].map(async (item:any) => {
-      return(await request('https://mirror-api.com/graphql', queryEntry, {
-        digest: item
-      }).then((data) =>
-        data.entry
-      ).catch(()=>{return})
-      )
-    }))
-
-    const entrieFiltered = entriesData.filter(function( element:any ) {
-      return element !== undefined;
-    });
-    
-  return {
-    props:{pbl:pbl, entries:entrieFiltered, profiles:profiles},
+  } catch(e){
+    return({notFound:true})
   }
 };
 
