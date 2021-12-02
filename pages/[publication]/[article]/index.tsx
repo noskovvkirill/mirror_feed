@@ -32,7 +32,7 @@ export async function getStaticPaths() {
       items.push(...path)
     }
     const paths = items.flat()
-    return { paths, fallback: true }
+    return { paths, fallback: 'blocking' }
 }
 
 export const getStaticProps: GetStaticProps = async (ctx) => {

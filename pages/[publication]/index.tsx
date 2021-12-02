@@ -46,7 +46,7 @@ export async function getStaticPaths() {
 
   const paths: Array<string | { params: { [key: string]: string } }> = [...pathsPublications]
     //add verified and nonverified accounts from mirror
-    return { paths, fallback: true }
+    return { paths, fallback: 'blocking' }
 }
 
 

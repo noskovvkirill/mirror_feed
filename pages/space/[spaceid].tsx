@@ -30,7 +30,7 @@ export async function getStaticPaths() {
       const paths = spaces.map((item:any)=>{
            return ({params: { spaceid:item.tokenId }})
      })
-        return { paths, fallback: 'true' }
+        return { paths, fallback: 'blocking' }
 }
 
 
