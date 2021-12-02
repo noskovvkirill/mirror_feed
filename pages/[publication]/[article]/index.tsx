@@ -24,8 +24,11 @@ export async function getStaticPaths() {
       const publication = publications[i]
       const entries = await request('https://mirror-api.com/graphql', queryPublication, {
         ensLabel: publication.ensLabel
-      }).then((data) =>data.publication.entries)
-      const path:Array<string | { params: { [key: string]: string } }> = entries.map((entry:EntryType)=>{ 
+      }).then((data) =>data.publication.entries).catch(()=>undefined)
+
+      const entriesFiltered = entries.filter((entry:any)=>entry.ensLabel)
+
+      const path:Array<string | { params: { [key: string]: string } }> = entriesFiltered.map((entry:EntryType)=>{ 
         const key = publication.ensLabel
         const keyNew =  entry.digest
         return ({params: {publication:key, article:keyNew} })})
