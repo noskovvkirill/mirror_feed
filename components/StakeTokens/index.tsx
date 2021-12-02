@@ -28,7 +28,7 @@ interface IOnAddCurated {
     spaceTitle:string,
     isOpen:boolean;
     setIsOpen:(newState:boolean) => void;
-    stakeCallback:(tx:TransactionResponse) => void;
+    stakeCallback:(tx:TransactionResponse, spaceId:number) => void;
 }
 
 const StyledContainerAll = styled('div', {
@@ -166,7 +166,7 @@ const StakeTokens = ({spaceId, selectedId, spaceTitle, isOpen, setIsOpen, stakeC
             }))
             const tx = await BatchSyncToSpace(spaceId, priceBatch, items)
             setNotificationList(prev => [...prev, {tx:tx, label:`Batch Stake ${priceBatch} to space ${spaceId}`}])
-            stakeCallback(tx)   //callback to dropzone to remove from notsync on tx success
+            stakeCallback(tx, selectedId)   //callback to dropzone to remove from notsync on tx success
             setTimeout(()=>{
                 setIsOpen(false)
             },1000)
@@ -177,7 +177,7 @@ const StakeTokens = ({spaceId, selectedId, spaceTitle, isOpen, setIsOpen, stakeC
             }))
             const tx = await BatchSyncToSpace(spaceId, valuesPerItem, items)
             setNotificationList(prev => [...prev, {tx:tx, label:`Batch Stake to space ${spaceId}`}])
-            stakeCallback(tx)  //callback to dropzone to remove from notsync on tx success
+            stakeCallback(tx,selectedId)  //callback to dropzone to remove from notsync on tx success
             setTimeout(()=>{
                 setIsOpen(false)
             },1000)

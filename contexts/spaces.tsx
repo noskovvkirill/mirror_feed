@@ -10,7 +10,7 @@ const ERC20address = process.env.NEXT_PUBLIC_FEED_CONTRACT;
 const govAddress = process.env.NEXT_PUBLIC_GOV_CONTRACT;
 declare let window: any;
 
-export type SpaceTop = SpaceType & {staked:number} //per week top staking
+export type SpaceTop = SpaceType & {staked:number, owner:string} //per week top staking
 
 export type SpaceType = {
     owner:string

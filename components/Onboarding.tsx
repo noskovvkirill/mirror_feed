@@ -144,12 +144,12 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
             <StyledBody>
                 <StyledHeader>
                     <Box as='h5' css={{color:'$text'}}>Your control panel</Box>
-                    <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
+                    <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state-new', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                 </StyledHeader>
                 <StyledContent>Login to your wallet or multisig here. Check your balance. Toggle themes settings. Find your reading list.</StyledContent>
                 <StyledFooter>
                     <Button onClick={()=>setStep(prevStep=>prevStep-=1)}>Prev</Button>
-                    <Button onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"); setIsOnboarded(true)}}>Finish</Button>
+                    <Button onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state-new', "true"); setIsOnboarded(true)}}>Finish</Button>
                 </StyledFooter>
             </StyledBody>
         </StyledToast>
@@ -167,7 +167,7 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
             <StyledBody>
                 <StyledHeader>
                     <Box as='h5' css={{color:'$text'}}>Mirror Feed. Discovery begins here.</Box>
-                    <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
+                    <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state-new', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                 </StyledHeader>
                 <StyledContent css={{maxWidth:'548px'}}>On the main page, you see <b>the newest articles</b> from Mirror.xyz contributors. <b>Explore</b> page (find it in the door) shows you only curated content.
                 Save items ➕ to your space or add them to pinned list 📌 and sort them later.</StyledContent>
@@ -190,7 +190,7 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
                 <StyledBody>
                     <StyledHeader>
                         <Box as='h5' css={{color:'$text'}}>Magical Door</Box>
-                    <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
+                    <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state-new', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                     </StyledHeader>
                     <StyledContent>
                        Remember the magical door in “Howl&apos;s Castle”? You can use it to move around.
@@ -269,7 +269,7 @@ const OnBoarding = () => {
                 <StyledBody css={{padding:'$2', gap:'$1'}}>
                     <StyledHeader>
                         <Box as='h5' css={{color:'$text'}}>Welcome to MirrorFeed</Box>
-                        <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
+                        <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state-new', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                     </StyledHeader>
                     <StyledContent>
                         We <b>discover, curate, and read together. <br/> The content is sourced from decentralized publishing platform Mirror.xyz.</b>

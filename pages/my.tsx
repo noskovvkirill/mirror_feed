@@ -16,7 +16,7 @@ import Box from '@/design-system/primitives/Box'
 import Profile from '@/design-system/primitives/Profile'
 import PlaceHolderEmptySpace from '@/design-system/Curation/PlaceholderEmptySpace'
 //state
-import {useSetRecoilState, useRecoilState, useRecoilValueLoadable, useRecoilRefresher_UNSTABLE as useRecoilRefresher} from 'recoil'
+import {useSetRecoilState, useRecoilState, useRecoilCallback, useRecoilValueLoadable, useRecoilRefresher_UNSTABLE as useRecoilRefresher} from 'recoil'
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMountFamily'
 import { curatedSpaceNotSync,  curatedSpaceSynced, curatedSpaceNotSyncSelected, userSpaces} from 'contexts'
 import React, { useCallback, useState} from 'react'
@@ -60,7 +60,6 @@ const SpaceBody = ({isStake, setIsStake, isUnstake, setIsUnstake, UpdateBalance,
 
     const [syncState, setSyncState] = useState<"default" | "loading" | "error">("default")
 
-
     const notsync = useRecoilValueAfterMount(curatedSpaceNotSync, {items:[]}, selectedSpace)
     const setNotSync = useSetRecoilState(curatedSpaceNotSync(selectedSpace))
     //removes not sync element
@@ -96,12 +95,17 @@ const SpaceBody = ({isStake, setIsStake, isUnstake, setIsUnstake, UpdateBalance,
         }
     },[])
 
-    const StakeCallback = useCallback(async (tx:TransactionResponse) => {
+     const UpdateSpaceNotSync = useRecoilCallback(({set})=>async (spaceIndex:number)=>{
+        set(curatedSpaceNotSync(spaceIndex),{items:[]})
+    },[])
+
+
+    const StakeCallback = useCallback(async (tx:TransactionResponse, spaceIndex:number) => {
         setSyncState("loading")
         try{
             await tx.wait()
+            UpdateSpaceNotSync(spaceIndex)
             setSyncState("default")
-            setNotSync({items:[]})
             refreshCurated()
         } catch(e){
              setSyncState("error")
@@ -179,6 +183,7 @@ const SpaceBody = ({isStake, setIsStake, isUnstake, setIsUnstake, UpdateBalance,
                                         onClick={()=>setSelectedSpace(index)}
                                         key={'selector'+space.tokenId}>
                                         <Profile 
+                                        isHover={false}
                                         isSelected={selectedSpace === index}
                                         profile={{
                                             avatarURL:space.avatarURL,

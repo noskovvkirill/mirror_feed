@@ -6,6 +6,7 @@ import AddIcon from '@/design-system/icons/Add'
 import {useAuth} from "contexts/user"
 import {useSpace} from 'contexts/spaces'
 import { styled } from 'stitches.config'
+import {useState} from 'react'
 
 import type {TransactionResponse} from '@ethersproject/abstract-provider'
 
@@ -38,7 +39,7 @@ const StyledContainer = styled('div', {
 
 
 const CreateSpace = ({newSpaceCallback}:{newSpaceCallback:(tx:TransactionResponse)=>void;}) => { 
-
+    const [isOpen, setIsOpen] = useState(false)
    const { user, UpdateBalance } = useAuth()
    const {  GrabTestBalance,
             CreateSpace, 
@@ -46,7 +47,7 @@ const CreateSpace = ({newSpaceCallback}:{newSpaceCallback:(tx:TransactionRespons
         } = useSpace()
     
     return(
-        <Root>
+        <Root open={isOpen} onOpenChange={(newState:boolean)=>setIsOpen(newState)}>
             <StyledOverlay/>
             <StyledTrigger><AddIcon/></StyledTrigger>
             <StyledContent>
@@ -59,7 +60,11 @@ const CreateSpace = ({newSpaceCallback}:{newSpaceCallback:(tx:TransactionRespons
                         UpdateBalance={UpdateBalance}
                         Approve={Approve}
                         GrabTestBalance={GrabTestBalance}
-                        NewSpace={(name:string, avatarURL:string)=>{return CreateSpace(name, avatarURL)}}
+                        NewSpace={(name:string, avatarURL:string)=>{
+                            setTimeout(()=>{
+                                setIsOpen(false)
+                            },1500)
+                            return CreateSpace(name, avatarURL)}}
                     />
              
                         

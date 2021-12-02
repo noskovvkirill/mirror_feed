@@ -2,6 +2,7 @@ import {styled} from 'stitches.config'
 import Heading from '@/design-system/primitives/Heading'
 import Info from '@/design-system/primitives/Info'
 import Box from '@/design-system/primitives/Box'
+import Logo from '@/design-system/icons/Logo'
 
 const StyledBodyContainer = styled('div', {
     display:'flex',
@@ -30,9 +31,9 @@ interface IBody {
 const Body = ({isDescription=true}:IBody) => {
     return(
         <StyledBodyContainer>
-        <StyledBody>
-            <Box layout='flexBoxRow' css={{alignItems:'center',  marginBottom:'$2', }}>
-                <Heading size={'h3'} color={'foregroundText'}>Your curation space.</Heading><Heading css={{whiteSpace:'nowrap'}} 
+        <StyledBody css={{alignItems:'center'}}>
+            <Box layout='flexBoxRow' css={{alignItems:'center',  marginBottom:'$2', whiteSpace:'nowrap'}}>
+                <Heading size={'h3'} color={'foregroundText'}>Curation space.</Heading><Heading css={{whiteSpace:'nowrap'}} 
                 color={'highlight'}
                 size='h3'>On-chain.</Heading>   
             </Box>

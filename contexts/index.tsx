@@ -310,17 +310,51 @@ type AppSettings = {
     view:'card' | 'list'
 }
 
+const AppSettingsEffect = ():AtomEffect<AppSettings> => ({setSelf, onSet, trigger}) => {
+    const loadPersisted = () => {
+        if(trigger === 'get' && typeof localStorage !== 'undefined'){
+            const appSettings = localStorage.getItem('mirror-app-settings')
+            if(appSettings){
+                setSelf(JSON.parse(appSettings))
+            }
+        }   
+    }   
+    loadPersisted();
+    onSet((newValue:AppSettings) => {
+            localStorage.setItem('mirror-app-settings', JSON.stringify(newValue))
+    })   
+}
+
 export const settings = atom({
     key:'app-settings',
     default: {
-        view:'card'
+        view:'list'
     } as AppSettings,
+    effects_UNSTABLE: [AppSettingsEffect()]
 })
+
+const SelectedSpaceNotSyncEffect = ():AtomEffect<number> => ({setSelf, onSet, trigger}) => {
+    const loadPersisted = () => {
+        if(trigger === 'get' && typeof localStorage !== 'undefined'){
+            const selected = localStorage.getItem('mirror-space-selected-last')
+            if(selected && typeof selected === 'string'){
+                setSelf(parseInt(selected))
+            }
+        }   
+    }   
+    loadPersisted();
+    onSet((newValue:number) => {
+        if(typeof newValue === "number"){
+            localStorage.setItem('mirror-space-selected-last', newValue.toString())
+        }
+    })   
+}
 
 
 export const curatedSpaceNotSyncSelected = atom({
     key:'curatedSpaceNotSyncSelected',  
     default:0 as number,   
+    effects_UNSTABLE:[SelectedSpaceNotSyncEffect()]
 })
 
 export type CuratedSpaceItem = PinnedItem 

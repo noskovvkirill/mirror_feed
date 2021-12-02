@@ -55,7 +55,9 @@ export const getStaticProps: GetStaticProps = async () => {
        digest: item.cid
     }).then((data:any) =>
       ({entry:data.entry, 
-        staked:item.totalStaked,
+        staked:item?.totalStaked,
+        // owner:item?.owner ||,
+        totalStaked:item?.totalStaked,
         spaces:item?.spaces && item.spaces.slice(0,3) as SpaceTypeProfile[],
         totalCurators:item?.spaces && item.spaces.length        
     })

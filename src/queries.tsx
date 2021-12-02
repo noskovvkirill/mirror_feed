@@ -320,7 +320,7 @@ query Publications {
 `
 
 
-export const UnverifiedProfiles = gql`
+export const queryUnverifiedProfiles = gql`
 query UnverifiedTwitterProfiles {
   unverifiedTwitterProfiles {
     address

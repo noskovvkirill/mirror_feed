@@ -276,8 +276,9 @@ export const UserProvider = ({children}:{children:React.ReactNode[] | React.Reac
     const Disconnect = useCallback(async () => {
         if(user && user.provider){
          try{
-             changeUser({isConnected:false})
-              localStorage.removeItem('mirror-feed-last-provider')
+            changeUser({isConnected:false})
+            localStorage.removeItem('mirror-feed-last-provider')
+            localStorage.removeItem('mirror-space-selected-last')
          } catch(e){
              console.log('failed attempt to disconnect', e)
          }
@@ -323,6 +324,7 @@ export const UserProvider = ({children}:{children:React.ReactNode[] | React.Reac
                         newUser.network = newNetwork; 
                         return newUser
                     })
+                  window.location.reload();
             })
 
             user.provider.on('accountsChanged', (accounts:string[])=>{

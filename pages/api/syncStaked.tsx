@@ -96,6 +96,8 @@ export default async function handler(
             createdAtTimestamp:space.createdAtTimestamp,
         })
      }))
+     //leaving the spaces that staked the most within the last week
+     const spacesExtendedSorted = spacesExtended.sort((a,b)=>(b.totalStaked-a.totalStaked)).slice(0,8)
 
     let obj = []
     for (let [key, value] of combined.entries()) {
@@ -104,7 +106,7 @@ export default async function handler(
             key:key,
             cid:key.split(' ')[0],
             author:key.split(' ')[1],
-            totalStaked:ethers.utils.formatEther(value.toString())
+            totalStaked:parseInt(ethers.utils.formatEther(value.toString()))
         })
     }
 
@@ -113,12 +115,12 @@ export default async function handler(
     
     const { data:sync, error:errorsync } = await supabase
     .from('topSync')
-    .insert({synced_at:new Date().toISOString(), totalStaked:totalStaked.totalStaked, topCurators:spacesExtended})
+    .insert({synced_at:new Date().toISOString(), totalStaked:totalStaked.totalStaked, topCurators:spacesExtendedSorted})
 
     const objExtended = await Promise.all(obj.map(async (item)=>{
         try{
         const {entry} = await request(endpoint, entriesSpaces, {id:`${item.cid}-${item.author}`})
-        const spaces = entry?.spaces.map((space:any)=>Object.assign({staked:space.totalStaked},space.space)).filter((space:any)=>space)
+        const spaces = entry?.spaces.map((space:any)=>Object.assign({staked:parseInt(ethers.utils.formatEther(space.totalStaked))},space.space)).filter((space:any)=>space)
         //need to extend spaces with the amount of stake
         return({
             ...item,

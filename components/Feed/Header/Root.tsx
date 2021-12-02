@@ -9,7 +9,7 @@ const StyledContainer = styled('div', {
     flexDirection: 'row',
     width:'100%',
     maxWidth:'$body',
-    gap:'$4'
+    gap:'calc($4 + $0)'
 })
 
 const StyledPocket = styled('div', {

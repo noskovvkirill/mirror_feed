@@ -1,7 +1,7 @@
 import Layout from '@/design-system/Layout'
 import Box from '@/design-system/primitives/Box'
 import { request } from 'graphql-request';
-import type { GetServerSideProps } from 'next'
+import type { GetStaticProps } from 'next'
 import type { SubscribedPublication} from 'contexts';
 import Article from '@/design-system/Article/ArticleShort';
 import type {EntryType} from '@/design-system/Entry'
@@ -10,58 +10,90 @@ import { useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
 import {useRecoilValueAfterMount} from 'hooks/useRecoilValueAfterMount'
 import type {UserTypeProfile} from 'contexts/user'
-import { queryPersonal, queryEntry, queryPublication } from 'src/queries';
+import { queryPersonal, queryEntry, queryPublications,queryPublication, queryUnverifiedProfiles, queryVerifiedAccounts } from 'src/queries';
 import { getContributorsListAvatars} from 'src/publication-contents'
 import Contributors from '@/design-system/Contributors';
 import {useRouter} from 'next/router'
+import type { ParsedUrlQuery } from 'querystring'
+
+const mirrorendpoint = process.env.NEXT_PUBLIC_MIRROR_API;
+
+interface IParams extends ParsedUrlQuery {
+    publication: string
+}
+
+export async function getStaticPaths() {
+    //publications
+    const {publications} = await request(mirrorendpoint || '', queryPublications);
+    const pathsPublications:Array<string | { params: { [key: string]: string } }> = publications.map((item:any)=>{
+          const key = item.ensLabel
+          return ({params: { publication:key }})
+    })
+
+    //verified accounts
+  // const {verifiedAccounts} = await request(mirrorendpoint || '', queryVerifiedAccounts);
+  // const pathsAccounts:Array<string | { params: { [key: string]: string } }> = verifiedAccounts.map((item:any)=>{
+  //       const key =item.account
+  //       return ({params: { publication:key }})
+  // })
+
+  // //nonverified accounts
+  // const {unverifiedTwitterProfiles} = await request(mirrorendpoint || '', queryUnverifiedProfiles);
+  // const pathsAccountsUnv:Array<string | { params: { [key: string]: string } }> = unverifiedTwitterProfiles.map((item:any)=>{
+  //       const key = item.account
+  //       return ({params: { publication: key}})
+  // })
+
+  const paths: Array<string | { params: { [key: string]: string } }> = [...pathsPublications]
+    //add verified and nonverified accounts from mirror
+    return { paths, fallback: true }
+}
 
 
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
-
-const { publication, type} = ctx.query;
+export const getStaticProps: GetStaticProps = async (ctx) => {
+console.log('params', ctx.params)
+const { publication} = ctx.params as IParams;
 
   if(!publication) {
     return {notFound:true}
   }
 
-  console.log('publication & type', publication)
+  // if(type === 'personal') {
+  //   const entries = await request('https://arweave.net/graphql', queryPersonal, {contributor:publication}).then(({ transactions }) =>{
+  //           return transactions.edges
+  //   });
 
-  if(type === 'personal') {
-    const entries = await request('https://arweave.net/graphql', queryPersonal, {contributor:publication}).then(({ transactions }) =>{
-            return transactions.edges
-    });
+  //   const pbl:SubscribedPublication = {
+  //     ensLabel:publication.toString(),
+  //     type:'personal'
+  //   }
 
-    const pbl:SubscribedPublication = {
-      ensLabel:publication.toString(),
-      type:'personal'
-    }
+  //   const profiles:UserTypeProfile[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
 
-    const profiles:UserTypeProfile[] | SubscribedPublication[] = await getContributorsListAvatars([pbl])
+  //   const content = entries.map(({node:{tags}}:{node:{tags:any}})=>{
+  //     return tags.find((c:any)=>c.name === 'Original-Content-Digest').value
+  //   })
 
-    const content = entries.map(({node:{tags}}:{node:{tags:any}})=>{
-      return tags.find((c:any)=>c.name === 'Original-Content-Digest').value
-    })
+  //   const entriesData = await Promise.all([...new Set(content)].map(async (item:any) => {
+  //     return(await request('https://mirror-api.com/graphql', queryEntry, {
+  //       digest: item
+  //     }).then((data) =>
+  //       data.entry
+  //     ).catch(()=>{return})
+  //     )
+  //   }))
 
-    const entriesData = await Promise.all([...new Set(content)].map(async (item:any) => {
-      return(await request('https://mirror-api.com/graphql', queryEntry, {
-        digest: item
-      }).then((data) =>
-        data.entry
-      ).catch(()=>{return})
-      )
-    }))
-
-    const entrieFiltered = entriesData.filter(function( element:any ) {
-        return element !== undefined;
-      });
+  //   const entrieFiltered = entriesData.filter(function( element:any ) {
+  //       return element !== undefined;
+  //     });
       
-      return {
-      props:{pbl, entries:entrieFiltered, profiles:profiles},
-    }
+  //     return {
+  //     props:{pbl, entries:entrieFiltered, profiles:profiles},
+  //   }
 
-  }
+  // }
 
 
 

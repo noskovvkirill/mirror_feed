@@ -1,24 +1,30 @@
 import * as Avatar from '@radix-ui/react-avatar';
-import * as Tooltip from '@radix-ui/react-tooltip';
+import * as HoverCard from '@radix-ui/react-hover-card';
+
 import Box from '@/design-system/primitives/Box'
 import Image from 'next/image'
 import Heading from '@/design-system/primitives/Heading'
+import Button from '@/design-system/primitives/Button'
 import Label from '@/design-system/primitives/Label'
-// import Link from 'next/link'
+import Link from 'next/link'
 import Tag from '@/design-system/primitives/Tag'
 
+//utils
 import {styled} from 'stitches.config'
+import {utils} from 'ethers'
+//types
 import type {SubscribedPublication} from 'contexts'
-import type {SpaceTypeProfile} from 'contexts/spaces'
+import type {SpaceTypeProfile, SpaceTop} from 'contexts/spaces'
 import type {UserTypeProfile} from 'contexts/user'
 import {AddressPrettyPrint} from 'src/utils'
 
-export type ProfileTypes = UserTypeProfile | SubscribedPublication | SpaceTypeProfile
+export type ProfileTypes = UserTypeProfile | SubscribedPublication | SpaceTypeProfile | SpaceTop
 
 interface IProfile {
     profile:ProfileTypes,
     size?:'og' | 'lg' | 'md'| 'sm',
     isSelected?:boolean,
+    isHover?:boolean,
 }
 
 export const StyledAvatar = styled(Avatar.Root, {
@@ -140,7 +146,7 @@ const StyledFallback = styled(Avatar.Fallback, {
   }
 });
 
-const StyledContentTooltip = styled(Tooltip.Content, {
+const StyledContentTooltip = styled(HoverCard.Content, {
     backgroundColor:'$background',
     border:'1px solid $foregroundBorder',
     color:'$foregroundText',
@@ -151,7 +157,7 @@ const StyledContentTooltip = styled(Tooltip.Content, {
     bottom:'$0',
 })
 
-const StyledTrigger = styled(Tooltip.Trigger, {
+const StyledTrigger = styled(HoverCard.Trigger, {
     cursor:'pointer',
     background:'transparent',
     border:'0px'
@@ -160,11 +166,12 @@ const StyledTrigger = styled(Tooltip.Trigger, {
 export const isUser = (x: any): x is UserTypeProfile => x && x.address;
 export const isPublication = (x: any): x is SubscribedPublication => x && x.ensLabel;
 export const isSpace = (x: any): x is SpaceTypeProfile => x && x.name;
+export const isSpaceExpanded = (x: any): x is SpaceTop => x && x.staked;
 
-const Profile = ({profile, size='md', isSelected=false}:IProfile) => {
+const Profile = ({profile, size='md', isSelected=false, isHover=true}:IProfile) => {
     return(
-            <Tooltip.Root>
-                <StyledTrigger>
+            <HoverCard.Root openDelay={!isHover ? 3000 : 500}>
+                <StyledTrigger >
                     <StyledAvatar size={size} isSelected={isSelected}>
                         <StyledImage 
                         src={profile?.avatarURL && profile.avatarURL}
@@ -175,20 +182,19 @@ const Profile = ({profile, size='md', isSelected=false}:IProfile) => {
                                 <>
                                 {profile.displayName 
                                 ? <>{profile?.displayName.match(/(\b\S)?/g)?.join("")?.match(/(^\S|\S$)?/g)?.join("").toUpperCase()} </>
-                                : <>{profile.address && 
-                                    <>{AddressPrettyPrint(profile.address, 4)}</>
+                                : <>
+                                    {profile.address && 
+                                        <>{AddressPrettyPrint(profile.address, 4)}</>
                                     }
-                                    </>
+                                  </>
                                 }
                                 </>
                             )}
-
                             {profile && isPublication(profile) && (
                                 <>
                                 {profile?.ensLabel.match(/(\b\S)?/g)?.join("")?.match(/(^\S|\S$)?/g)?.join("").toUpperCase()} 
                                 </>
                             )}
-
                             {profile && isSpace(profile) && (
                                 <>
                                 {profile?.name?.slice(0,9)}
@@ -250,16 +256,25 @@ const Profile = ({profile, size='md', isSelected=false}:IProfile) => {
                         </Box>
                 }
                 {isSpace(profile) && 
-                <Box layout='flexBoxRow' css={{width:'320px', gap:'$2', alignItems:'center'}}>
-                            <Box css={{overflow:'hidden', border:'1px solid $foregroundBorder', borderRadius:'$round', width:'64px', height:'64px'}}>
-                                <Image src={profile?.avatarURL} objectFit={'cover'}  alt='image' width={'64'} height={'64'}/>
-                            </Box>
-                        <Box layout='flexBoxColumn' css={{}}>
-                            <Heading size={'h5'}>{profile?.name}</Heading>
+                <Box layout='flexBoxColumn' css={{width:'256px', gap:'$2', alignItems:'flex-start'}}>
+                    <Box layout='flexBoxRow' css={{justifyContent:'space-between', width:'100%',}}>
+                        <Box css={{overflow:'hidden', border:'1px solid $foregroundBorder', borderRadius:'$round', width:'64px', height:'64px'}}>
+                            <Image src={profile?.avatarURL} objectFit={'cover'}  alt='image' width={'64'} height={'64'}/>
                         </Box>
+                        <Link passHref href={`/space/${profile.tokenId}`}>
+                        <Button>Open space</Button>
+                        </Link>
+                    </Box>
+                    {isSpaceExpanded(profile) && (
+                        <Box layout='flexBoxColumn' css={{padding:'0 0 $1 0'}}>
+                            <Heading size={'h5'}>{profile?.name}</Heading>
+                            <Label>{profile?.staked && profile?.staked}&thinsp;● Staked</Label>
+                            <Label>{profile?.owner && AddressPrettyPrint(profile.owner)}</Label>
+                        </Box>
+                    )}
                     </Box>}
                 </StyledContentTooltip>
-            </Tooltip.Root>
+            </HoverCard.Root>
     )
 }
 

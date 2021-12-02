@@ -9,6 +9,7 @@ import CuratedArticle from '@/design-system/Curation/CuratedArticle'
 import Dropzone from '@/design-system/Curation/Dropzone'
 import Header from '@/design-system/Curation/Header'
 import Loader from '@/design-system/primitives/Loader'
+import OnboardingCuration from '@/design-system/Curation/Onboarding'
 //hooks
 import { useAuth } from 'contexts/user'
 import { useState, useEffect} from 'react'
@@ -48,7 +49,7 @@ const Curation = ({
 
     //we get local data from local forage and replace it in a background when the new data is available
     const loadData = async() =>{ 
-        const data:Array<{entry:EntryType, staked:number}> | null = await localforage.getItem(`${user?.address}_${space.tokenId}`)
+        const data:Array<{entry:EntryType, staked:number}> | null = await localforage.getItem(`${user?.address}_${space.tokenId}_${user?.network}`)
         setData(data)
     }
 
@@ -66,7 +67,8 @@ const Curation = ({
 
    
         return(
-            <Box layout='flexBoxColumn' css={{width:'fit-content', padding:'0',}}>
+            <Box layout='flexBoxColumn' css={{width:'fit-content', padding:'0'}}>
+                <OnboardingCuration/>
                 <Header 
                 isOwner={user?.address?.toLowerCase() === space?.owner.toLowerCase()  ? true : false}
                 space={space}>

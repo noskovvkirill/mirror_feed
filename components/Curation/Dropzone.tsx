@@ -110,8 +110,8 @@ const Dropzone = ({notSync, RemoveItem, syncState}:IDropZone) => {
                         </Box>
                     </Box>
                 </StyledContainer>
-                : <StyledContainer css={{gap:"$2", justifyContent:'flex-start', flexWrap:'wrap', display:'flex', padding:'$4', boxSizing:'border-box', width:'100%', background:'transparent'}}>
-                    <Box css={{width:'100%', boxSizing:'border-box', alignItems:'flex-start', height:'fit-content'}}>
+                : <StyledContainer css={{gap:"$2", justifyContent:'flex-start', flexWrap:'wrap', display:'flex',  padding:'calc($4 + $0) $4', boxSizing:'border-box', width:'100%', background:'transparent'}}>
+                    <Box css={{width:'100%', padding:'0', boxSizing:'border-box', alignItems:'flex-start', height:'fit-content', marginBottom:'$2'}}>
                         <Tag>Place your items from pinned list here</Tag>
                     </Box>
                    <Box css={{borderRadius:'$2', 

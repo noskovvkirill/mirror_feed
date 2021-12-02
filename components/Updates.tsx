@@ -152,9 +152,9 @@ const Updates = () => {
                {/* <Label>{notifications?.length}</Label> */}
             </StyledCurationButton>
                 <StyledContainer>
-                    <Button onClick={Remove}>
+                    {/* <Button onClick={Remove}>
                         Remove Notifications
-                    </Button>
+                    </Button> */}
                     <Box layout='flexBoxColumn'>
                         {notifications.map((space, index)=>{
                             return(
@@ -171,7 +171,7 @@ const Updates = () => {
                     </Box>
                     {notifications.length === 0 &&
                         <Box css={{color:'$text'}}>
-                            No new notifications
+                          Notifications are in making. Stay tuned!
                         </Box>
                     }
                 </StyledContainer>

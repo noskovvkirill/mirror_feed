@@ -8,14 +8,14 @@ import DecreaseIcon from '@/design-system/icons/Decrease'
 import ProfileList from '@/design-system/primitives/ProfileList'
 //types
 import type {EntryType} from '@/design-system/Entry'
-import type {SpaceTypeProfile} from 'contexts/spaces'
+import type {SpaceTypeProfile, SpaceTop} from 'contexts/spaces'
 //utiles
 import * as dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 //
-import StakeExtraTokens from '@/design-system/StakeTokens/ExtraStake'
-import {useState} from 'react'
+// import StakeExtraTokens from '@/design-system/StakeTokens/ExtraStake'
+// import {useState} from 'react'
 
 const StyledMetadata = styled('div', {
     display:'flex',
@@ -34,7 +34,7 @@ const StyledStakeContainer = styled('div', {
     right:'0',
     flexDirection:'row',
     alignItems:'center',
-    gap:'$1'
+    gap:'$0'
 })
 
 const StyledStake = styled('div', {
@@ -102,7 +102,7 @@ interface IMetadata {
     isHover:boolean,
     isFocused:boolean;
     entry:EntryType,
-    spaces?:SpaceTypeProfile[],
+    spaces?:SpaceTypeProfile[] | SpaceTop[],
     totalSpaces?:number,
     SetStakeSelected?:(entry:EntryType)=>void;
     SetUnStakeSelected?:(entry:EntryType)=>void;

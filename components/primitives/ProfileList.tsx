@@ -29,7 +29,7 @@ const ProfileList = ({ profiles, size, key, total }:IProfileList) => {
                 <Box 
                 layout='flexBoxRow'
                 css={{width:'calc($4 * 0.8)', outline:'3px solid $foreground', height:'calc($4 * 0.8)', alignItems:'center', justifyContent:'center', overflow:'hidden', backgroundColor:'$highlight', color:'$foregroundText', borderRadius:'$round'}}>
-                    <Label>+{total}</Label>
+                    <Label>+{total-profiles.length}</Label>
                 </Box>
             )}
         </Box>

@@ -9,6 +9,13 @@ const supabaseUrl = 'https://tcmqmkigakxeiuratohw.supabase.co'
 const supabaseKey = process.env.SERVICE_KEY || ''
 const supabase = createClient(supabaseUrl, supabaseKey)
 
+export const config = {
+  api:{
+    bodyParser: false,
+  },
+}
+
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -58,8 +65,13 @@ export default async function handler(
     }
 
     const entries:Publication[] = await Promise.all(publications.map(async (item:{ensLabel:string}) => {
+        try{
             const {publication} = await request(mirrorendpoint, queryPublication, {ensLabel: item.ensLabel})
             return publication.entries
+        } catch(e){
+            console.log(e)
+            return []
+        }
     }))
     const sorted:Publication[] = entries.reduce((acc:any, publ:any)=>[...acc, ...publ], [])
     .sort((a:Publication,b:Publication)=>b.timestamp-a.timestamp)

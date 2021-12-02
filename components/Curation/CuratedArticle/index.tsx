@@ -14,7 +14,7 @@ import {ignoredPublication, pinnedItems, readLaterList, stakeSelectedItem } from
 import type {ReadingListItem} from 'contexts'
 import type {EntryType} from '@/design-system/Entry'
 import type {SpaceTypeProfile} from 'contexts/spaces'
-import type {SpaceType} from 'contexts/spaces'
+import type {SpaceType, SpaceTop} from 'contexts/spaces'
 
 //components
 import * as Entry from '@/design-system/Entry'
@@ -28,7 +28,7 @@ type ArticleNewType = {
     isPreview?: boolean
     stacked:number,
     space?:SpaceType,
-    spaces?:SpaceTypeProfile[]
+    spaces?:SpaceTypeProfile[] | SpaceTop[],
     isPinned?:boolean,
     totalSpaces?:number
 }

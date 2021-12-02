@@ -138,7 +138,7 @@ const Mint = ({GrabTestBalance, newSpaceCallback, Approve, NewSpace, UpdateBalan
           <Box layout='flexBoxColumn'  as='form' onSubmit={Create} css={{padding:'$2 0 $4 0',gap:'$1', color:'$foregroundText'}}>
                         <Box css={{width:'100%', backgroundColor:'$highlightBronze', overflow:'hidden',
                         borderRadius:'$2', padding:'$2', boxSizing:'border-box',
-                        position:'relative', color:'$foregroundBronze'
+                        position:'relative', color:'$foregroundTextBronze'
                         }}>Space settings
                         <Box css={{position:'absolute', color:'$foreground',width:'auto',height:'100%', opacity:1, mixBlendMode:'multiply', right:0, top:0}}>
                             <Bg/>
