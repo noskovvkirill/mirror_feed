@@ -46,7 +46,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     if(!govAddress) return({notFound:true});
     if(!endpoint) return({notFound:true});
     
-    const {space} = await request(endpoint, spaceEntries, {id:spaceid})
+    const {space} = await request(endpoint, spaceEntries, {id:spaceid}).catch(e=>{return({notFound:true})});
 
     const myspace:SpaceType = {
         tokenId:spaceid,

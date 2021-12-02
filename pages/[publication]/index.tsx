@@ -99,7 +99,7 @@ const { publication} = ctx.params as IParams;
 
   const entries = await request('https://mirror-api.com/graphql', queryPublication, {
         ensLabel: publication
-    }).then((data) =>data.publication.entries).catch(()=>{return})
+    }).then((data) =>data.publication.entries).catch(()=>{return {notFound:true}});
     
     if(!entries){
       return { notFound:true}
