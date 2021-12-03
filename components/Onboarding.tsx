@@ -1,13 +1,34 @@
 import {styled} from 'stitches.config'
 import Remove from '@/design-system/icons/Remove'
+import PinnedIcon from '@/design-system/icons/Pin'
+import AddIcon from '@/design-system/icons/Add'
+
 import {useState, useEffect, useLayoutEffect, useRef} from 'react'
 import Button from '@/design-system/primitives/Button'
 import Box from '@/design-system/primitives/Box'
 import useLockBodyScroll from 'hooks/useLockBodyScroll'
 import {useRouter} from 'next/router'
-import Image from 'next/image'
+// import Image from 'next/image'
 import {portalState} from 'contexts'
 import {useRecoilState} from 'recoil'
+import {overlayShow} from 'stitches.config'
+import * as Portal from '@radix-ui/react-portal';
+
+
+const StyledOverlay = styled('div', {
+  backgroundColor:'$background',
+  opacity:0.65,
+  position: 'fixed',
+  inset: 0,
+  '@media (prefers-reduced-motion: no-preference)': {
+       animation: `${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`
+  },
+});
+
+const StyledLabel = styled('div', {
+    display:'inline-flex', padding:'$0', color:'$background', borderRadius:'$round', margin:'0 $0',backgroundColor:"$foregroundBronze"
+})
+
 const StyledKey = styled('span', {
     display:'inline-flex',
     padding:'0 $0',
@@ -18,7 +39,7 @@ const StyledKey = styled('span', {
 })
 
 const StyledToast = styled('div', {
-    zIndex:'100',
+    zIndex:'1000000000000000000',
     borderRadius:'$2',
     width:'calc($4 * 12)',
     position:'fixed',
@@ -124,20 +145,23 @@ const StyledContent = styled('p', {
     fontSize:'$6',
 })
 
+// setIsPortal((fn({isPortal:boolean; })=>void)=>void)
+
 //the reason to  separate the components is to have a bodylockscroll working only after the first step 
-const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevState:number) => number) => void, setIsOnboarded:(newState:boolean) => void}) => {
+const Steps = ({step, setStep, setIsOnboarded, setIsPortal}:{step:number, setStep:(fn:(prevState:number) => number) => void, setIsOnboarded:(newState:boolean) => void, setIsPortal:any}) => {
     
+    // const [isPortal, setIsPortal] = useRecoilState(portalState)
 
 
       useLockBodyScroll()
       useLayoutEffect(()=>{
           window.scrollTo(0,0)
       })
-      if(step === 4){
+      if(step === 5){
         return(
              <StyledToast css={{  
             top:'calc($4 + $0)',
-            right:'calc($4 * 5)',
+            right:'calc($4 * 3 + $2)',
             zIndex:100000000,
             }}>
             <StyledArrowRight/>
@@ -156,7 +180,7 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
         )
     }
 
-    if(step === 3){
+    if(step === 4){
         return(
              <StyledToast css={{ 
             width:'calc($body / 1.8)', 
@@ -166,13 +190,15 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
             <StyledArrowDown/>
             <StyledBody>
                 <StyledHeader>
-                    <Box as='h5' css={{color:'$text'}}>Mirror Feed. Discovery begins here.</Box>
+                    <Box as='h5' css={{color:'$text'}}>Mirror Feed. Discovery begins</Box>
                     <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state-new', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                 </StyledHeader>
                 <StyledContent css={{maxWidth:'548px'}}>On the main page, you see <b>the newest articles</b> from Mirror.xyz contributors. <b>Explore</b> page (find it in the door) shows you only curated content.
-                Save items ➕ to your space or add them to pinned list 📌 and sort them later.</StyledContent>
+                Save items <StyledLabel><AddIcon label={'Add Entry Icon Onboarding Example'}/></StyledLabel> to your space or add them to pinned list <StyledLabel><PinnedIcon label={'Pinned Icon Onboarding Example'}/></StyledLabel> and sort them later.</StyledContent>
                 <StyledFooter>
-                    <Button onClick={()=>setStep(prevStep=>prevStep-=1)}>Prev</Button>
+                    <Button onClick={()=>{setStep(prevStep=>prevStep-=1)
+                       setIsPortal({isPortal:true, modal:false})
+                    }}>Prev</Button>
                     <Button onClick={()=>setStep(prevStep=>prevStep+=1)}>Next</Button>
                 </StyledFooter>
             </StyledBody>
@@ -180,10 +206,40 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
         )
     }
 
+     if(step === 3){
+        return(
+            <StyledToast css={{  
+                top:'calc($4 * 2 + $1)',
+                left:'calc($4 * 4)'
+                }}>
+                <StyledArrowLeft/>
+                <StyledBody>
+                    <StyledHeader>
+                        <Box as='h5' css={{color:'$text'}}>Explore page</Box>
+                        <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state-new', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
+                    </StyledHeader>
+                    <StyledContent>
+                       You can find the best entries in the Explore page. Curators stake their tokens to uptove their fundings. 
+           
+                       {/* Press <StyledKey>ALT</StyledKey> or <StyledKey>Option&thinsp;⌥</StyledKey> to open it from anywhere.  */}
+                    </StyledContent>
+                    <StyledFooter>
+                        <Button onClick={()=>{setStep(prevStep=>prevStep-=1)
+                        setIsPortal({isPortal:true, modal:false})
+                        }}>Prev</Button>
+                        <Button onClick={()=>{setStep(prevStep=>prevStep+=1)
+                        setIsPortal({isPortal:false, modal:false})
+                        }}>Next</Button>
+                    </StyledFooter>
+                </StyledBody>
+            </StyledToast>
+        )
+    }
+
     if(step === 2){
         return(
             <StyledToast css={{  
-                top:'calc(-1px + $3)',
+                top:'calc(-1px + $2)',
                 left:'calc($4 * 4)'
                 }}>
                 <StyledArrowLeft/>
@@ -193,13 +249,15 @@ const Steps = ({step, setStep, setIsOnboarded}:{step:number, setStep:(fn:(prevSt
                     <CloseButton onClick={()=>{localStorage.setItem('mirror-feed-onboarding-state-new', "true"), setIsOnboarded(true)}}><Remove/></CloseButton>
                     </StyledHeader>
                     <StyledContent>
-                       Remember the magical door in “Howl&apos;s Castle”? You can use it to move around.
+                       Remember the magical door in “Howl&apos;s Castle”? This menu works the same way. You can use it to move around.
            
                        Press <StyledKey>ALT</StyledKey> or <StyledKey>Option&thinsp;⌥</StyledKey> to open it from anywhere. 
                     </StyledContent>
                     <StyledFooter>
                         <Button onClick={()=>setStep(prevStep=>prevStep-=1)}>Prev</Button>
-                        <Button onClick={()=>setStep(prevStep=>prevStep+=1)}>Next</Button>
+                        <Button onClick={()=>{setStep(prevStep=>prevStep+=1);
+                        setIsPortal({isPortal:true, modal:false})
+                        }}>Next</Button>
                     </StyledFooter>
                 </StyledBody>
             </StyledToast>
@@ -235,7 +293,10 @@ const OnBoarding = () => {
 
     if(step!==1){
         return(
-            <Steps step={step} setIsOnboarded={setIsOnboarded} setStep={setStep}/>
+            <Portal.Root>
+            <Steps setIsPortal={setIsPortal} step={step} setIsOnboarded={setIsOnboarded} setStep={setStep}/>
+            <StyledOverlay css={{pointerEvents:'all'}}/>
+            </Portal.Root>
         )
     }
   
@@ -275,7 +336,7 @@ const OnBoarding = () => {
                         We <b>discover, curate, and read together. <br/> The content is sourced from decentralized publishing platform Mirror.xyz.</b>
                     </StyledContent>
                     <StyledFooter css={{justifyContent:'flex-start'}}>
-                        <Button onClick={()=>{setStep(prevStep=>prevStep+=1); setIsPortal(true)}}>Show me around</Button>
+                        <Button onClick={()=>{setIsPortal({isPortal:true, modal:false}); setStep(prevStep=>prevStep+=1);}}>Show me around</Button>
                     </StyledFooter>
                 </StyledBody>
             </Box>

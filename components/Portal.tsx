@@ -4,7 +4,6 @@
 import {styled, keyframes} from 'stitches.config'
 import {useState} from 'react'
 
-
 import SearchIcon from '@/design-system/icons/Search'
 import ArcIcon from '@/design-system/icons/Arc'
 import PointIcon from '@/design-system/icons/Point'
@@ -153,12 +152,15 @@ const PortalBody = ({setIsSearch, setIsOpen}:any) => {
     )
 }
 
+
+
 const Portal = () => {
     const [isOpen, setIsOpen] = useRecoilState(portalState)
     const [isSearch, setIsSearch] = useState(false)
     return(
         <>
-            <DropdownMenu.Root open={isOpen} onOpenChange={(open:boolean)=>setIsOpen(open)}>
+            <DropdownMenu.Root open={isOpen.isPortal} modal={isOpen.modal || false} onOpenChange={(open:boolean)=>{
+                setIsOpen({isPortal:open,  modal:isOpen.modal})}}>
                 <StyledCurationButton>
                     <ArcIcon/>
                 </StyledCurationButton>

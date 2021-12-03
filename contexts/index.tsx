@@ -80,7 +80,7 @@ export const Current = atom({
 //controls open/close of the navigation (aka portal)
 export const portalState = atom({
     key:'isPortal',
-    default:false
+    default:{isPortal:false, modal:true} as {isPortal:boolean, modal?:boolean},
 })
 
 

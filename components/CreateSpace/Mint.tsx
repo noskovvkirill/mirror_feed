@@ -18,7 +18,7 @@ import type {TransactionResponse} from '@ethersproject/abstract-provider'
 interface IMint {
     newSpaceCallback: (tx:TransactionResponse) => void;
     NewSpace:(name:string, avatarURL:string) => Promise<TransactionResponse>;
-    Approve:() => Promise<TransactionResponse>;
+    Approve:(contract:'spaces' | 'gov') => Promise<TransactionResponse>;
     balance:number;
     UpdateBalance:() => Promise<void>;
     GrabTestBalance:()=>Promise<TransactionResponse>;
@@ -217,7 +217,7 @@ const Mint = ({GrabTestBalance, newSpaceCallback, Approve, NewSpace, UpdateBalan
                             : <Button onClick={async(e)=>{
                                 e.preventDefault()
                                 setApproved("loading")
-                                const tx = await Approve()
+                                const tx = await Approve('spaces')
                                 await tx.wait()
                                 setApproved("true")
                             }}> 

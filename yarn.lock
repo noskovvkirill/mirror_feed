@@ -824,6 +824,14 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
+"@radix-ui/react-accessible-icon@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-accessible-icon/-/react-accessible-icon-0.1.1.tgz#5376d28524a68c2629b671309b40e5f49594390d"
+  integrity sha512-24XFs9R1bLzQlWMpc7W4TT5Yz4cHXu/saEeqhB9JOXjI1Qmvy6nuPJeCjJZwdRakOEYJCf7jkN6NUxJDGq+7DA==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/react-visually-hidden" "0.1.1"
+
 "@radix-ui/react-arrow@0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-arrow/-/react-arrow-0.1.0.tgz#9491f7244c574c0a7a281de8bf8c55b85438948d"
@@ -1358,6 +1366,14 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-primitive" "0.1.0"
+
+"@radix-ui/react-visually-hidden@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-visually-hidden/-/react-visually-hidden-0.1.1.tgz#19be23414d4d731159a2c86d69a2c7319750a80f"
+  integrity sha512-9tH9yD5fwPOtQO4X5Xq3rv27g30bMY4S9T7Jx2SAhqdIhRfojuMnu3hUNOtGdrVwahm+/AFHwMEs2w+Dq+fdZw==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/react-primitive" "0.1.1"
 
 "@radix-ui/rect@0.1.0":
   version "0.1.0"

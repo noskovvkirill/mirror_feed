@@ -130,7 +130,7 @@ const Layout = ({children}:Props) =>{
 
     useHotkeys("*", (e) => {
         if(e.key === 'Alt'){
-             setIsPortal(!isPortal)
+             setIsPortal({isPortal:!isPortal.isPortal,modal:true})
         } 
     },{keyup:true},[isPortal])
     

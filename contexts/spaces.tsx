@@ -5,6 +5,8 @@ import { SpacesAbi } from 'contracts/Spaces'
 import { ERC20Abi } from 'contracts/ERC20';
 import { GovAbi } from 'contracts/Gov';
 import type {UserType} from 'contexts/user'
+import type {TransactionResponse} from '@ethersproject/abstract-provider'
+
 const spacesAddress = process.env.NEXT_PUBLIC_SPACES_CONTRACT;
 const ERC20address = process.env.NEXT_PUBLIC_FEED_CONTRACT;
 const govAddress = process.env.NEXT_PUBLIC_GOV_CONTRACT;
@@ -25,9 +27,17 @@ export type SpaceTypeProfile = Pick<SpaceType,'avatarURL' | 'tokenId' | 'name'>
 
 
 type SpaceMethodsContext = {
-    user:SpaceType | null;
+    GrabTestBalance:()=>Promise<TransactionResponse>,
+    CreateSpace:(name:string, avatarURL:string) => Promise<TransactionResponse>,
+    CheckMyStake:(address:string) => Promise<string>,
+    Approve: (contract:'spaces' | 'gov') => Promise<TransactionResponse>,
+    UpdateFEEDContract_INTERNAL:() => Promise<TransactionResponse>,
+    BatchSyncToSpace:(spaceId:number, amount:number | Array<number>, items:{cid:string, author:string}[]) => Promise<TransactionResponse>,
+    BatchUnSyncFromSpace:(spaceId:number, items:{cid:string, author:string}[]) => Promise<TransactionResponse>,
+    SyncToSpace:(spaceId:number, amount:number, cid:string, author:string) => Promise<TransactionResponse>,
+    UnsyncFromSpace:(spaceId:number, cid:string, author:string) => Promise<TransactionResponse>,
 }
-const SpacesMethods = createContext<any | null>(null)
+const SpacesMethods = createContext<SpaceMethodsContext | null>(null)
 
 
 export const SpaceMethodsProvider = ({children, user}:{children:React.ReactNode[] | React.ReactNode, user:UserType}) => {

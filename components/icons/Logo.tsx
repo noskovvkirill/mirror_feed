@@ -1,7 +1,9 @@
 import React from "react";
+import * as AccessibleIcon from '@radix-ui/react-accessible-icon';
 
-function Icon() {
+function Icon({label}:{label?:string}) {
   return (
+    <AccessibleIcon.Root label={label ? label : 'Logo'}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="512"
@@ -30,6 +32,7 @@ function Icon() {
         </clipPath>
       </defs>
     </svg>
+    </AccessibleIcon.Root>
   );
 }
 

@@ -112,7 +112,7 @@ const UnStakeTokens = ({unstakeCallback}:IUnstakeTokens) => {
             throw "item was not found"
         }
         const tx = await UnsyncFromSpace(
-            selectedItem.space.tokenId, 
+            parseInt(selectedItem.space.tokenId), 
             selectedItem.item.entry.digest,
             selectedItem?.item?.entry?.author.address
         )

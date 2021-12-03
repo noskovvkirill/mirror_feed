@@ -1,7 +1,9 @@
 import React from "react";
+import * as AccessibleIcon from '@radix-ui/react-accessible-icon';
 
-function Icon() {
+function Icon({label}:{label?:string}) {
   return (
+    <AccessibleIcon.Root label={label ? label : 'Check'}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="15"
@@ -17,6 +19,7 @@ function Icon() {
         clipRule="evenodd"
       ></path>
     </svg>
+    </AccessibleIcon.Root>
   );
 }
 

@@ -94,7 +94,7 @@ const ExtraStake = ({stakeCallback}:IOnAddCurated) => {
             throw "item was not found"
         }
         const tx = await SyncToSpace(
-            selectedItem.space.tokenId, 
+            parseInt(selectedItem.space.tokenId), 
             priceBatch,
             selectedItem.item.entry.digest,
             selectedItem?.item?.entry?.author.address
