@@ -294,8 +294,8 @@ const OnBoarding = () => {
     if(step!==1){
         return(
             <Portal.Root>
-            <Steps setIsPortal={setIsPortal} step={step} setIsOnboarded={setIsOnboarded} setStep={setStep}/>
-            <StyledOverlay css={{pointerEvents:'all'}}/>
+                <Steps setIsPortal={setIsPortal} step={step} setIsOnboarded={setIsOnboarded} setStep={setStep}/>
+                <StyledOverlay css={{pointerEvents:'all'}}/>
             </Portal.Root>
         )
     }

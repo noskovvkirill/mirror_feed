@@ -4,42 +4,43 @@ import ControlsPreview from '@/design-system/Entry/Controls/Preview'
 import ControlsEntryFull from '@/design-system/Entry/Controls/EntryFull'
 
 export type EntryType = {
-  id:string,
-  digest:string,
-  timestamp:number,
-  author:{
-      address:string;
-      displayName:string;
+  id: string,
+  digest: string,
+  timestamp: number,
+  author: {
+    address: string;
+    displayName: string;
   },
-  publication:{
-      ensLabel:string;
+  publication: {
+    avatarURL?: string;
+    ensLabel: string;
   },
-  featuredImage?:{
-      sizes:{
-          og?:{
-            src:string,
-            width:number,
-            height:number
-          },
-          lg?:{
-            src:string,
-            width:number,
-            height:number
-          }, 
-          md?:{
-            src:string,
-            width:number,
-            height:number
-          },
-          sm?:{
-            src:string,
-            width:number,
-            height:number
-          }
+  featuredImage?: {
+    sizes: {
+      og?: {
+        src: string,
+        width: number,
+        height: number
+      },
+      lg?: {
+        src: string,
+        width: number,
+        height: number
+      },
+      md?: {
+        src: string,
+        width: number,
+        height: number
+      },
+      sm?: {
+        src: string,
+        width: number,
+        height: number
       }
+    }
   }
-  title:string,
-  body:any
+  title: string,
+  body: any
 }
 
 export {

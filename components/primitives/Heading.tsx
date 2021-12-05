@@ -1,65 +1,71 @@
-import {styled} from 'stitches.config'
+import { styled } from 'stitches.config'
 import React from 'react'
 import { CSS } from '@stitches/react/types/css-util'
 
 interface IStyledHeading {
-    size? : 'h1' | 'h2' | 'h3' | 'h4' | 'h5',
+    size?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5',
     children: React.ReactNode,
-    color?:'foregroundText' | 'foregroundTextBronze' | 'text' | 'textBronze' | 'highlight',
-    css?:CSS
+    color?: 'foregroundText' | 'foregroundTextBronze' | 'text' | 'textBronze' | 'highlight',
+    css?: CSS
 }
 const Heading = styled('h1', {
-    margin:'0!important',
-    padding:0,
-   
-    variants:{
-        size:{
-            h1:{
-                fontSize:'$1'
+    margin: '0!important',
+    padding: 0,
+
+    variants: {
+        size: {
+            h1: {
+                fontSize: '$1',
+                '@bp1': {
+                    fontSize: '$3'
+                }
             },
-            h2:{
-                fontSize:'$2'
+            h2: {
+                fontSize: '$2',
+                '@bp1': {
+                    fontSize: '$3'
+                }
             },
-            h3:{
-                fontSize:'$3'
+            h3: {
+                fontSize: '$3'
             },
-            h4:{
-                fontSize:'$4'
+            h4: {
+                fontSize: '$4'
             },
-            h5:{
-                fontSize:'$5'
+            h5: {
+                fontSize: '$5'
             }
         },
-        color:{
-            text:{
-                color:'$text'
+        color: {
+            text: {
+                color: '$text'
             },
-            textBronze:{
-                color:'$textBronze'
+            textBronze: {
+                color: '$textBronze'
             },
-            foregroundText:{
-                color:'$foregroundText'
+            foregroundText: {
+                color: '$foregroundText'
             },
-            foregroundTextBronze:{
-                color:'$foregroundTextBronze'
+            foregroundTextBronze: {
+                color: '$foregroundTextBronze'
             },
-            highlight:{
-                color:'$highlight'
+            highlight: {
+                color: '$highlight'
             },
         }
     },
-    defaultVariants:{
-        size:'h5',
+    defaultVariants: {
+        size: 'h5',
     }
 })
 
-const StyledHeading = ({size, children, color, css}:IStyledHeading) => {
-    return(
-        <Heading 
-        as={size}
-        color={color}
-        size={size}
-        css={{...css}}
+const StyledHeading = ({ size, children, color, css }: IStyledHeading) => {
+    return (
+        <Heading
+            as={size}
+            color={color}
+            size={size}
+            css={{ ...css }}
         >{children}</Heading>
     )
 }

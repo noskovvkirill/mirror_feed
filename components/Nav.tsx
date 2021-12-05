@@ -8,62 +8,71 @@ import ButtonControl from "@/design-system/primitives/ButtonControl"
 import Updates from "@/design-system/Updates"
 import { useAuth } from "contexts/user"
 
-const StyledNav= styled(Box, {
-    zIndex:'1000000',
+const StyledNav = styled(Box, {
+    zIndex: '1000000',
     // backdropFilter:'opacity(10%)',
     // backgroundColor:'$background',
     // height:'120px',
     // mixBlendMode:'screen',
-    display:'flex',
-    flexDirection:'row',
-    gap:'$1',
-    position:'fixed', top:'calc($4 + $2)', right:'calc($4 + $4)'
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '$1',
+    position: 'fixed', top: 'calc($4 + $2)', right: 'calc($4 + $4)',
+    '@bp1': {
+        top: 'calc($2 + $2)', right: '$4',
+    }
 })
 
 
-interface INav{
-    isPinnedList:boolean;
-    setIsPinnedList:(newState:boolean) => void;
-    pinnedListLength:number;
+interface INav {
+    isPinnedList: boolean;
+    setIsPinnedList: (newState: boolean) => void;
+    pinnedListLength: number;
 }
 
- 
-const Nav = ({isPinnedList, setIsPinnedList, pinnedListLength}:INav) =>{
+
+const Nav = ({ isPinnedList, setIsPinnedList, pinnedListLength }: INav) => {
     // const router = useRouter();
     // const readingList = useRecoilValueAfterMount(readLaterList, [])
     // const setReadLater = useSetRecoilState(readLaterList) 
     const { themes, theme, setTheme } = useTheme()
-    const {user} = useAuth()
+    const { user } = useAuth()
 
-    return(
+    return (
         <StyledNav>
             <Box layout='flexBoxRow'>
-                  {!isPinnedList && (
-                    <Box layout='flexBoxRow' css={{userSelect:'none', fontSize:'$6', color:'$foregroundText', alignItems:'center', justifyContent:'center'}}>{pinnedListLength}</Box>
+                {!isPinnedList && (
+                    <Box layout='flexBoxRow' css={{ userSelect: 'none', fontSize: '$6', color: '$foregroundText', alignItems: 'center', justifyContent: 'center' }}>{pinnedListLength}</Box>
                 )}
                 <ButtonControl
-                isHighlighted={false}
-                direction='left'
-                label={isPinnedList ? 'hide pinned' : 'show pinned' }
-                onClick={()=>setIsPinnedList(!isPinnedList)}
+                    isHighlighted={false}
+                    direction='left'
+                    label={isPinnedList ? 'hide pinned' : 'show pinned'}
+                    onClick={() => setIsPinnedList(!isPinnedList)}
+                    css={{
+                        '@bp1': {
+                            display: 'none'
+                        }
+                    }}
                 >
                     <Box css={{
-                        pointerEvents:'none',
-                        transform:isPinnedList ? 'rotate(180deg)' : ''}}> 
-                        <ArrowDownIcon/>
+                        pointerEvents: 'none',
+                        transform: isPinnedList ? 'rotate(180deg)' : '',
+                    }}>
+                        <ArrowDownIcon />
                     </Box>
                 </ButtonControl>
-              
+
             </Box>
-             {user?.isConnected && (
-                <Updates/>
+            {user?.isConnected && (
+                <Updates />
             )}
-            <Settings 
-            themes={themes}
-            theme={theme}
-            UpdateTheme={setTheme}/>
-        
-        </StyledNav> 
+            <Settings
+                themes={themes}
+                theme={theme}
+                UpdateTheme={setTheme} />
+
+        </StyledNav>
     )
 }
 
@@ -134,7 +143,7 @@ export default React.memo(Nav)
 //      '&:hover':{
 //           color:'$textBronze',
 //     },
- 
+
 // })
 
 
@@ -176,66 +185,66 @@ export default React.memo(Nav)
 //         [U: string]: Color
 // }
 
-    //COMMENTED CODE IS FOR THE CUSTOM THEMING FUNCTIONALITY. 
-    // NOT AVAILABLE AT THIS MOMENT
+//COMMENTED CODE IS FOR THE CUSTOM THEMING FUNCTIONALITY. 
+// NOT AVAILABLE AT THIS MOMENT
 
 
-    
-    // useEffect(()=>{
-    //     let custom = localStorage.getItem('custom-theme') 
-    //     if(custom){
-    //         const data  = JSON.parse(custom)
-    //         const newColors:{[U: string]: string} = {}
-    //             for (const key in colors) {
-    //                 if (colors.hasOwnProperty(key)) {
-    //                     newColors[key] = data[key].hex
-    //                 }
-    //         }
-    //         const newName = 'custom'+Math.floor(Math.random()*1000).toString()
-    //         const themeN = createTheme(newName, {
-    //             colors: newColors
-    //          });
-    //         changeTheme({theme:themeN, name:newName})
-    //         setTheme(newName)
-    //         Object.keys(data).map((key)=>dispatch({color:key, value:data[key]}))
-    //     }
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-    // },[setTheme, changeTheme])
 
-    // const initialValue:ThemeTokens = {
-    //         background: toColor("hex", "#121212"),
-    //         tinted:toColor("hex", "#121212"),
-    //         foreground: toColor("hex", "#121212"),
-    //         foregroundBorder: toColor("hex", "#121212"),
-    //         highlight: toColor("hex", "#121212"),
-    //         foregroundText: toColor("hex", "#121212"),
-    //         text:toColor("hex", "#121212"),
-    //         backgroundBronze: toColor("hex", "#121212"),
-    //         foregroundBronze: toColor("hex", "#121212"),
-    //         highlightBronze:toColor("hex", "#121212"),
-    //         foregroundTextBronze: toColor("hex", "#121212"),
-    //         textBronze: toColor("hex", "#121212"),
-    // }
-    // const [colors, dispatch] = useReducer(reducer, initialValue)
+// useEffect(()=>{
+//     let custom = localStorage.getItem('custom-theme') 
+//     if(custom){
+//         const data  = JSON.parse(custom)
+//         const newColors:{[U: string]: string} = {}
+//             for (const key in colors) {
+//                 if (colors.hasOwnProperty(key)) {
+//                     newColors[key] = data[key].hex
+//                 }
+//         }
+//         const newName = 'custom'+Math.floor(Math.random()*1000).toString()
+//         const themeN = createTheme(newName, {
+//             colors: newColors
+//          });
+//         changeTheme({theme:themeN, name:newName})
+//         setTheme(newName)
+//         Object.keys(data).map((key)=>dispatch({color:key, value:data[key]}))
+//     }
+// // eslint-disable-next-line react-hooks/exhaustive-deps
+// },[setTheme, changeTheme])
+
+// const initialValue:ThemeTokens = {
+//         background: toColor("hex", "#121212"),
+//         tinted:toColor("hex", "#121212"),
+//         foreground: toColor("hex", "#121212"),
+//         foregroundBorder: toColor("hex", "#121212"),
+//         highlight: toColor("hex", "#121212"),
+//         foregroundText: toColor("hex", "#121212"),
+//         text:toColor("hex", "#121212"),
+//         backgroundBronze: toColor("hex", "#121212"),
+//         foregroundBronze: toColor("hex", "#121212"),
+//         highlightBronze:toColor("hex", "#121212"),
+//         foregroundTextBronze: toColor("hex", "#121212"),
+//         textBronze: toColor("hex", "#121212"),
+// }
+// const [colors, dispatch] = useReducer(reducer, initialValue)
 
 
-    // const UpdateTheme = async () => {
-    //    const newName = 'custom'+Math.floor(Math.random()*1000).toString()
-    //    const newColors:{[U: string]: string} = {}
-    //    for (const key in colors) {
-    //         if (colors.hasOwnProperty(key)) {
-    //             newColors[key] = colors[key].hex
-    //         }
-    //    }
-    //    const themeN = createTheme(newName, {
-    //         colors: newColors
-    //    });
-    
-    //     changeTheme({theme:themeN, name:newName})
-    //     setTheme(newName)
+// const UpdateTheme = async () => {
+//    const newName = 'custom'+Math.floor(Math.random()*1000).toString()
+//    const newColors:{[U: string]: string} = {}
+//    for (const key in colors) {
+//         if (colors.hasOwnProperty(key)) {
+//             newColors[key] = colors[key].hex
+//         }
+//    }
+//    const themeN = createTheme(newName, {
+//         colors: newColors
+//    });
 
-    //     localStorage.setItem('custom-theme', JSON.stringify(colors))
-    // }
+//     changeTheme({theme:themeN, name:newName})
+//     setTheme(newName)
+
+//     localStorage.setItem('custom-theme', JSON.stringify(colors))
+// }
 
 
 
