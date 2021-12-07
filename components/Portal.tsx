@@ -23,7 +23,6 @@ const AnimationContentDisplay = keyframes({
     '100%': { opacity: 1, transform: `scaleY(1)` }
 })
 
-
 const StyledCurationButton = styled(DropdownMenu.Trigger, {
     display: 'flex',
     alignItems: 'center',
@@ -116,7 +115,9 @@ const PortalBody = ({ setIsSearch, setIsOpen }: any) => {
         <StyledContainer
             sideOffset={-42}>
             <DropdownMenu.Item asChild>
-                <StyledCurationButton as={'button'} isOpen={true}>
+                <StyledCurationButton
+                    css={{ pointerEvents: 'none' }}
+                    as={'button'} isOpen={true}>
                     <ArcIcon />
                 </StyledCurationButton>
             </DropdownMenu.Item>

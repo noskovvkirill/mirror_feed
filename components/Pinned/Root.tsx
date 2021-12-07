@@ -1,4 +1,5 @@
 import React from "react"
+import Label from '@/design-system/primitives/Label'
 import { styled } from "stitches.config"
 import type { PinnedItem } from 'contexts'
 
@@ -9,7 +10,7 @@ const StyledContainer = styled('div', {
     height: '128px',
     boxSizing: 'border-box',
     flexDirection: 'column', margin: '0',
-    // mixBlendMode:'multiply',
+    gap: '$1',
     padding: '$2 $2',
     color: '$foregroundText',
     borderRadius: '$2',
@@ -42,6 +43,7 @@ const StyledContainer = styled('div', {
         },
         isDragged: {
             true: {
+                color: '$foregroundTextBronze',
                 backgroundColor: '$highlightBronze',
             }
         }
@@ -65,31 +67,7 @@ const StyledControls = styled('div', {
     boxSizing: 'border-box',
 })
 
-const StyledTitle = styled('div', {
-    display: 'flex',
-    gap: '$1',
-    padding: 0, margin: 0,
-    alignItems: 'center',
-    maxWidth: '720px',
-    whiteSpace: 'break-spaces',
-    'h1': {
-        fontSize: "$1",
-        marginBottom: '$4'
-    },
-    variants: {
-        isHighlighted: {
-            true: {
-                color: '$textBronze',
-            },
-            false: {
-                color: '$foregroundText',
-            }
-        }
-    },
-    defaultVariants: {
-        isHighlighted: false
-    }
-})
+
 
 const StyledBody = styled('div', {
     overflow: 'hidden',
@@ -139,11 +117,11 @@ const Root = ({ item, isActive = false, isDragged = false, children, ...props }:
                 }
             </StyledControls>
             <StyledBody isHighlighted={false}>
-                <StyledTitle isHighlighted={false}>
-                    <b style={{ color: 'inherit', padding: 0, userSelect: 'none', margin: '16px 0px' }}>
-                        {item.item.title.slice(0, 45)}
-                    </b>
-                </StyledTitle>
+                {/* <StyledTitle isHighlighted={false}> */}
+                <Label size='normal' css={{ color: 'inherit', userSelect: 'none', margin: '$2 0' }}>
+                    {item.item.title.slice(0, 45)}
+                </Label>
+                {/* </StyledTitle> */}
             </StyledBody>
         </StyledContainer>
     )

@@ -133,7 +133,7 @@ export const queryAll = gql`
 		}
 	}`
 
-  // Publication Info
+// Publication Info
 export const queryPublicationInfo = gql`
 query Publication($ensLabel: String!) {
   publication(ensLabel: $ensLabel) {
@@ -186,6 +186,7 @@ query Entry($digest: String!) {
         }
         publication{
           ensLabel
+          avatarURL
         }
     }
 }`

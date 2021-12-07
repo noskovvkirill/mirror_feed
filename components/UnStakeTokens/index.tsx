@@ -24,13 +24,13 @@ dayjs.extend(relativeTime)
 import React, { useState } from 'react'
 
 const StyledContainerAll = styled('div', {
-    width: '100%',
+    // width: '100%',
     boxSizing: 'border-box',
     alignItems: 'flex-start',
     padding: '$2 $2',
     display: 'flex',
     flexDirection: 'column',
-    gap: '$0',
+    gap: '$1',
     borderRadius: '$2',
     'span': {
         userSelect: 'none'
@@ -156,7 +156,7 @@ const UnStakeTokens = ({
             <StyledOverlay />
             <StyledContent>
 
-                <Box layout='flexBoxRow' css={{ alignItems: 'center', margin: '0 0 $4 0', justifyContent: 'space-between' }}>
+                <Box layout='flexBoxRow' css={{ alignItems: 'center', margin: '0 0 $4 0', color: '$foregroundText', justifyContent: 'space-between' }}>
                     <Box layout='flexBoxRow' css={{ alignItems: 'center', userSelect: 'none' }} ><Heading size={'h4'} color={'foregroundText'}>Unstake tokens</Heading> <Heading size={'h4'} color='highlight' >{spaceTitle}</Heading></Box>
                     <Info>
                         Unstaking tokens bla bla
@@ -168,38 +168,62 @@ const UnStakeTokens = ({
 
                 </Box> */}
 
-                <StyledContainerAll
-                    css={{ position: 'relative' }}
-                    collapsed={isCollapsed}
-                    onClick={() => { if (isCollapsed) setIsCollapsed(false) }}
-                >
+                <Box layout='flexBoxRow'
+                    css={{ position: 'relative', marginBottom: '$1' }}>
 
-                    {isCollapsed && (
-                        <Box
-                            onClick={() => { if (isCollapsed) setIsCollapsed(false) }}
-                            css={{
-                                width: '100%', height: '100%',
-                                // mixBlendMode:'multiply',
-                                opacity: 0.75,
-                                pointerEvents: 'all',
-                                borderRadius: '$2',
-                                transition: '$background',
-                                '&:hover': {
-                                    backgroundColor: '$tint',
-                                    cursor: 'pointer'
-                                },
-                                position: 'absolute', left: 0, top: 0, boxSizing: 'border-box',
-                                backgroundColor: 'transparent'
-                            }}>
-                        </Box>
-                    )}
-                    <span>Batch unstake all the tokens</span>
-                    <Heading
-                        css={{ fontFamily: 'Inter', userSelect: 'none' }}
-                        size={'h2'}>{totalStaked && parseInt(ethers.utils.formatEther(totalStaked?.toString()))}</Heading>
-                    <span>● Tokens staked in total</span>
+                    <StyledContainerAll
+                        css={{ width: '30%' }}
+                        collapsed={isCollapsed}
+                        onClick={() => { if (isCollapsed) setIsCollapsed(false) }}
+                    >
+                        <Label size='normal'>To unstake</Label>
+                        <Heading
+                            css={{ userSelect: 'none' }}
+                            size={'h2'}>4/5</Heading>
+                        <Label size='normal'>Available</Label>
+
+                    </StyledContainerAll>
+
+                    <StyledContainerAll
+                        collapsed={isCollapsed}
+
+                        css={{ width: '70%' }}>
+                        {isCollapsed && (
+                            <Box
+                                tabIndex={0}
+                                onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                    const code = e.key
+                                    if (code === 'Enter') {
+                                        setIsCollapsed(false)
+                                    }
+                                }}
+                                onClick={() => { setIsCollapsed(false) }}
+                                css={{
+                                    width: '100%', height: '100%',
+                                    // mixBlendMode:'multiply',
+                                    opacity: 0.75,
+                                    pointerEvents: 'all',
+                                    borderRadius: '$2',
+                                    transition: '$background',
+                                    '&:hover': {
+                                        backgroundColor: '$tint',
+                                        cursor: 'pointer'
+                                    },
+                                    position: 'absolute', left: 0, top: 0, boxSizing: 'border-box',
+                                    backgroundColor: 'transparent'
+                                }}>
+                            </Box>
+                        )}
+                        <span>Batch unstake all the tokens</span>
+                        <Heading
+                            css={{ userSelect: 'none' }}
+                            size={'h2'}>{totalStaked && parseInt(ethers.utils.formatEther(totalStaked?.toString()))}</Heading>
+                        <span>● Tokens staked in total</span>
+                    </StyledContainerAll>
+
+
                     {/* {JSON.stringify(items)} */}
-                </StyledContainerAll>
+                </Box>
 
                 <Box layout='flexBoxColumn' css={{
                     padding: '$1 0'
@@ -208,6 +232,12 @@ const UnStakeTokens = ({
                     <StyledContainerByItem
                         collapsed={isCollapsed}
                         tabIndex={0}
+                        onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                            const code = e.key
+                            if (code === 'Enter') {
+                                if (!isCollapsed) { setIsCollapsed(!isCollapsed) }
+                            }
+                        }}
                         css={{ userSelect: 'none' }}
                         onClick={() => {
                             if (!isCollapsed) { setIsCollapsed(!isCollapsed) }
@@ -255,6 +285,11 @@ const UnStakeTokens = ({
                                                 <Tag isHighlighted={true}>
                                                     {dayjs.unix(parseInt(item?.lastStakeTimestamp) + 604800).fromNow()}
                                                 </Tag>)}
+                                            {item.lastStakeTimestamp && (
+                                                <Tag isHighlighted={true}>
+                                                    {dayjs.unix(parseInt(item?.lastStakeTimestamp) + 604800).isBefore(Date()).toString()}
+                                                </Tag>)}
+
                                             <Tag isHighlighted={true}>
                                                 {item.entry.publication
                                                     ? item.entry.publication.ensLabel
@@ -269,7 +304,7 @@ const UnStakeTokens = ({
                                             css={{ justifyContent: 'space-between', userSelect: 'none', alignItems: 'center', display: 'flex', flexDirection: 'row' }}
                                         >
                                             <span>{item.entry.title}</span>
-                                            <span>{item.staked}&thinsp;●</span>
+                                            <Label size='normal' css={{ whiteSpace: 'nowrap' }}>{item.staked}&thinsp;●</Label>
                                         </Box>
                                     </Box>
                                 )

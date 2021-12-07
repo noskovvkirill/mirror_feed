@@ -5,18 +5,16 @@ import Profile from '@/design-system/primitives/Profile'
 import * as Header from '@/design-system/Feed/Header'
 import Link from 'next/link'
 import GridPage from '@/design-system/Feed/GridPage'
-
 import { request } from 'graphql-request';
 import type { GetStaticProps } from 'next'
 import type { SubscribedPublication } from 'contexts';
-import Article from '@/design-system/Article/ArticleShort';
 import type { EntryType } from '@/design-system/Entry'
 import { Current, PinnedItem, pinnedItems } from 'contexts';
 import { useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
 import type { UserTypeProfile } from 'contexts/user'
-import { queryPersonal, queryEntry, queryPublications, queryPublication, queryUnverifiedProfiles, queryVerifiedAccounts } from 'src/queries';
+import { queryEntry, queryPublications, queryPublication } from 'src/queries';
 import { getContributorsListAvatars } from 'src/publication-contents'
 import Contributors from '@/design-system/Contributors';
 import { useRouter } from 'next/router'
@@ -117,8 +115,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
     const pbl: SubscribedPublication = {
       ensLabel: publication.toString(),
-      // avatarURL: publication?.avatarURL || null,
-      // displayName: publication?.displayName || null,
       type: 'ens'
     }
 
@@ -183,7 +179,7 @@ const Data = ({ pbl, entries, profiles }: Props) => {
                 <Box layout='flexBoxRow'>
                   <Profile
                     size={'lg'}
-                    profile={{ avatarURL: entries[0]?.publication?.avatarURL, name: entries[0]?.publication?.displayName }} />
+                    profile={{ avatarURL: entries[0]?.publication?.avatarURL, displayName: entries[0]?.publication?.displayName, ensLabel: pbl.ensLabel }} />
                   &nbsp;&nbsp;
 
                   <Link passHref={true} href={`/${pbl.ensLabel}`}>

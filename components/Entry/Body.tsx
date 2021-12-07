@@ -8,8 +8,10 @@ import type { ReactElement } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Box from '@/design-system/primitives/Box'
-import Profile from '@/design-system/primitives/Profile'
-import Heading from '@/design-system/primitives/Heading'
+
+// import Profile from '@/design-system/primitives/Profile'
+// import Heading from '@/design-system/primitives/Heading'
+// import { isPresent } from 'framer-motion/types/components/AnimatePresence/use-presence'
 export interface BodyInternal {
     entry: EntryType,
     view?: 'card' | 'list',
@@ -27,7 +29,7 @@ export interface BodyInternal {
 const StyledTitle = styled('h1', {
     display: 'flex',
     gap: '$1',
-    marginTop: '0',
+    // marginTop: '0',
     alignItems: 'center',
     width: '100%',
     whiteSpace: 'break-spaces',
@@ -77,8 +79,35 @@ const StyledBody = styled('div', {
             },
             false: {
                 // maxWidth:'700px',
-                // alignItems:'center',
+                // alignItems: 'center',
                 justifyContent: 'center',
+            }
+        }
+    },
+    defaultVariants: {
+        isPreview: true
+    }
+})
+
+const StyledContentBody = styled('div', {
+    variants: {
+        isPreview: {
+            true: {
+
+            },
+            false: {
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                '@bp1': {
+                    width: '100%',
+                },
+                '@bp2': {
+                    width: '640px',
+                },
+                '@bp3': {
+                    width: '700px',
+                },
             }
         }
     },
@@ -104,10 +133,14 @@ const StyledArticle = styled('section', {
                 },
             },
             false: {
+                alignItems: 'center',
                 '@bp3': {
                     width: '100%',
                     maxWidth: '1080px'
                 },
+                'ul': {
+                    paddingLeft: '$2',
+                }
             }
         },
         type: {
@@ -133,15 +166,29 @@ const StyledArticle = styled('section', {
 
 const StyledText = styled('article', {
     maxHeight: '100%',
+    color: 'inherit',
     variants: {
         type: {
             card: {
-                width: '100%'
+                width: '100%',
+                'h1, h2': {
+                    fontSize: "$4!important", lineHeight: "$3", margin: '$4 0 $2 0',
+                },
+                'h1:first-of-type': {
+                    fontSize: "$3", lineHeight: "inherit", margin: '$4 0 $2 0',
+                },
             },
             list: {
-                // display: 'flex',
-                // flexDirection: 'column',
-                // alignItems: 'center',
+                'h1, h2': {
+                    fontSize: '$3!important',
+                    margin: '$4 0 $2 0',
+                    lineHeight: '$3',
+                },
+                'h1:first-of-type': {
+                    fontSize: "$1",
+                    margin: 'calc($4 * 1) 0 $3 0',
+                    lineHeight: 'inherit',
+                },
                 '@bp1': {
                     width: '100%',
                 },
@@ -152,10 +199,21 @@ const StyledText = styled('article', {
                     width: '700px',
                 },
             }
-        }
+        },
+        isHighlighted: {
+            true: {
+                color: '$textBronze'
+            },
+            false: {
+                color: '$text'
+            }
+        },
+        // isHighlighted: {
+        // }
     },
     defaultVariants: {
-        type: 'list'
+        type: 'list',
+        isHighlighted: false
     }
 })
 
@@ -176,7 +234,6 @@ const StyledContents = styled('div', {
                 alignItems: 'space-between',
             },
             false: {
-                alignItems: 'flex-start',
                 gap: '$2',
                 justifyContent: 'center'
             }
@@ -194,6 +251,17 @@ const StyledContents = styled('div', {
     }
 })
 
+const ContainerImage = styled('div', {
+    borderRadius: '$2',
+    justifySelf: 'center',
+    position: 'relative',
+    objectFit: 'scale-down',
+    width: '100%',
+    overflow: 'hidden',
+    marginBottom: 'calc($4 + $1)',
+    backgroundColor: '$foregroundTintBronze'
+})
+
 
 const RenderImage = ({ featuredImage }: { featuredImage: EntryType["featuredImage"] }) => {
     if (!featuredImage) {
@@ -201,7 +269,7 @@ const RenderImage = ({ featuredImage }: { featuredImage: EntryType["featuredImag
     }
 
     if (featuredImage.sizes.md) {
-        <Box css={{ borderRadius: '$2', position: 'relative', objectFit: 'scale-down', maxWidth: '100%', overflow: 'hidden', marginBottom: 'calc($4 + $1)' }}>
+        <ContainerImage>
             <Image layout='responsive'
                 objectFit={'cover'}
                 alt='cover'
@@ -209,38 +277,41 @@ const RenderImage = ({ featuredImage }: { featuredImage: EntryType["featuredImag
                 width={featuredImage.sizes.md.width}
                 height={featuredImage.sizes.md.height}
             />
-        </Box>
+        </ContainerImage>
     }
     if (featuredImage.sizes.lg) {
-        <Box css={{ borderRadius: '$2', position: 'relative', maxWidth: '100%', overflow: 'hidden', marginBottom: 'calc($4 + $1)' }}>
+        <ContainerImage
+        >
             <Image objectFit={'cover'}
                 layout='responsive'
-                placeholder="blur"
                 alt='cover'
                 src={featuredImage.sizes.lg.src}
                 width={featuredImage.sizes.lg.width}
                 height={featuredImage.sizes.lg.height} />
-        </Box>
+        </ContainerImage>
     }
     if (featuredImage.sizes.og) {
         return (
-            <Box css={{ borderRadius: '$2', position: 'relative', maxWidth: '100%', overflow: 'hidden', marginBottom: 'calc($4 + $1)' }}>
-                <Image objectFit={'cover'} layout='responsive'
+            <ContainerImage
+            >
+                <Image objectFit={'cover'}
+                    layout='responsive'
                     alt='cover'
                     src={featuredImage.sizes.og.src}
                     width={featuredImage.sizes.og.width}
                     height={featuredImage.sizes.og.height} />
-            </Box>
+            </ContainerImage>
         )
     }
     if (featuredImage.sizes.sm) {
-        <Box css={{ borderRadius: '$2', position: 'relative', maxWidth: '100%', overflow: 'hidden', marginBottom: 'calc($4 + $1)' }}>
+        <ContainerImage
+        >
             <Image objectFit={'cover'} layout='responsive'
                 alt='cover'
                 src={featuredImage.sizes.sm.src}
                 width={featuredImage.sizes.sm.width}
                 height={featuredImage.sizes.sm.height} />
-        </Box>
+        </ContainerImage>
     }
     return (<></>)
 }
@@ -263,10 +334,10 @@ const BodyComponent = (
         <StyledContents isPreview={isPreview} type={view}>
             <StyledArticle type={view} isPreview={isPreview}>
                 {!isPreview && (<RenderImage featuredImage={entry.featuredImage} />)}
-                {metadata}
-                <StyledText type={view}>
-                    <Box>
-                        <StyledTitle type={view} isHighlighted={(isHover || isFocused) ? true : false}>
+                <StyledContentBody isPreview={isPreview}>
+                    {metadata}
+                    <StyledText isHighlighted={(isHover || isFocused || !isPreview) ? true : false} type={view}>
+                        <StyledTitle type={view} isHighlighted={(isHover || isFocused || !isPreview) ? true : false}>
                             <Link
                                 passHref
                                 href={
@@ -284,8 +355,7 @@ const BodyComponent = (
                                         whiteSpace: 'wrap',
                                         wordBreak: 'break-word',
                                         hyphens: 'auto',
-                                        fontWeight: "700",
-                                        margin: 'calc($4 * 1) 0 $3 0',
+                                        fontWeight: '$max',
                                         fontFamily: '$default',
                                         textDecoration: 'none',
                                         color: 'inherit'
@@ -293,8 +363,8 @@ const BodyComponent = (
                             </Link>
                         </StyledTitle>
                         {children}
-                    </Box>
-                </StyledText>
+                    </StyledText>
+                </StyledContentBody>
             </StyledArticle>
             {/* </Box> */}
         </StyledContents>
