@@ -28,7 +28,9 @@ const Editions = ({ editions }: any) => {
         <Layout>
             {console.table('editions', editions)}
             {editions.map((edition: any) => (
-                <NFT contract={edition.address} tokenId={edition.editionId * edition.quantity} />
+                <NFT
+                    key={edition.editionId * edition.quantity}
+                    contract={edition.address} tokenId={(edition.editionId * edition.quantity).toString()} />
             ))}
         </Layout>
     )
