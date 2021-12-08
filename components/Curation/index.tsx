@@ -44,7 +44,7 @@ const Curation = ({
     OpenStake, OpenUnStake, RemoveItem, space, syncState }: ICuration) => {
 
     // const { data:curated, error, isValidating} = useSWR(`space-${space.tokenId}`, FetchEntries)
-    const [data, setData] = useState<Array<{ entry: EntryType, staked: number }> | null | undefined>(undefined)
+    const [data, setData] = useState<Array<CuratedItem> | null | undefined>(undefined)
     const { user } = useAuth()
 
     //we get local data from local forage and replace it in a background when the new data is available
@@ -117,12 +117,13 @@ const Curation = ({
 
 
                     <Box layout='flexBoxColumn' css={{ width: '100%', padding: 'calc($4 * 2) 0', gap: 'calc($4 * 2)' }}>
-                        {data.map((item: { entry: EntryType, staked: number }) => {
+                        {data.map((item: CuratedItem) => {
                             if (item) {
                                 return (
                                     <CuratedArticle
                                         space={space}
                                         view={view}
+                                        lastStakeTimestamp={item.lastStakeTimestamp}
                                         key={'my_space_item_synced' + item.entry.id}
                                         entry={item.entry}
                                         isPreview={true}

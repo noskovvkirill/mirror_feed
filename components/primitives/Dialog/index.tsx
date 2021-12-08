@@ -17,7 +17,7 @@ export const StyledContent = styled(Dialog.Content, {
   background: '$background',
   color: '$foregroundText',
   width: '512px',
-  maxHeight: '60vh',
+  maxHeight: '80vh',
   overflow: 'scroll',
   position: 'fixed',
   top: '50%',

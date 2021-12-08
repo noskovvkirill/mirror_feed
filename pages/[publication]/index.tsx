@@ -114,6 +114,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     }
 
     const pbl: SubscribedPublication = {
+      displayName: publication.toString(),
       ensLabel: publication.toString(),
       type: 'ens'
     }
@@ -205,7 +206,7 @@ const Data = ({ pbl, entries, profiles }: Props) => {
         <Box
           layout='flexBoxColumn'
           css={{
-            marginTop: 'calc($4 + $2)',
+            marginTop: 'calc($4 * 2 + $2)',
             padding: '$2 $4',
             width: 'fit-content',
             height: 'fit-content',

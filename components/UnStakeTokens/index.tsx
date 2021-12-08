@@ -21,7 +21,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
 //state
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const StyledContainerAll = styled('div', {
     // width: '100%',
@@ -92,8 +92,9 @@ const AnimationContentDisplay = keyframes({
 const StyledContainerItems = styled('div', {
     display: 'flex',
     flexDirection: 'column',
+    gap: '$1',
     borderRadius: '$2',
-    backgroundColor: '$highlightBronze',
+    // backgroundColor: '$highlightBronze',
     // padding:'$2 $1', 
     marginTop: '0',
     transformOrigin: 'top center',
@@ -123,6 +124,7 @@ const UnStakeTokens = ({
     isOpen, setIsOpen, unstakeCallback, spaceId, spaceTitle }: IUnstakeTokens) => {
 
     const [isCollapsed, setIsCollapsed] = useState(false)
+    const [listAvailable, setListAvailable] = useState<CuratedItem[] | null>(null)
     const [unstakeList, setListUnstake] = useState<Array<{ cid: string, author: string, stake: number }>>([])
 
     const {
@@ -147,6 +149,17 @@ const UnStakeTokens = ({
 
     }
 
+    useEffect(() => {
+        CheckTimeToUnstake(items)
+    }, [items])
+
+    const CheckTimeToUnstake = (items: CuratedItem[]) => {
+        const itemsToUnstake = items.filter((item: CuratedItem) => {
+            return (!item?.lastStakeTimestamp || !dayjs.unix(parseInt(item?.lastStakeTimestamp) + 604800).isBefore(Date()).toString())
+        })
+        setListAvailable(itemsToUnstake)
+    }
+
     return (
         <Root
             open={isOpen}
@@ -159,14 +172,12 @@ const UnStakeTokens = ({
                 <Box layout='flexBoxRow' css={{ alignItems: 'center', margin: '0 0 $4 0', color: '$foregroundText', justifyContent: 'space-between' }}>
                     <Box layout='flexBoxRow' css={{ alignItems: 'center', userSelect: 'none' }} ><Heading size={'h4'} color={'foregroundText'}>Unstake tokens</Heading> <Heading size={'h4'} color='highlight' >{spaceTitle}</Heading></Box>
                     <Info>
-                        Unstaking tokens bla bla
+                        You can unstake tokens from your space after 7 days period.
+                        Be aware, in some cases unstaking may fail due to the way time is calculated
+                        on a blockchain. We are looking forward to verify it upfront in updated version.
                     </Info>
                 </Box>
 
-                {/* <Box layout='flexBoxRow' css={{width:'100%', position:'relative'}}>
-           
-
-                </Box> */}
 
                 <Box layout='flexBoxRow'
                     css={{ position: 'relative', marginBottom: '$1' }}>
@@ -179,7 +190,7 @@ const UnStakeTokens = ({
                         <Label size='normal'>To unstake</Label>
                         <Heading
                             css={{ userSelect: 'none' }}
-                            size={'h2'}>4/5</Heading>
+                            size={'h2'}>{listAvailable?.length}/{items.length}</Heading>
                         <Label size='normal'>Available</Label>
 
                     </StyledContainerAll>
@@ -248,13 +259,15 @@ const UnStakeTokens = ({
                     </StyledContainerByItem>
 
                     {isCollapsed && (
-                        <StyledContainerItems>
+                        <StyledContainerItems >
                             {items.map((item, index) => {
                                 const isInList = unstakeList.findIndex(i => i.cid === item.entry.digest) !== -1
+                                const isAvailable = listAvailable?.findIndex(i => i.entry.digest === item.entry.digest) !== -1
                                 return (
                                     <Box
                                         tabIndex={0}
                                         onKeyPress={(e) => {
+                                            if (!isAvailable) return;
                                             if (e.key === 'Enter') {
                                                 if (!isInList) {
                                                     setListUnstake(list => [...list, { cid: item.entry.digest, author: item.entry.author.address, stake: item.staked }])
@@ -264,6 +277,7 @@ const UnStakeTokens = ({
                                             }
                                         }}
                                         onClick={() => {
+                                            if (!isAvailable) return;
                                             if (!isInList) {
                                                 setListUnstake(list => [...list, { cid: item.entry.digest, author: item.entry.author.address, stake: item.staked }])
                                             } else {
@@ -275,30 +289,31 @@ const UnStakeTokens = ({
                                         css={{
                                             padding: '$2 $3',
                                             boxSizing: 'border-box',
+                                            backgroundColor: isInList ? '$highlightBronze' : '$tint',
+
                                             //   backgroundColor:isInList ? '$highlightBronze' : '$highlight',
                                             border: isInList ? '1px solid $foregroundTextBronze' : '1px solid transparent',
-                                            color: '$foregroundTextBronze', paddingBottom: '$4', borderRadius: '$2', cursor: 'pointer'
+                                            color: isInList ? '$foregroundTextBronze' : '$foreground', paddingBottom: '$4', borderRadius: '$2', cursor: isAvailable ? 'pointer' : 'not-allowed'
                                         }}
                                         key={item.entry.digest}>
                                         <Box layout='flexBoxRow'>
-                                            {item.lastStakeTimestamp && (
-                                                <Tag isHighlighted={true}>
+                                            {item.lastStakeTimestamp && !isInList && (
+                                                <Label size='normal' css={{ color: '$foregroundTextBronze' }}>
                                                     {dayjs.unix(parseInt(item?.lastStakeTimestamp) + 604800).fromNow()}
-                                                </Tag>)}
-                                            {item.lastStakeTimestamp && (
-                                                <Tag isHighlighted={true}>
-                                                    {dayjs.unix(parseInt(item?.lastStakeTimestamp) + 604800).isBefore(Date()).toString()}
-                                                </Tag>)}
-
-                                            <Tag isHighlighted={true}>
-                                                {item.entry.publication
-                                                    ? item.entry.publication.ensLabel
-                                                    : item.entry.author.displayName
-                                                }
-                                            </Tag>
-                                            <Tag isHighlighted={true}>
-                                                {item.entry.digest.slice(0, 5)}...
-                                            </Tag>
+                                                </Label>)}
+                                            {isInList && (
+                                                <>
+                                                    <Tag isHighlighted={true}>
+                                                        {item.entry.publication
+                                                            ? item.entry.publication.ensLabel
+                                                            : item.entry.author.displayName
+                                                        }
+                                                    </Tag>
+                                                    <Tag isHighlighted={true}>
+                                                        {item.entry.digest.slice(0, 5)}...
+                                                    </Tag>
+                                                </>
+                                            )}
                                         </Box>
                                         <Box
                                             css={{ justifyContent: 'space-between', userSelect: 'none', alignItems: 'center', display: 'flex', flexDirection: 'row' }}
@@ -313,11 +328,13 @@ const UnStakeTokens = ({
                 </Box>
 
                 <Box layout='flexBoxRow' css={{ alignItems: 'center', padding: '$1 0', justifyContent: 'space-between' }}>
-                    <Button onClick={UnSync}>Unstake</Button>
+                    <Button
+                        disabled={(unstakeList.length === 0 && listAvailable?.length === 0) ? true : false}
+                        onClick={UnSync}>Unstake</Button>
                     <Box layout='flexBoxRow'>
                         <Label size='normal'>You will receive
                             &thinsp;
-                            {isCollapsed ? unstakeList?.length > 0 ? parseInt(unstakeList?.reduce((prev, current) => ({ stake: prev.stake + current.stake, author: '', cid: '' })).stake.toString()) : <>0</> : totalStaked && parseInt(ethers.utils.formatEther(totalStaked.toString()))}&thinsp;●
+                            {isCollapsed ? unstakeList?.length > 0 ? parseInt(unstakeList?.reduce((prev, current) => ({ stake: prev.stake + current.stake, author: '', cid: '' })).stake.toString()) : <>0</> : listAvailable && listAvailable?.length > 0 ? parseInt(listAvailable?.reduce<any>((prev, current) => ({ staked: prev.staked + current.staked }), [{ staked: 0 }]).staked.toString()) : 0}&thinsp;●
                         </Label>
                         {/* <Label size='normal'
                         color={(user?.balance && CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed) >= user?.balance) ? 'error' : 'default'}

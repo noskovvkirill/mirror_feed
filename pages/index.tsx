@@ -279,17 +279,19 @@ const Data = ({ entries }: Props) => {
                                 <Heading
                                     size={'h1'}
                                     color={"foregroundText"}>
-                                    Show
+                                    Latest
                                 </Heading>
                                 <Heading
                                     size={'h1'}
                                     color={"highlight"}>
-                                    <StyledSelect
+                                    &nbsp;Entries
+                                    {/* <StyledSelect
                                         onChange={(e) => setFetchOption(e.target.value)}>
                                         <StyledOption value={"publications"} data-state={fetchOption === 'publications' ? "active" : ""}>Latest</StyledOption>
                                         <StyledOption value={"all"} data-state={fetchOption === 'all' ? "active" : ""}>Random</StyledOption>
-                                    </StyledSelect>
+                                    </StyledSelect> */}
                                 </Heading>
+
                             </Box>
                         </Box>
                     </Header.Root>

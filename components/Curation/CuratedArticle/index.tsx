@@ -23,10 +23,11 @@ import Metadata from '@/design-system/Curation/CuratedArticle/Metadata'
 
 
 type ArticleNewType = {
-    entry: EntryType
+    entry: EntryType,
     view?: 'list' | 'card'
     isPreview?: boolean
     stacked: number,
+    lastStakeTimestamp?: string,
     space?: SpaceType,
     spaces?: SpaceTypeProfile[] | SpaceTop[],
     isPinned?: boolean,
@@ -39,7 +40,7 @@ const CuratedArticle = ({
     space,
     view = 'list',
     isPinned = false,
-    isPreview = true, stacked, spaces, totalSpaces }: ArticleNewType) => {
+    isPreview = true, stacked, lastStakeTimestamp, spaces, totalSpaces }: ArticleNewType) => {
     const router = useRouter()
     const ref = useRef<HTMLDivElement | null>(null)
     const el = useOnScreen(ref, { threshold: 1 })
@@ -56,7 +57,7 @@ const CuratedArticle = ({
         if (space) {
             setStakeSelectedItem({
                 isOpen: true,
-                item: { entry: entry, staked: stacked },
+                item: { entry: entry, staked: Number(stacked) },
                 space: space,
                 type: 'stake'
             })
@@ -69,8 +70,9 @@ const CuratedArticle = ({
         if (space) {
             setStakeSelectedItem({
                 isOpen: true,
-                item: { entry: entry, staked: stacked },
+                item: { entry: entry, staked: Number(stacked) },
                 space: space,
+                lastStakeTimestamp: lastStakeTimestamp,
                 type: 'unstake'
             })
         } else {

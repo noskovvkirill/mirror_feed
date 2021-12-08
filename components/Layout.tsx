@@ -6,8 +6,8 @@ import Head from 'next/head'
 import React, { ReactNode, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { pinnedItems, readLaterList, curationItems, portalState, curatedSpaceNotSyncSelected, curatedSpaceNotSync, PinnedItem } from 'contexts'
-import type { CurationList, CuratedSpaceNotSync, CuratedSpaceItem } from 'contexts'
+import { pinnedItems, readLaterList, portalState, curatedSpaceNotSyncSelected, curatedSpaceNotSync, PinnedItem } from 'contexts'
+import type { CuratedSpaceNotSync, CuratedSpaceItem } from 'contexts'
 import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil'
 import useScrollPosition from '@react-hook/window-scroll'
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
@@ -85,13 +85,13 @@ export const history: Array<{
 }> = [];
 
 
-// making spaces available through the global keys
-const SpaceKeysMapping = ({ index, Open }: { index: number, Open: () => void }) => {
-    useHotkeys(`alt+${index}`, () => {
-        Open()
-    }, [index, Open]);
-    return (<></>)
-}
+// // making spaces available through the global keys
+// const SpaceKeysMapping = ({ index, Open }: { index: number, Open: () => void }) => {
+//     useHotkeys(`alt+${index}`, () => {
+//         Open()
+//     }, [index, Open]);
+//     return (<></>)
+// }
 
 
 const Layout = ({ children }: Props) => {
@@ -102,8 +102,9 @@ const Layout = ({ children }: Props) => {
     const currentArticle = useRecoilValue(Current)
     const router = useRouter()
 
-    const curated = useRecoilValueAfterMount(curationItems, [])
+    // const curated = useRecoilValueAfterMount(curationItems, [])
     const [isPortal, setIsPortal] = useRecoilState(portalState)
+    const [isSearch, setIsSearch] = useState(false)
 
     const [activeId, setActiveId] = useState<string | null>(null); //draggable
 
@@ -140,13 +141,18 @@ const Layout = ({ children }: Props) => {
 
 
 
+    useHotkeys("cmd+/, ctrl+/", (e) => {
+        setIsSearch(true)
+    }, [])
+
+
     useHotkeys("*", (e) => {
         if (e.key === 'Alt') {
             setIsPortal({ isPortal: !isPortal.isPortal, modal: true })
         }
     }, { keyup: true }, [isPortal])
 
-    useHotkeys('cmd+z, ctrl+z', () => {
+    useHotkeys('cmd+z, ctrl+z, command+z, Meta+z', () => {
         if (history.length > 0) {
             history[0].undo()
         } else {
@@ -168,7 +174,7 @@ const Layout = ({ children }: Props) => {
                 setIsPinnedList={setIsPinnedList} />
 
             {/* Main feed key */}
-            <SpaceKeysMapping index={1}
+            {/* <SpaceKeysMapping index={1}
                 Open={() => router.push('/')} />
             {curated.length > 0 && (
                 <>
@@ -180,7 +186,7 @@ const Layout = ({ children }: Props) => {
                             }} />
                     ))}
                 </>
-            )}
+            )} */}
             <DndContext
                 onDragEnd={(e) => {
                     const over = e.over
@@ -213,7 +219,10 @@ const Layout = ({ children }: Props) => {
                 }}>
                 <StyledHeader css={{ position: 'sticky', height: '160px' }}>
                     <StyledNavControls layout='flexBoxColumn'>
-                        <Portal />
+                        <Portal
+                            isSearch={isSearch}
+                            setIsSearch={setIsSearch}
+                        />
                     </StyledNavControls>
                     <PinnedList
                         activeId={activeId}

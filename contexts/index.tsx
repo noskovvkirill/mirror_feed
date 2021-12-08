@@ -24,15 +24,15 @@ export type IgnoredPublication = {
     ensLabel: string
 }
 
-export type CurationList = {
-    title: string,
-    avatar?: string,
-    publications: SubscribedPublication[]
-}
+// export type CurationList = {
+//     title: string,
+//     avatar?: string,
+//     publications: SubscribedPublication[]
+// }
 
 export type SubscribedPublication = Publication & {
     avatarURL?: string,
-    displayName?: string
+    displayName: string,
 }
 
 export type PinnedItem = {
@@ -183,73 +183,19 @@ export const readLaterList = atom({
 
 
 
-const CurrationEffect = (): AtomEffect<CurationList[]> => ({ setSelf, onSet, trigger }) => {
+const CurrationEffect = (): AtomEffect<SubscribedPublication[]> => ({ setSelf, onSet, trigger }) => {
     const loadPersisted = () => {
         if (trigger === 'get' && typeof localStorage !== 'undefined') {
-            const ignoredList = localStorage.getItem('mirror-curated-publication-items')
+            const ignoredList = localStorage.getItem('mirror-curated-publication-items-new')
             if (ignoredList) {
                 setSelf(JSON.parse(ignoredList))
-            } else {
-                const listDefaultTokenomics: CurationList = {
-                    title: 'Tokenomics',
-                    publications: [{
-                        avatarURL: 'https://images.mirror-media.xyz/publication-images/2e2bc5d9-281c-4301-8c1a-f49dc1654976.jpeg?height=572&width=574',
-                        ensLabel: 'p',
-                        type: 'ens'
-                    },
-                    {
-                        avatarURL: "",
-                        ensLabel: "sariazout",
-                        type: "ens"
-                    },
-                    {
-                        avatarURL: "https://images.mirror-media.xyz/publication-images/a29969cc-d425-4c07-947e-624f2787fbea.png?height=200&width=200",
-                        ensLabel: "ff",
-                        type: "ens"
-                    }, {
-                        ensLabel: 'notboring',
-                        avatarURL: 'https://images.mirror-media.xyz/publication-images/448239a6-f0fc-4283-a434-b7703975d23b.png?height=282&width=282',
-                        type: 'ens'
-                    },
-                    {
-                        avatarURL: "https://images.mirror-media.xyz/publication-images/e9eca86a-47e6-4bee-9c26-5ce0ac13158e.png?height=91&width=94",
-                        ensLabel: "cdixon",
-                        type: "ens"
-                    }
-                    ]
-                }
-                const listDefaultIRL: CurationList = {
-                    title: 'IRL Crypto',
-                    publications: [{
-                        ensLabel: 'neuroswish',
-                        avatarURL: "https://images.mirror-media.xyz/publication-images/d9826cd6-f5c2-4b2f-89c0-b58442e20ac8.png?height=400&width=400",
-                        type: "ens",
-                    }, {
-                        avatarURL: "https://images.mirror-media.xyz/publication-images/8bd1be9c-00b0-47a1-8a0b-7ac974279222.png?height=400&width=400",
-                        ensLabel: "m",
-                        type: "ens"
-                    }, {
-                        avatarURL: "https://images.mirror-media.xyz/publication-images/c0bf3504-7152-4eff-aaa1-3da7ba766352.png?height=897&width=897",
-                        ensLabel: "creators",
-                        type: "ens"
-                    }, {
-                        avatarURL: "https://images.mirror-media.xyz/publication-images/bd2d9447-5541-4116-840c-89d3141341fa.jpg?height=360&width=360",
-                        ensLabel: "avc",
-                        type: "ens"
-                    }, {
-                        avatarURL: "https://images.mirror-media.xyz/publication-images/f44b9fc6-c75e-4854-ac5e-25126bff59a1.png?height=764&width=770",
-                        ensLabel: "city",
-                        type: "ens"
-                    }]
-                }
-                setSelf([listDefaultTokenomics, listDefaultIRL])
             }
         }
     }
     loadPersisted();
-    onSet((newValue: CurationList[], oldValue: any) => {
+    onSet((newValue: SubscribedPublication[], oldValue: any) => {
         if (newValue instanceof Array) {
-            localStorage.setItem('mirror-curated-publication-items', JSON.stringify(newValue))
+            localStorage.setItem('mirror-curated-publication-items-new', JSON.stringify(newValue))
             history.push({
                 label: `${JSON.stringify(oldValue)} -> ${JSON.stringify(newValue)}`,
                 undo: () => {
@@ -262,7 +208,7 @@ const CurrationEffect = (): AtomEffect<CurationList[]> => ({ setSelf, onSet, tri
 
 export const curationItems = atom({
     key: 'curationList',
-    default: [] as CurationList[],
+    default: [] as SubscribedPublication[],
     effects_UNSTABLE: [CurrationEffect()]
 })
 
@@ -457,6 +403,7 @@ type StakingSelectedItem = {
     isOpen: boolean;
     type: 'stake' | 'unstake'
     item: { entry: EntryType, staked: number };
+    lastStakeTimestamp?: string;
     space: SpaceType;
 }
 

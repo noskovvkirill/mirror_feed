@@ -18,8 +18,8 @@ import PlaceHolderEmptySpace from '@/design-system/Curation/PlaceholderEmptySpac
 //state
 import { useSetRecoilState, useRecoilState, useRecoilCallback, useRecoilValueLoadable, useRecoilRefresher_UNSTABLE as useRecoilRefresher } from 'recoil'
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMountFamily'
-import { curatedSpaceNotSync, curatedSpaceSynced, curatedSpaceNotSyncSelected, userSpaces } from 'contexts'
-import React, { useCallback, useState } from 'react'
+import { curatedSpaceNotSync, curatedSpaceSynced, curatedSpaceNotSyncSelected, userSpaces, Current } from 'contexts'
+import React, { useCallback, useState, useEffect } from 'react'
 import { useAuth } from 'contexts/user'
 //
 import { AnimatePresence } from 'framer-motion'
@@ -166,6 +166,7 @@ const SpaceBody = ({ isStake, setIsStake, isUnstake, setIsUnstake, UpdateBalance
                                 error={curated.state === 'hasError' ? 'something went wrong ' : ''}
                                 isValidating={curated.state === 'loading' ? true : false}
                                 syncState={syncState}
+                                view={'list'}
                                 space={spaces.contents[selectedSpace]}
                                 OpenUnStake={OpenUnStake}
                                 OpenStake={OpenStake}
@@ -226,6 +227,17 @@ const MySpace = () => {
     const [isStake, setIsStake] = useState(false)
     const [isUnstake, setIsUnstake] = useState(false)
     const { user, UpdateBalance, isLoading } = useAuth()
+    const setCurrentArticle = useSetRecoilState(Current)
+
+    useEffect(() => {
+        setCurrentArticle({
+            publication: null,
+            author: null,
+            title: null,
+            digest: null
+        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     if (!user || !user.provider) {
         return (

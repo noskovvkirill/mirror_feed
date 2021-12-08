@@ -53,8 +53,11 @@ export default async function handler(
     const provider = new ethers.providers.InfuraProvider("mainnet", '87ff3775011f44d1ad3ae2c38d63d950')
     const editionsContract = new ethers.Contract(editionsContractMirror, EditionsABI, provider);
     const filter = editionsContract.filters.EditionCreated();
+    // const filterBurn = editionsContract.filters.Transfer(null, "0x0000000000000000000000000000000000000000", null);
+    // "0x3184FAf9C62c9E45A92553Cef9eb866B692a2e06"
+    // "0x0000000000000000000000000000000000000000"
     const eventsRaw = await editionsContract.queryFilter(filter)
-
+    // const eventsRawBurn = await editionsContract.queryFilter(filterBurn)
 
     const editions = eventsRaw.map((edition) => {
         return ({
@@ -64,6 +67,7 @@ export default async function handler(
         })
     })
 
+    // console.log('editions!', eventsRawBurn)
 
     // blockNumber
     // const { crowdfunds } = await request(endpoint, queryCrowdfunds)

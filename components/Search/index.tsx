@@ -14,14 +14,12 @@ import SearchPublication from '@/design-system/Search/SearchPublication'
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
 import { useSetRecoilState, useRecoilValue } from 'recoil'
 import { useRouter } from 'next/router'
-import { useHotkeys } from 'react-hotkeys-hook'
 import { useThrottleCallback } from '@react-hook/throttle'
+import { useHotkeys } from 'react-hotkeys-hook'
+
 import { Search } from 'src/search'
 //state
-import { curationItems, CurationList, Current } from 'contexts'
-
-//type
-import type { CurrentArticle } from 'contexts'
+import { curationItems, Current } from 'contexts'
 
 //icons
 import PointIcon from '@/design-system/icons/Point'
@@ -99,6 +97,10 @@ export const StyledSpaceSelector = styled('button', {
         fontSize: '$6',
         lineHeight: '100%'
     },
+    '&:focus': {
+        backgroundColor: '$highlightBronze',
+        color: '$foregroundTextBronze',
+    },
     variants: {
         isActive: {
             true: {
@@ -121,27 +123,72 @@ export const StyledSpaceSelector = styled('button', {
     }
 })
 
+
+const StyledRouter = styled('ul', {
+    border: '1px solid $highlight',
+    borderRadius: '$round',
+    listStyle: 'none',
+    alignItems: 'center',
+    gap: '0',
+    boxSizing: 'border-box',
+    backgroundColor: '$tint',
+    color: '$foreground',
+    minHeight: '24px',
+    margin: '0 0',
+    position: 'relative',
+    overflow: 'hidden',
+    padding: '0 $2',
+    display: 'flex',
+    flexDirection: 'row',
+})
+
+const StyledLocation = styled('li', {
+    display: 'flex',
+    gap: '$0',
+    padding: '0 $2',
+    borderRadius: '$2 0 0 $2',
+    backgroundColor: '$tint',
+    boxSizing: 'border-box',
+    fontSize: '$6',
+    alignItems: 'center',
+    borderRight: '1px solid $highlight',
+    position: 'relative',
+    '&:before': {
+        content: " ",
+        display: 'block',
+        width: 0,
+        height: 0,
+        borderTop: "25px solid transparent", /* Go big on the size, and let overflow hide */
+        borderBottom: "25px solid transparent",
+        borderLeft: "15px solid $highlight",
+        position: "absolute",
+        top: "50%",
+        marginTop: '-25px',
+        marginLeft: '2px',
+        left: '100%',
+        zIndex: 2,
+    },
+    '&:after': {
+        content: " ",
+        display: 'block',
+        width: 0,
+        height: 0,
+        borderTop: "25px solid transparent", /* Go big on the size, and let overflow hide */
+        borderBottom: "25px solid transparent",
+        borderLeft: "15px solid $tint",
+        position: "absolute",
+        top: "50%",
+        marginTop: '-25px',
+        left: '100%',
+        zIndex: 2,
+    }
+})
+
 interface ISearch {
     setIsOpen: (newState: boolean) => void;
 }
 
 
-const SpaceItem = ({ index, isActive, title, Open }: { index: number, isActive: boolean, title: string, Open: (direction: string) => void }) => {
-    useHotkeys(`${index + 2}, alt+${index + 2}}`, () => {
-        Open(`/read/${title}`)
-    }, [index, Open]);
-    return (
-        <StyledSpaceSelector isActive={isActive} onClick={() => {
-            Open(`/read/${title}`)
-        }}>
-            {title}
-            <span>⌥
-                &#8201;
-                {index + 2}
-            </span>
-        </StyledSpaceSelector>
-    )
-}
 
 const fetcher = async (url: string) => { return await fetch(url).then(res => res.json()) }
 
@@ -152,6 +199,7 @@ const SearchPanel = ({ setIsOpen }: ISearch) => {
 
     useLockBodyScroll()
     const ref = useRef(null)
+    const curators = useRef<HTMLDivElement>(null)
     const search = useRef<any>()
     useOnClickOutside(ref, () => { setIsOpen(false) })
     const curated = useRecoilValueAfterMount(curationItems, [])
@@ -161,7 +209,71 @@ const SearchPanel = ({ setIsOpen }: ISearch) => {
     const router = useRouter()
     const [searchResult, setSearchResult] = useState<null | any>(null)
     const [searchState, setSearchState] = useState<'default' | 'loading' | 'not found' | 'error'>('default')
-    const [isFavourites, setIsFavourites] = useState(true)
+
+    // const FocusSpaces = Object.freeze({
+    //     0: "search",
+    //     1: "top",
+    //     2: "publ"
+    // });
+
+    const [selectedSpace, setSelectedSpace] = useState<number>(-1)
+    const [isHover, setIsHover] = useState<null | number>(null)
+    const [isPointer, setIsPointer] = useState(true)
+
+    useHotkeys('*', () => {
+        document.body.style.cursor = 'auto'
+    }, [])
+
+    useHotkeys('esc, escape', () => {
+        setIsOpen(false)
+    }, [])
+
+    useHotkeys(`up, tab+shift`, (e) => {
+        if (selectedSpace === 2) {
+            setIsPointer(false)
+            document.body.style.cursor = 'none'
+            if (typeof isHover === 'number' && isHover !== 0) {
+                setIsHover(isHover - 1)
+            } else {
+                if (curators?.current) { curators.current.focus() }
+                setIsHover(-1)
+                setSelectedSpace((selected) => selected -= 1)
+            }
+        } else {
+            // e.preventDefault()
+            if (selectedSpace - 1 === 1) {
+                if (curators?.current) { curators.current.focus() }
+            } else {
+                if (search?.current) { search.current.focus() }
+            }
+            if (selectedSpace !== 0) {
+                setSelectedSpace((selected) => selected -= 1)
+            }
+
+
+        }
+    }, [curated, isHover, selectedSpace]);
+
+    useHotkeys(`down, tab`, (e) => {
+        if (selectedSpace === 2) {
+            if (curators?.current) { curators.current.blur() }
+            setIsPointer(false)
+            document.body.style.cursor = 'none'
+            if (typeof isHover === 'number') {
+                setIsHover(isHover + 1)
+            }
+        } else {
+            if (selectedSpace === 0) {
+                e.preventDefault()
+                if (curators?.current) { curators.current.focus() }
+            } else {
+                setIsHover(0)
+                if (curators?.current) { curators.current.blur() }
+            }
+            setSelectedSpace((selected) => selected += 1)
+
+        }
+    }, [curated, isHover, selectedSpace]);
 
     useEffect(() => {
         if (search.current) {
@@ -169,9 +281,7 @@ const SearchPanel = ({ setIsOpen }: ISearch) => {
         }
     }, [search])
 
-    // useEffect(()=> { if(search.current.value !== ''){ setIsFavourites(false)} else setIsFavourites(true)},[search]) 
     const InputSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (search.current.value !== '') { setIsFavourites(false) } else setIsFavourites(true)
         setSearchState('loading')
         const target = e.target
         if (target.value === '') {
@@ -203,131 +313,86 @@ const SearchPanel = ({ setIsOpen }: ISearch) => {
                             <StyledOverlay />
                             <StyledSearchContainter ref={ref}>
                                 {currentItem && (
-                                    <Box layout='flexBoxRow'
-                                        as='ul'
-                                        css={{
-                                            border: '1px solid $highlight',
-                                            borderRadius: '$round',
-                                            listStyle: 'none',
-                                            alignItems: 'center',
-                                            gap: '0',
-                                            boxSizing: 'border-box',
-                                            backgroundColor: '$tint',
-                                            color: '$foreground',
-                                            minHeight: '24px',
-                                            margin: '0 0',
-                                            position: 'relative',
-                                            overflow: 'hidden',
-                                            padding: '0 $2',
-                                            // overflow: 'hidden'
-                                        }}>
-                                        <Box
-                                            as='li'
+                                    <StyledRouter>
+                                        <StyledLocation>{currentItem?.publication ? currentItem?.publication.ensLabel :
+                                            router.pathname === '/' ? <><MainIcon label='location icon' />&thinsp;Main page</> :
+                                                router.pathname === '/explore' ? <><ExploreIcon label='location icon' />&thinsp;Explore page</> :
+                                                    router.pathname === '/my' ? <><PointIcon label='location icon' />&thinsp;My Spaces</> : router.pathname
+                                        }
+                                        </StyledLocation>
+                                        <Box as='li'
                                             css={{
-                                                display: 'flex',
-                                                gap: '$1',
-                                                padding: '0 $2',
-                                                borderRadius: '$2 0 0 $2',
-                                                backgroundColor: '$tint',
-                                                boxSizing: 'border-box',
-                                                fontSize: '$6',
-                                                alignItems: 'center',
-                                                borderRight: '1px solid $highlight',
-                                                position: 'relative',
-                                                '&:before': {
-                                                    content: " ",
-                                                    display: 'block',
-                                                    width: 0,
-                                                    height: 0,
-                                                    borderTop: "25px solid transparent", /* Go big on the size, and let overflow hide */
-                                                    borderBottom: "25px solid transparent",
-                                                    borderLeft: "15px solid $highlight",
-                                                    position: "absolute",
-                                                    top: "50%",
-                                                    marginTop: '-25px',
-                                                    marginLeft: '2px',
-                                                    left: '100%',
-                                                    zIndex: 2,
-                                                },
-                                                '&:after': {
-                                                    content: " ",
-                                                    display: 'block',
-                                                    width: 0,
-                                                    height: 0,
-                                                    borderTop: "25px solid transparent", /* Go big on the size, and let overflow hide */
-                                                    borderBottom: "25px solid transparent",
-                                                    borderLeft: "15px solid $tint",
-                                                    position: "absolute",
-                                                    top: "50%",
-                                                    marginTop: '-25px',
-                                                    left: '100%',
-                                                    zIndex: 2,
-                                                }
-
-                                            }}>{currentItem?.publication ? currentItem?.publication.ensLabel :
-                                                router.pathname === '/' ? <><MainIcon label='location icon' /> Main page</> : router.pathname
-                                            }</Box>
-                                        <Box
-                                            as='li'
-                                            css={{
-
                                                 boxSizing: 'border-box',
                                                 padding: '0 $2', fontSize: '$6',
                                                 marginLeft: '$1'
-                                            }}>{currentItem.title?.slice(0, 36)}&thinsp;...</Box>
-                                    </Box>
+                                            }}>{currentItem.title?.slice(0, 36)}&thinsp;...
+                                        </Box>
+                                    </StyledRouter>
                                 )}
-                                {/* {JSON.stringify(currentItem)} */}
                                 <StyledSearchHeader>
-                                    {/* <CreateSpace          
-                                    setCuratedPublications={setCuratedPublications}/> */}
-                                    <Input ref={search} css={{ top: '0', marginBottom: '$0', width: '100%', height: 'auto', '&:focus': { boxShadow: '$large' } }} type='search'
+                                    <Input
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'esc' || e.key === 'escape' || e.key === 'Escape') {
+                                                setIsOpen(false)
+                                                return
+                                            }
+                                            if (e.key === 'ArrowUp') {
+                                                e.preventDefault()
+                                            }
+                                            if (e.key === 'ArrowDown' || e.key === 'Tab') {
+                                                e.preventDefault()
+                                                if (curators?.current) { curators.current.focus() }
+                                                setSelectedSpace(1)
+                                            }
+                                        }}
+                                        ref={search} css={{ top: '0', marginBottom: '$0', width: '100%', height: 'auto', '&:focus': { boxShadow: '$large' } }}
+                                        // type='search'
                                         onChange={thottleSearch}
-                                        placeholder='Search user address or publication' />
+                                        placeholder='Search publication' />
                                 </StyledSearchHeader>
 
 
-                                <Box css={{
-                                    padding: '0 0 0 0',
-                                    marginBottom: '-$2'
-                                }}>
-                                    <Box as='p' css={{ padding: '0', color: '$foregroundText' }}>Trending Spaces</Box>
-                                    {topCurators && (<TopCurators top={topCurators} />)}
+                                <Box tabIndex={-1}>
+                                    <Box as='span' css={{ padding: '0', color: '$foregroundText' }}>Trending Spaces</Box>
+                                    <Box
+                                        tabIndex={0}
+                                        ref={curators} css={{
+                                            padding: '0 $2',
+                                            '&:focus': {
+                                                outline: 'none',
+                                                background: '$foregroundTintBronze',
+                                                borderRadius: '$2'
+                                            },
+                                            '&:active': {
+                                                outline: 'none',
+                                                background: '$foregroundTintBronze',
+                                                borderRadius: '$2'
+                                            }
+                                        }}
+                                    >{topCurators && (<TopCurators top={topCurators} />)}</Box>
                                 </Box>
 
                                 <Box layout='flexBoxColumn'>
-                                    {isFavourites && (
-                                        <StyledTabsContent>
-                                            <Box as='p' css={{ padding: '0', color: '$foregroundText' }}>Saved Publications</Box>
-                                            <SpaceItem index={-1} title={"Main feed"} Open={() => {
-                                                setIsOpen(false)
-                                                router.push('/')
-                                            }}
-                                                isActive={router.pathname === '/' ? true : false} />
-                                            {curated.map((list: CurationList, i: number) => {
-                                                return (
-                                                    <SpaceItem index={i} key={list.title + i} isActive={router.query.index?.toString() === list.title ? true : false}
-                                                        Open={(direction: string) => {
-                                                            setIsOpen(false)
-                                                            router.push(direction)
-                                                        }} title={list.title} />
-                                                )
-                                            })}
-
-                                        </StyledTabsContent>
-                                    )}
-                                    <Box layout='flexBoxColumn' css={{ padding: '$2 0' }}>
-                                        <Box as='p' css={{ color: '$foregroundText' }}>
-                                            {isFavourites ? 'All Publications' : 'Search Results'}
-                                        </Box>
-                                        <SearchPublication searchResult={searchResult} searchState={searchState} />
+                                    <Box as='span' css={{ color: '$foregroundText' }}>
+                                        Publications
                                     </Box>
+                                    <SearchPublication
+                                        isHover={isHover}
+                                        setIsHover={setIsHover}
+                                        isPointer={isPointer}
+                                        setIsPointer={setIsPointer}
+                                        curated={curated}
+                                        setCuratedPublications={setCuratedPublications}
+                                        searchResult={searchResult}
+                                        searchState={searchState} />
+
                                 </Box>
                             </StyledSearchContainter>
                         </>,
                         document.body)}
                 </>
-            )}
+            )
+            }
         </>
     )
 }

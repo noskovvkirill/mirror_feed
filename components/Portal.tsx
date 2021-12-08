@@ -177,10 +177,14 @@ const PortalBody = ({ setIsSearch, setIsOpen }: any) => {
 }
 
 
+interface IPortal {
+    isSearch: boolean,
+    setIsSearch: (value: boolean) => void,
+}
 
-const Portal = () => {
+
+const Portal = ({ isSearch, setIsSearch }: IPortal) => {
     const [isOpen, setIsOpen] = useRecoilState(portalState)
-    const [isSearch, setIsSearch] = useState(false)
     return (
         <>
             <DropdownMenu.Root open={isOpen.isPortal} modal={isOpen.modal || false} onOpenChange={(open: boolean) => {

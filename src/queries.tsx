@@ -298,6 +298,31 @@ query Edition($editionId: Int!, $editionContractAddress: String!) {
          }
        }
     }
+    thumbnailMedia{
+       mimetype
+       sizes{
+           og {
+             src
+            height
+            width
+            }
+            lg {
+              src
+              height
+               width
+            }
+            md {
+                src
+                height
+                width
+            }
+            sm {
+             src
+             height
+             width
+         }
+       }
+    }
   }
 }
 `
@@ -316,6 +341,15 @@ export const queryPublications = gql`
 query Publications {
   publications{
       ensLabel
+  }
+}
+`
+
+export const queryPublications_wAvatars = gql`
+query Publications {
+  publications{
+      ensLabel
+      avatarURL
   }
 }
 `
