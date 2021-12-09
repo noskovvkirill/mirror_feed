@@ -173,6 +173,7 @@ export const isPublication = (x: any): x is SubscribedPublication => x && x.ensL
 export const isSpace = (x: any): x is SpaceTypeProfile => x && x.name;
 export const isSpaceExpanded = (x: any): x is SpaceTop => x && x.staked;
 
+
 const Profile = ({ profile, size = 'md', isSelected = false, isHover = true }: IProfile) => {
     return (
         <HoverCard.Root openDelay={!isHover ? 3000 : 500}>
