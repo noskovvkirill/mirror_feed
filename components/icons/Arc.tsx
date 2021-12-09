@@ -1,12 +1,14 @@
 import React from "react";
+import * as AccessibleIcon from '@radix-ui/react-accessible-icon';
 
-function Icon() {
+function Icon({label}: {label?: string}) {
   return (
+    <AccessibleIcon.Root label={label ? label : 'Mirror Feed Icon'}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="15"
       height="15"
-      style={{position:'relative', top:'-1px', userSelect:'none'}}
+      style={{position:'relative', top:'-1px', userSelect:'none', pointerEvents:'none'}}
       fill="none"
       viewBox="0 0 15 15"
     >
@@ -17,6 +19,7 @@ function Icon() {
       ></path>
       <path stroke="currentColor" strokeLinecap="round" d="M2.5 13l10-6.5"></path>
     </svg>
+    </AccessibleIcon.Root>
   );
 }
 

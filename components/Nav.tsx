@@ -1,118 +1,169 @@
 import Box from "@/design-system/primitives/Box"
-import Button from "@/design-system/primitives/Button"
 import { styled } from "stitches.config"
-import {useRouter} from 'next/router'
-import { useSetRecoilState } from "recoil"
-import { useRecoilValueAfterMount } from "hooks/useRecoilValueAfterMount"
-import {readLaterList, ReadingListItem} from 'contexts'
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-// import ButtonPopover from "@/design-system/primitives/ButtonPopover"
-// import {useStore} from 'pages/_app'
-// import {createTheme} from 'stitches.config'
 import { useTheme } from 'next-themes'
-// import {useEffect, useReducer} from 'react'
-
 import Settings from '@/design-system/Settings'
-// import AdjustIcon from '@/design-system/icons/Adjust'
-// import ColorPicker from '@/design-system/primitives/ColorPicker'
-// import { toColor} from "react-color-palette";
 import React from 'react'
+import ArrowDownIcon from '@/design-system/icons/ArrowDown'
+import ButtonControl from "@/design-system/primitives/ButtonControl"
+import Updates from "@/design-system/Updates"
+import { useAuth } from "contexts/user"
 
-
-const StyledNav= styled(Box, {
-    zIndex:'1000',
-    backdropFilter:'opacity(30%)',
-    display:'flex',
-    flexDirection:'row',
-    gap:'$1',
-    position:'fixed', top:'calc($4 + $2)', right:'calc($4 + $4)'
-})
-
-const StyledContent = styled(DropdownMenu.Content,{
-    marginTop:'$1',
-    padding:'0',
-    borderRadius:'$2',
-    maxHeight:'calc($4 * 12)',
-    overflow:'scroll', 
-    border:'1px solid $foregroundBorder',
-    backgroundColor:'$background',
-    // backgroundColor:'$highlightBronze',
-    mixBlendMode:'multiply',
-    width:'calc($4 * 9)',
-    display:'flex',
-    flexDirection:'column',
-    gap:'$1',
-    listStyle:'none',
+const StyledNav = styled(Box, {
+    zIndex: '1000000',
+    // backdropFilter:'opacity(10%)',
+    // backgroundColor:'$background',
+    // height:'120px',
+    // mixBlendMode:'screen',
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '$1',
+    position: 'fixed', top: 'calc($4 + $2)', right: 'calc($4 + $4)',
+    '@bp1': {
+        top: 'calc($2 + $2)', right: '$4',
+    }
 })
 
 
-const StyledItem = styled(DropdownMenu.Item, {
-    display:'flex',
-    width:'100%',
-    gap:'$2',
-    fontSize:'$6',
-    maxWidth:'100%',
-    color:'$foregroundText',
-    padding:'$0 $0',
-    marginBottom:'$1',
-    cursor:'pointer',
-    transition:'$color',
-    position:'relative',
-    '&:hover':{
-          color:'$textBronze',
-    },
-    '&:focus': {
-    outline:' 3px solid $highlight',
-    borderRadius:'$2',
-    },
-    // expand the reach of the text 
-    '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '100%',
-    height: '100%',
-    minWidth: 44,
-    minHeight: 44,
-  },
-})
-
-const StyledDelete = styled('button', {
-      display:'flex',
-      alignItems:'center',
-      justifyContent:'flex-end',
-      color:'$foregroundText',
-      background:'transparent',
-      cursor:'pointer',
-      width:'calc($4 * 2)',
-      height:'100%',
-      border:'0',
-     '&:hover':{
-          color:'$textBronze',
-    },
- 
-})
-
-
-export interface Color {
-    readonly hex: string;
-    readonly rgb: ColorRGB;
-    readonly hsv: ColorHSV;
+interface INav {
+    isPinnedList: boolean;
+    setIsPinnedList: (newState: boolean) => void;
+    pinnedListLength: number;
 }
-interface ColorRGB {
-    readonly r: number;
-    readonly g: number;
-    readonly b: number;
-    readonly a?: number;
+
+
+const Nav = ({ isPinnedList, setIsPinnedList, pinnedListLength }: INav) => {
+    // const router = useRouter();
+    // const readingList = useRecoilValueAfterMount(readLaterList, [])
+    // const setReadLater = useSetRecoilState(readLaterList) 
+    const { themes, theme, setTheme } = useTheme()
+    const { user } = useAuth()
+
+    return (
+        <StyledNav>
+            <Box layout='flexBoxRow'>
+                {!isPinnedList && (
+                    <Box layout='flexBoxRow' css={{ userSelect: 'none', fontSize: '$6', color: '$foregroundText', alignItems: 'center', justifyContent: 'center' }}>{pinnedListLength}</Box>
+                )}
+                <ButtonControl
+                    isHighlighted={false}
+                    direction='left'
+                    label={isPinnedList ? 'hide pinned' : 'show pinned'}
+                    onClick={() => setIsPinnedList(!isPinnedList)}
+                    css={{
+                        '@bp1': {
+                            display: 'none'
+                        }
+                    }}
+                >
+                    <Box css={{
+                        pointerEvents: 'none',
+                        transform: isPinnedList ? 'rotate(180deg)' : '',
+                    }}>
+                        <ArrowDownIcon />
+                    </Box>
+                </ButtonControl>
+
+            </Box>
+            {user?.isConnected && (
+                <Updates />
+            )}
+            <Settings
+                themes={themes}
+                theme={theme}
+                UpdateTheme={setTheme} />
+
+        </StyledNav>
+    )
 }
-interface ColorHSV {
-    readonly h: number;
-    readonly s: number;
-    readonly v: number;
-    readonly a?: number;
-}
+
+export default React.memo(Nav)
+
+
+// const StyledContent = styled(DropdownMenu.Content,{
+//     marginTop:'$1',
+//     padding:'0',
+//     borderRadius:'$2',
+//     maxHeight:'calc($4 * 12)',
+//     overflow:'scroll', 
+//     border:'1px solid $foregroundBorder',
+//     backgroundColor:'$background',
+//     // backgroundColor:'$highlightBronze',
+//     mixBlendMode:'multiply',
+//     width:'calc($4 * 9)',
+//     display:'flex',
+//     flexDirection:'column',
+//     gap:'$1',
+//     listStyle:'none',
+// })
+
+
+// const StyledItem = styled(DropdownMenu.Item, {
+//     display:'flex',
+//     width:'100%',
+//     gap:'$2',
+//     fontSize:'$6',
+//     maxWidth:'100%',
+//     color:'$foregroundText',
+//     padding:'$0 $0',
+//     marginBottom:'$1',
+//     cursor:'pointer',
+//     transition:'$color',
+//     position:'relative',
+//     '&:hover':{
+//           color:'$textBronze',
+//     },
+//     '&:focus': {
+//     outline:' 3px solid $highlight',
+//     borderRadius:'$2',
+//     },
+//     // expand the reach of the text 
+//     '&::before': {
+//     content: '""',
+//     position: 'absolute',
+//     top: '50%',
+//     left: '50%',
+//     transform: 'translate(-50%, -50%)',
+//     width: '100%',
+//     height: '100%',
+//     minWidth: 44,
+//     minHeight: 44,
+//   },
+// })
+
+// const StyledDelete = styled('button', {
+//       display:'flex',
+//       alignItems:'center',
+//       justifyContent:'flex-end',
+//       color:'$foregroundText',
+//       background:'transparent',
+//       cursor:'pointer',
+//       width:'calc($4 * 2)',
+//       height:'100%',
+//       border:'0',
+//      '&:hover':{
+//           color:'$textBronze',
+//     },
+
+// })
+
+
+// export interface Color {
+//     readonly hex: string;
+//     readonly rgb: ColorRGB;
+//     readonly hsv: ColorHSV;
+// }
+// interface ColorRGB {
+//     readonly r: number;
+//     readonly g: number;
+//     readonly b: number;
+//     readonly a?: number;
+// }
+// interface ColorHSV {
+//     readonly h: number;
+//     readonly s: number;
+//     readonly v: number;
+//     readonly a?: number;
+// }
 
 // const reducer = (state:ThemeTokens, action:{color:string, value:Color}) => {
 //       return { ...state, [action.color]: action.value }
@@ -134,82 +185,70 @@ interface ColorHSV {
 //         [U: string]: Color
 // }
 
-
- 
-const Nav = () =>{
-    const router = useRouter();
-    const readingList = useRecoilValueAfterMount(readLaterList, [])
-    const setReadLater = useSetRecoilState(readLaterList) 
-    // const { changeTheme} = useStore()
-    const { themes, theme, setTheme } = useTheme()
+//COMMENTED CODE IS FOR THE CUSTOM THEMING FUNCTIONALITY. 
+// NOT AVAILABLE AT THIS MOMENT
 
 
-    //COMMENTED CODE IS FOR THE CUSTOM THEMING FUNCTIONALITY. 
-    // NOT AVAILABLE AT THIS MOMENT
+
+// useEffect(()=>{
+//     let custom = localStorage.getItem('custom-theme') 
+//     if(custom){
+//         const data  = JSON.parse(custom)
+//         const newColors:{[U: string]: string} = {}
+//             for (const key in colors) {
+//                 if (colors.hasOwnProperty(key)) {
+//                     newColors[key] = data[key].hex
+//                 }
+//         }
+//         const newName = 'custom'+Math.floor(Math.random()*1000).toString()
+//         const themeN = createTheme(newName, {
+//             colors: newColors
+//          });
+//         changeTheme({theme:themeN, name:newName})
+//         setTheme(newName)
+//         Object.keys(data).map((key)=>dispatch({color:key, value:data[key]}))
+//     }
+// // eslint-disable-next-line react-hooks/exhaustive-deps
+// },[setTheme, changeTheme])
+
+// const initialValue:ThemeTokens = {
+//         background: toColor("hex", "#121212"),
+//         tinted:toColor("hex", "#121212"),
+//         foreground: toColor("hex", "#121212"),
+//         foregroundBorder: toColor("hex", "#121212"),
+//         highlight: toColor("hex", "#121212"),
+//         foregroundText: toColor("hex", "#121212"),
+//         text:toColor("hex", "#121212"),
+//         backgroundBronze: toColor("hex", "#121212"),
+//         foregroundBronze: toColor("hex", "#121212"),
+//         highlightBronze:toColor("hex", "#121212"),
+//         foregroundTextBronze: toColor("hex", "#121212"),
+//         textBronze: toColor("hex", "#121212"),
+// }
+// const [colors, dispatch] = useReducer(reducer, initialValue)
 
 
-    
-    // useEffect(()=>{
-    //     let custom = localStorage.getItem('custom-theme') 
-    //     if(custom){
-    //         const data  = JSON.parse(custom)
-    //         const newColors:{[U: string]: string} = {}
-    //             for (const key in colors) {
-    //                 if (colors.hasOwnProperty(key)) {
-    //                     newColors[key] = data[key].hex
-    //                 }
-    //         }
-    //         const newName = 'custom'+Math.floor(Math.random()*1000).toString()
-    //         const themeN = createTheme(newName, {
-    //             colors: newColors
-    //          });
-    //         changeTheme({theme:themeN, name:newName})
-    //         setTheme(newName)
-    //         Object.keys(data).map((key)=>dispatch({color:key, value:data[key]}))
-    //     }
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-    // },[setTheme, changeTheme])
+// const UpdateTheme = async () => {
+//    const newName = 'custom'+Math.floor(Math.random()*1000).toString()
+//    const newColors:{[U: string]: string} = {}
+//    for (const key in colors) {
+//         if (colors.hasOwnProperty(key)) {
+//             newColors[key] = colors[key].hex
+//         }
+//    }
+//    const themeN = createTheme(newName, {
+//         colors: newColors
+//    });
 
-    // const initialValue:ThemeTokens = {
-    //         background: toColor("hex", "#121212"),
-    //         tinted:toColor("hex", "#121212"),
-    //         foreground: toColor("hex", "#121212"),
-    //         foregroundBorder: toColor("hex", "#121212"),
-    //         highlight: toColor("hex", "#121212"),
-    //         foregroundText: toColor("hex", "#121212"),
-    //         text:toColor("hex", "#121212"),
-    //         backgroundBronze: toColor("hex", "#121212"),
-    //         foregroundBronze: toColor("hex", "#121212"),
-    //         highlightBronze:toColor("hex", "#121212"),
-    //         foregroundTextBronze: toColor("hex", "#121212"),
-    //         textBronze: toColor("hex", "#121212"),
-    // }
-    // const [colors, dispatch] = useReducer(reducer, initialValue)
+//     changeTheme({theme:themeN, name:newName})
+//     setTheme(newName)
+
+//     localStorage.setItem('custom-theme', JSON.stringify(colors))
+// }
 
 
-    // const UpdateTheme = async () => {
-    //    const newName = 'custom'+Math.floor(Math.random()*1000).toString()
-    //    const newColors:{[U: string]: string} = {}
-    //    for (const key in colors) {
-    //         if (colors.hasOwnProperty(key)) {
-    //             newColors[key] = colors[key].hex
-    //         }
-    //    }
-    //    const themeN = createTheme(newName, {
-    //         colors: newColors
-    //    });
-    
-    //     changeTheme({theme:themeN, name:newName})
-    //     setTheme(newName)
 
-    //     localStorage.setItem('custom-theme', JSON.stringify(colors))
-    // }
-
-    
-
-    return(
-        <StyledNav>
-            <DropdownMenu.Root>
+{/* <DropdownMenu.Root>
                 <Button
                 as={DropdownMenu.Trigger}
                 css={{gap:'$1', 
@@ -289,16 +328,4 @@ const Nav = () =>{
                     </Box>
                     )}
                 </StyledContent>
-            </DropdownMenu.Root>
-
-            <Settings 
-            themes={themes}
-            theme={theme}
-            UpdateTheme={setTheme}/>
-
-
-        </StyledNav> 
-    )
-}
-
-export default React.memo(Nav)
+            </DropdownMenu.Root> */}

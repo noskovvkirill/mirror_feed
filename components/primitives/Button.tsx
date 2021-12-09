@@ -12,7 +12,7 @@ const StyledButton = styled("button", {
     lineHeight: "130%",
     height: "fit-content",
     whiteSpace: "nowrap",
-    background:'transparent',
+    background: 'transparent',
     // backgroundColor: "rgba(255,255,255,0.75)",
     // mixBlendMode:'multiply',
     // backdropFilter:'opacity(0.75)',
@@ -20,38 +20,39 @@ const StyledButton = styled("button", {
     variants: {
         look: {
             default: {
-                border:'1px solid $foreground',
-                color:'$foregroundText',
+                border: '1px solid $foreground',
+                color: '$foregroundText',
                 "&:focus": {
-                    
+
                 },
                 "&:active": {
-                   
+
                 },
                 "&:hover": {
-                    color:'$background',
-                    backgroundColor:'$foregroundBronze',
-                    border:'1px solid $foregroundBronze'
+                    color: '$background',
+                    backgroundColor: '$foregroundBronze',
+                    border: '1px solid $foregroundBronze'
                 },
                 "&:disabled": {
-                    color:'$background',
-                    backgroundColor:'$foregroundBronze',
-                    border:'1px solid $foregroundBronze'
+                    color: '$foreground',
+                    cursor: 'not-allowed',
+                    backgroundColor: '$highlight',
+                    border: '1px solid $highlight'
                 },
             },
             outlined: {
-               
+
                 "&:hover": {
-                  
+
                 },
                 "&:focus": {
-               
+
                 },
                 "&:active": {
-                  
+
                 },
                 "&:disabled": {
-                  
+
                 },
             },
         },

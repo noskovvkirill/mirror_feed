@@ -1,4 +1,5 @@
-
+import { Contract } from "ethers";
+import { ERC20Abi } from "contracts/ERC20";
 
 
 export const AddressPrettyPrint = (address:string, maxLength=10) =>{
@@ -9,3 +10,42 @@ export const AddressPrettyPrint = (address:string, maxLength=10) =>{
     return newAddress
 }
 
+
+
+const tokenAddress = process.env.NEXT_PUBLIC_FEED_CONTRACT;
+
+interface IGetBalance {
+    provider: any;
+    address: string;
+}
+
+export const getBalance = async ({ provider, address }: IGetBalance) => {
+    if (!tokenAddress) return;
+    try{
+        const contract = new Contract(tokenAddress, ERC20Abi, provider);
+            const balance = await contract.balanceOf(address);
+        return balance.toString();
+    } catch(e){
+        return 0
+    }
+};
+
+
+
+interface IGetAllowance {
+    provider: any;
+    address: string;
+    addressSpender:string;
+}
+
+export const getAllowance = async ({ provider, address, addressSpender }: IGetAllowance) => {
+    if (!tokenAddress) return;
+    try{
+        const contract = new Contract(tokenAddress, ERC20Abi, provider);
+        const balance = await contract.allowance(address, addressSpender);
+        console.log('allowance get allowance',  address, addressSpender)
+        return balance.toString();
+    } catch(e){
+        return 0
+    }
+};

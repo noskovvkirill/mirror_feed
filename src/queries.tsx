@@ -31,7 +31,7 @@ query Contributor($name: String!) {
   }
 `
 
-//contributor 
+//profile  
 export const queryContributor = gql`
 query Contributor($address: String!) {
   userProfile(address: $address) {
@@ -119,7 +119,7 @@ query Transaction($contributor:String!){
 
 export const queryAll = gql`
 {
-		transactions(first:5, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
+		transactions(first:10, tags: [{ name: "App-Name", values: ["MirrorXYZ"] }]) {
 			edges {
 				node {
 					id
@@ -133,7 +133,7 @@ export const queryAll = gql`
 		}
 	}`
 
-  // Publication Info
+// Publication Info
 export const queryPublicationInfo = gql`
 query Publication($ensLabel: String!) {
   publication(ensLabel: $ensLabel) {
@@ -156,6 +156,7 @@ query Publication($ensLabel: String!) {
        entries{
          id
          digest
+         timestamp
        }
     }
 }`
@@ -179,6 +180,26 @@ query Entry($digest: String!) {
             }
           }
         }
+        author{
+          address
+          displayName
+        }
+        publication{
+          ensLabel
+          avatarURL
+        }
+    }
+}`
+
+
+//single Entry
+export const queryEntryPreview = gql`
+query Entry($digest: String!) {
+  entry(digest: $digest) {
+        id
+        digest
+        timestamp
+        title
         author{
           address
           displayName
@@ -277,12 +298,73 @@ query Edition($editionId: Int!, $editionContractAddress: String!) {
          }
        }
     }
+    thumbnailMedia{
+       mimetype
+       sizes{
+           og {
+             src
+            height
+            width
+            }
+            lg {
+              src
+              height
+               width
+            }
+            md {
+                src
+                height
+                width
+            }
+            sm {
+             src
+             height
+             width
+         }
+       }
+    }
+  }
+}
+`
+
+export const queryVerifiedAccounts = gql`
+  query VerifiedAccounts {
+    verifiedAccounts {
+      username
+      account
+      signature
+    }
+  }
+`
+
+export const queryPublications = gql`
+query Publications {
+  publications{
+      ensLabel
+  }
+}
+`
+
+export const queryPublications_wAvatars = gql`
+query Publications {
+  publications{
+      ensLabel
+      avatarURL
   }
 }
 `
 
 
-
-
-
-
+export const queryUnverifiedProfiles = gql`
+query UnverifiedTwitterProfiles {
+  unverifiedTwitterProfiles {
+    address
+    twitterProfile {
+      username
+      avatarURL
+      __typename
+    }
+    __typename
+  }
+}
+`
