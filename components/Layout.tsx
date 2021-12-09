@@ -168,7 +168,6 @@ const Layout = ({ children }: Props) => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <Notifications />
             <OnBoarding />
             <Nav pinnedListLength={pinnedList.length} isPinnedList={isPinnedList}
                 setIsPinnedList={setIsPinnedList} />
@@ -218,6 +217,7 @@ const Layout = ({ children }: Props) => {
                     setActiveId(e.active.id)
                 }}>
                 <StyledHeader css={{ position: 'sticky', height: '160px' }}>
+
                     <StyledNavControls layout='flexBoxColumn'>
                         <Portal
                             isSearch={isSearch}
@@ -237,6 +237,7 @@ const Layout = ({ children }: Props) => {
                         setReadLater={setReadLater}
                     />
                 </StyledHeader>
+                <Notifications />
                 <StyledMain>
                     {children}
                 </StyledMain>
