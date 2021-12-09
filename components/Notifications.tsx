@@ -1,13 +1,13 @@
-import { styled } from 'stitches.config'
 import Box from '@/design-system/primitives/Box'
 import Tag from '@/design-system/primitives/Tag'
 import { NotificationList } from 'contexts'
 import type { Notification } from 'contexts'
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom'
 import type { TransactionResponse } from '@ethersproject/abstract-provider'
 import * as Portal from '@radix-ui/react-portal';
+
+import { darkTheme, darkThemePlain } from 'stitches.config'
 
 const Toast = ({ updateList, item }: { updateList: (fn: (oldState: Notification[]) => Notification[]) => void, item: Notification }) => {
     const [currentState, setCurrentState] = useState<string>("pending");
@@ -33,7 +33,7 @@ const Toast = ({ updateList, item }: { updateList: (fn: (oldState: Notification[
         }
     })
     return (
-        <Box css={{ borderRadius: '$2' }}>
+        <Box css={{ borderRadius: '$2', backgroundColor: '$background' }}>
             <Box layout='flexBoxRow' css={{ padding: '$2', gap: '$1', alignItems: 'center' }}>
                 {currentState === 'pending'
                     ? <Tag>{item?.label}</Tag>
@@ -41,7 +41,17 @@ const Toast = ({ updateList, item }: { updateList: (fn: (oldState: Notification[
                 }
                 <Box css={{
                     width: '36px', height: '36px', borderRadius: '$round',
-                    mixBlendMode: 'overlay', overflow: 'hidden'
+                    mixBlendMode: 'normal',
+                    border: '1px solid $foregroundBorder',
+                    [`.${darkTheme} &`]: {
+                        mixBlendMode: 'overlay',
+                        border: '0'
+                    },
+                    [`.${darkThemePlain} &`]: {
+                        mixBlendMode: 'overlay',
+                        border: '0'
+                    },
+                    overflow: 'hidden'
                 }}>
                     <video
                         height='100%'
@@ -54,7 +64,7 @@ const Toast = ({ updateList, item }: { updateList: (fn: (oldState: Notification[
                 </Box>
             </Box>
 
-        </Box>
+        </Box >
     )
 }
 
@@ -72,13 +82,8 @@ const Notifications = () => {
                 height: 'fit-content',
                 color: '$text',
                 bottom: '$2',
-                right: 'calc($4 + $4)'
+                right: 'calc($4 + $2)'
             }}>
-
-            {/* <Toast
-                updateList={updateList}
-                key={'toast'}
-                item={{ label: 'test' }} /> */}
 
             {list[0].map((item: Notification, index) => {
                 return (
@@ -92,10 +97,6 @@ const Notifications = () => {
     </Portal.Root>
     )
 
-
-    // } else {
-    //     return <></>
-    // }
 }
 
 export default Notifications
