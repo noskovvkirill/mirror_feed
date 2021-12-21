@@ -66,19 +66,23 @@ const Updates = () => {
     })
 
     const getItems = async () => {
+        if (!user) return;
         const { data, error } = await supabase
             .from('user_notifications')
             .select('created_at, isSend, entry(title, publication)')
             .eq('owner', user.id)
             .limit(5)
+        if (!data) { return }
         setNotifications(data)
     }
 
     const getUserEmail = async () => {
+        if (!user) return
         const { data, error } = await supabase
             .from('users')
             .select('*')
             .eq('id', user.id)
+        if (!data) { return }
         setNotificationSettings(data[0])
         console.log('email', data, error)
     }
@@ -317,7 +321,7 @@ const Updates = () => {
                                 <Box layout='flexBoxRow' css={{ color: '$foregroundText' }}>
                                     <Label css={{ color: '$foregroundText' }}>What type of notifications do you prefer?</Label>
                                     <Info>
-                                        Digest sends you a summary of what's happening accross your subscriptions or suggests new content.<br />
+                                        Digest sends you a summary of what&apos;s happening accross your subscriptions or suggests new content.<br />
                                         On demand only sends you a notification when the authors you follow publish a new entry.
                                     </Info>
                                 </Box>
