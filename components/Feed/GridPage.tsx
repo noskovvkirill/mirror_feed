@@ -58,7 +58,7 @@ const Grid = ({ data, error, isValidating, setSize }: IGrid) => {
 
                 {data.map((entry: EntryType) => {
                     return (
-                        <Article key={entry.digest} view={appSettings.view} entry={entry} />
+                        <Article key={entry.digest + 'card'} view={appSettings.view} entry={entry} />
 
                     )
                 })}

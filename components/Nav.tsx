@@ -10,6 +10,7 @@ import { useAuth } from "contexts/user"
 
 const StyledNav = styled(Box, {
     zIndex: '1000000',
+    padding: '0 $4',
     // backdropFilter:'opacity(10%)',
     // backgroundColor:'$background',
     // height:'120px',
@@ -17,9 +18,9 @@ const StyledNav = styled(Box, {
     display: 'flex',
     flexDirection: 'row',
     gap: '$1',
-    position: 'fixed', top: 'calc($4 + $2)', right: 'calc($4 + $4)',
+    // position: 'fixed', top: 'calc($4 + $2)', right: 'calc($4 + $4)',
     '@bp1': {
-        top: 'calc($2 + $2)', right: '$4',
+        // top: 'calc($2 + $2)', right: '$4',
     }
 })
 
@@ -41,7 +42,7 @@ const Nav = ({ isPinnedList, setIsPinnedList, pinnedListLength }: INav) => {
     return (
         <StyledNav>
             <Box layout='flexBoxRow'>
-                {!isPinnedList && (
+                {/* {!isPinnedList && (
                     <Box layout='flexBoxRow' css={{ userSelect: 'none', fontSize: '$6', color: '$foregroundText', alignItems: 'center', justifyContent: 'center' }}>{pinnedListLength}</Box>
                 )}
                 <ButtonControl
@@ -61,7 +62,7 @@ const Nav = ({ isPinnedList, setIsPinnedList, pinnedListLength }: INav) => {
                     }}>
                         <ArrowDownIcon />
                     </Box>
-                </ButtonControl>
+                </ButtonControl> */}
 
             </Box>
             {user?.isConnected && (

@@ -1,6 +1,6 @@
 import { styled } from 'stitches.config';
 import useSWRInfinite from 'swr/infinite'
-import { useHotkeys } from 'react-hotkeys-hook'
+
 
 import Box from '@/design-system/primitives/Box'
 import React from 'react'
@@ -63,58 +63,11 @@ export const StyledSpaceSelector = styled('button', {
     }
 })
 
-const StyledLabel = styled('div', {
-    fontSize: '$6',
-    color: '$background',
-    borderRadius: '$round',
-    padding: '$0 $1',
-    background: '$foreground'
-})
-
-
-const StyledSearchResult = styled('div', {
-    display: 'flex',
-    flexDirection: 'row',
-    margin: '$1 0',
-    padding: '$1 $1',
-    fontSize: '$6',
-    cursor: 'pointer',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderRadius: '$2',
-    // margin:'$0 0',
-    transition: '$background',
-    '&:hover': {
-        backgroundColor: '$highlight',
-        color: '$foregroundText',
-        [`& ${StyledLabel}`]: {
-            // backgroundColor:'$foreground'
-        }
-    },
-
-    variants: {
-        type: {
-            default: {
-
-                borderBottom: '1px solid $highlight',
-            },
-            list: {
-                borderRadius: '$1',
-                color: '$foregroundTextBronze',
-                background: '$highlightBronze',
-            }
-        }
-    },
-    defaultVariants: {
-        type: 'default'
-    }
-})
 
 
 
 
-
-const SpacePublication = ({ index, isActive, isPointer, setCuratedPublications, isFavourite, isAvatar = true, item, setIsActive, Open }: { isPointer: boolean; setCuratedPublications?: any, isAvatar?: boolean; isFavourite: boolean; setIsActive: any, index: number, isActive: boolean, item: SubscribedPublication, Open: (direction: string) => void }) => {
+export const SpacePublication = ({ index, isActive, isPointer, setCuratedPublications, isFavourite, isAvatar = true, item, setIsActive, Open }: { isPointer: boolean; setCuratedPublications?: any, isAvatar?: boolean; isFavourite: boolean; setIsActive: any, index: number, isActive: boolean, item: SubscribedPublication, Open: (direction: string) => void }) => {
     const ref = useRef<any>(null)
     const [isHover, setIsHover] = useState(false)
     useEffect(() => {
@@ -124,6 +77,14 @@ const SpacePublication = ({ index, isActive, isPointer, setCuratedPublications, 
     }, [isActive])
     return (
         <Box layout='flexBoxRow'
+            onClick={() => {
+                Open(`/${item?.ensLabel}`)
+            }}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                    Open(`/${item?.ensLabel}`)
+                }
+            }}
             css={{ pointerEvents: isPointer ? 'all' : 'none', alignItems: 'center' }}
             onMouseEnter={() => { if (isPointer) { setIsHover(true); setIsActive(index) } }}
             onMouseLeave={() => { if (isPointer) setIsHover(false) }}
@@ -132,9 +93,7 @@ const SpacePublication = ({ index, isActive, isPointer, setCuratedPublications, 
             <StyledSpaceSelector
                 css={{ pointerEvents: isPointer ? 'all' : 'none' }}
                 ref={ref}
-                isActive={isActive} onClick={() => {
-                    Open(`/${item?.ensLabel}`)
-                }}>
+                isActive={isActive}>
                 <Box layout='flexBoxRow' css={{ gap: '$2', fontSize: '$6', alignItems: 'center' }}>
                     {isAvatar && (
                         <Profile size='sm' profile={item} />
@@ -200,7 +159,7 @@ const fetcher = async (key: string) => {
 
 
 
-const SearchPublication = ({ isHover, isPointer, setIsPointer, setIsHover, searchResult, searchState, curated, setCuratedPublications }: any) => {
+const SearchPublication = ({ isHover, isPointer, setIsPointer, setIsHover, curated, setCuratedPublications }: any) => {
 
     const { data, error, isValidating, setSize } = useSWRInfinite(getKey, fetcher)
     const router = useRouter()
@@ -210,32 +169,6 @@ const SearchPublication = ({ isHover, isPointer, setIsPointer, setIsHover, searc
         rootMargin: '100%'
     })
     const isVisible = !!entry?.isIntersecting
-    // const [isHover, setIsHover] = useState<null | number>(null)
-    // const [isPointer, setIsPointer] = useState(true)
-
-    // useHotkeys('*', () => {
-    //     document.body.style.cursor = 'auto'
-    // }, [])
-
-    // useHotkeys(`up, tab+shift`, () => {
-    //     setIsPointer(false)
-    //     document.body.style.cursor = 'none'
-    //     if (typeof isHover === 'number' && isHover !== 0) {
-    //         setIsHover(isHover - 1)
-    //     } else {
-    //         setIsHover(0)
-    //     }
-    // }, [curated, isHover]);
-
-    // useHotkeys(`down, tab`, () => {
-    //     setIsPointer(false)
-    //     document.body.style.cursor = 'none'
-    //     if (typeof isHover === 'number') {
-    //         setIsHover(isHover + 1)
-    //     } else {
-    //         setIsHover(0)
-    //     }
-    // }, [curated, isHover]);
 
     useEffect(() => {
         if (isVisible) {
@@ -257,47 +190,6 @@ const SearchPublication = ({ isHover, isPointer, setIsPointer, setIsHover, searc
             <Box layout='flexBoxColumn' css={{
                 height: 'fit-content', overflow: 'visible', scrollBehavior: 'smooth', scrollSnapType: 'y proximity'
             }}>
-                <Box css={searchResult?.length > 0 ? { paddingBottom: '0' } : {}}>
-                    {searchResult?.map((item: SubscribedPublication & { address?: string }, index: number) => {
-                        return (
-                            <StyledSearchResult
-                                tabIndex={0}
-                                onClick={() => { router.push(`/${item.type === 'ens' ? item.ensLabel : item.address}?type=${item.type}`) }}
-                                key={'search result' + index}>
-                                <Box layout='flexBoxRow' css={{ width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <Box layout='flexBoxRow' css={{ alignItems: 'center', fontSize: '$6' }}>
-                                        <Profile size='sm' profile={item} />
-                                        <>{AddressPrettyPrint(item.ensLabel)}</>
-                                    </Box>
-                                    <StyledLabel>
-                                        {item.type === 'ens'
-                                            ? "PUBLICATION"
-                                            : "PRIVATE"
-                                        }
-                                    </StyledLabel>
-                                </Box>
-                            </StyledSearchResult>
-                        )
-                    })}
-                    {searchState === 'loading' && (
-                        <Box css={{ padding: '$2 $2 $2 $2' }}>
-                            <Loader size='small' />
-                        </Box>
-                    )}
-
-                    {searchState === 'not found' && (
-                        <Box css={{ padding: '$2 $2 $2 $2', fontSize: '$6', color: '$text' }}>
-                            Not found
-                        </Box>
-                    )}
-
-                    {searchState === 'error' && (
-                        <Box css={{ padding: '$1 $2 $2 $2', fontSize: '$6', color: '$text' }}>
-                            <>Something went wrong...</>
-                        </Box>
-                    )}
-                </Box>
-
 
                 {!data && [...curated].map((item: SubscribedPublication, index: number) => {
                     return (
@@ -349,3 +241,45 @@ const SearchPublication = ({ isHover, isPointer, setIsPointer, setIsHover, searc
 }
 
 export default SearchPublication
+
+
+{/* <Box css={searchResult?.length > 0 ? { paddingBottom: '0' } : {}}>
+                    {searchResult?.map((item: SubscribedPublication & { address?: string }, index: number) => {
+                        return (
+                            <StyledSearchResult
+                                tabIndex={0}
+                                onClick={() => { router.push(`/${item.type === 'ens' ? item.ensLabel : item.address}?type=${item.type}`) }}
+                                key={'search result' + index}>
+                                <Box layout='flexBoxRow' css={{ width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <Box layout='flexBoxRow' css={{ alignItems: 'center', fontSize: '$6' }}>
+                                        <Profile size='sm' profile={item} />
+                                        <>{AddressPrettyPrint(item.ensLabel)}</>
+                                    </Box>
+                                    <StyledLabel>
+                                        {item.type === 'ens'
+                                            ? "PUBLICATION"
+                                            : "PRIVATE"
+                                        }
+                                    </StyledLabel>
+                                </Box>
+                            </StyledSearchResult>
+                        )
+                    })}
+                    {searchState === 'loading' && (
+                        <Box css={{ padding: '$2 $2 $2 $2' }}>
+                            <Loader size='small' />
+                        </Box>
+                    )}
+
+                    {searchState === 'not found' && (
+                        <Box css={{ padding: '$2 $2 $2 $2', fontSize: '$6', color: '$text' }}>
+                            Not found
+                        </Box>
+                    )}
+
+                    {searchState === 'error' && (
+                        <Box css={{ padding: '$1 $2 $2 $2', fontSize: '$6', color: '$text' }}>
+                            <>Something went wrong...</>
+                        </Box>
+                    )}
+                </Box> */}

@@ -155,7 +155,7 @@ const PortalBody = ({ setIsSearch, setIsOpen }: any) => {
                     <PointIcon />
                 </ButtonControl>
             </DropdownMenu.Item>
-            <DropdownMenu.Item
+            {/* <DropdownMenu.Item
                 asChild
                 onSelect={() => {
                     setIsOpen(false)
@@ -170,7 +170,7 @@ const PortalBody = ({ setIsSearch, setIsOpen }: any) => {
                     label='search'>
                     <SearchIcon />
                 </ButtonControl>
-            </DropdownMenu.Item>
+            </DropdownMenu.Item> */}
         </StyledContainer>
 
     )
@@ -178,12 +178,12 @@ const PortalBody = ({ setIsSearch, setIsOpen }: any) => {
 
 
 interface IPortal {
-    isSearch: boolean,
+    // isSearch: boolean,
     setIsSearch: (value: boolean) => void,
 }
 
 
-const Portal = ({ isSearch, setIsSearch }: IPortal) => {
+const Portal = ({ setIsSearch }: IPortal) => {
     const [isOpen, setIsOpen] = useRecoilState(portalState)
     return (
         <>
@@ -198,9 +198,6 @@ const Portal = ({ isSearch, setIsSearch }: IPortal) => {
                     setIsSearch={setIsSearch}
                 />
             </DropdownMenu.Root>
-            {isSearch && (
-                <Search setIsOpen={setIsSearch} />
-            )}
         </>
     )
 }

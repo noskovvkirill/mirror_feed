@@ -3,7 +3,7 @@ import React from 'react'
 import { CSS } from '@stitches/react/types/css-util'
 
 interface IStyledHeading {
-    size?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5',
+    size?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'huge',
     children: React.ReactNode,
     color?: 'foregroundText' | 'foregroundTextBronze' | 'text' | 'textBronze' | 'highlight',
     css?: CSS
@@ -11,9 +11,15 @@ interface IStyledHeading {
 const Heading = styled('h1', {
     margin: '0!important',
     padding: 0,
-
+    fontWeight: '$max',
     variants: {
         size: {
+            'huge': {
+                fontSize: "3.852rem",
+                '@bp1': {
+                    fontSize: '$2'
+                }
+            },
             h1: {
                 fontSize: '$1',
                 '@bp1': {

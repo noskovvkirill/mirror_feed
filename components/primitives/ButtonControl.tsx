@@ -6,6 +6,7 @@ import * as Portal from '@radix-ui/react-portal';
 const StyledControl = styled(Button, {
     border: '1px solid $foreground',
     color: '$foregroundText',
+    flexShrink: '0',
     //this is rude, but for some reason simple height:33px doesn't work in Safari 
     height: 'auto',
     minHeight: '33px',

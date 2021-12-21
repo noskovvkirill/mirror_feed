@@ -202,7 +202,8 @@ const ControlsPreview = (
                 item={entry}
             />
             <br style={{ userSelect: 'none' }} />
-            {setPinnedItem && (
+
+            {/* {setPinnedItem && (
                 <ButtonControl
                     direction={view === 'list' ? 'right' : 'bottom'}
                     label='pin on top'
@@ -211,7 +212,9 @@ const ControlsPreview = (
                         setPinnedItem((prevState: PinnedItem[]) => [...prevState, { id: prevState.length > 0 ? prevState[prevState.length - 1].id + 1 : 0, type: 'entry', item: entry }])
                     }>
                     <PinIcon />
-                </ButtonControl>)}
+                </ButtonControl>)} */}
+
+
             {/* {setIgnoredList && (
                 <ButtonControl
                     direction={view==='list' ? 'right' :'bottom'}

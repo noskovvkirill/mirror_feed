@@ -1,58 +1,76 @@
-import {request} from 'graphql-request'
-import {queryPublicationInfo, queryContributor, queryEnsAddress, queryPublicationContributor} from 'src/queries'
+import { request } from 'graphql-request'
+import { queryPublicationInfo, queryContributor, queryEnsAddress, queryPublicationContributor } from 'src/queries'
 import { SubscribedPublication } from 'contexts'
-import {User} from '@/design-system/primitives/Profile'
+import { UserType as User } from 'contexts/user'
+import { supabase } from 'src/client'
+
+export const Search = async (query: string, type?: 'ENTRIES' | 'PUBLICATIONS') => {
+    if (type === 'ENTRIES') {
+        const { data, error } = await supabase
+            .from('mirroritems_test')
+            .select('digest, title, publication, timestamp')
+            .textSearch('title', query, {
+                type: 'plain',
+                config: 'english'
+            })
+            .limit(5)
+        return data
+    } else {
+        const { data, error } = await supabase
+            .rpc('fuzzy_search_publication', { str1: query })
+        return data
+    }
+}
 
 
 
-
-export const Search = async (name:string) => {
+export const SearchLegacy = async (name: string) => {
     //checking the type of the domain
     //Mirror.xyz subdomain, ENS Subdomain (EnsExternal) or Address 
-    if(name === '' || name === undefined || name === null) return 
+    if (name === '' || name === undefined || name === null) return
     const regexEthAddress = new RegExp('0x[a-fA-F0-9]{40}', 'g')
     const regexENS = ".*\.(xyz|eth)$"
     let type = 'ens'
     const url = name.match(regexENS)
     const address = regexEthAddress.test(name)
-    if(url){
-        type='ensExternal'
+    if (url) {
+        type = 'ensExternal'
     }
-    if(address){
-        type='address'
+    if (address) {
+        type = 'address'
     }
 
 
     console.log('type', type)
 
-    if(type === 'address'){
-        try{
-            const contributorsProfiles:User = await request('https://mirror-api.com/graphql', queryContributor, {
-                        address: name,
-                    }).then(({userProfile}) =>{
-                            return userProfile
-                        })
-                        .catch(() => {
-                            return 
+    if (type === 'address') {
+        try {
+            const contributorsProfiles: User = await request('https://mirror-api.com/graphql', queryContributor, {
+                address: name,
+            }).then(({ userProfile }) => {
+                return userProfile
             })
+                .catch(() => {
+                    return
+                })
 
             console.log('adress profiles', contributorsProfiles)
 
-            
 
-            const contributors:SubscribedPublication & {address?:string, displayName?:string} = Object.assign({}, {
-                type:'personal' as 'personal' | 'ens',
-                ensLabel:contributorsProfiles && contributorsProfiles?.displayName || contributorsProfiles?.address
+
+            const contributors: SubscribedPublication & { address?: string, displayName?: string } = Object.assign({}, {
+                type: 'personal' as 'personal' | 'ens',
+                ensLabel: contributorsProfiles && contributorsProfiles?.displayName || contributorsProfiles?.address
             }, contributorsProfiles);
             // delete contributors.address
             delete contributors.displayName
 
-            const data = [contributors].filter(function( element:any ) {
+            const data = [contributors].filter(function (element: any) {
                 return element !== undefined && element.ensLabel !== null
             });
 
             return data
-        } catch(e){
+        } catch (e) {
             console.log(e)
             return;
         }
@@ -60,88 +78,88 @@ export const Search = async (name:string) => {
 
 
 
-    if(type === 'ensExternal'){
-        try{
+    if (type === 'ensExternal') {
+        try {
             const ens = await request('https://api.thegraph.com/subgraphs/name/ensdomains/ens', queryEnsAddress, {
-                name:name
+                name: name
             })
             const address = ens.domains[0].owner.id
             const contributorPublications = await request('https://mirror-api.com/graphql', queryPublicationContributor, {
-                    address: address,
+                address: address,
             })
-            .then(({contributor})=>contributor.publications)
-            .catch(()=>{return})
+                .then(({ contributor }) => contributor.publications)
+                .catch(() => { return })
 
             // const publication:SubscribedPublication[] = Object.assign({}, contributorPublications);
-            const publication = contributorPublications.map((item:SubscribedPublication)=>{ const newItem = Object.assign({}, item); newItem.type='ens'; return newItem})
+            const publication = contributorPublications.map((item: SubscribedPublication) => { const newItem = Object.assign({}, item); newItem.type = 'ens'; return newItem })
 
             // console.log('contributor publications', contributorPublications)
 
-             const contributorsProfiles:User = await request('https://mirror-api.com/graphql', queryContributor, {
-                        address: address,
-                    }).then(({userProfile}) =>{
-                            return userProfile
-                        })
-                        .catch(() => {
-                            return 
+            const contributorsProfiles: User = await request('https://mirror-api.com/graphql', queryContributor, {
+                address: address,
+            }).then(({ userProfile }) => {
+                return userProfile
             })
+                .catch(() => {
+                    return
+                })
 
-            const contributors:SubscribedPublication & {address?:string, displayName?:string} = Object.assign({}, {
-                type:'personal' as 'personal' | 'ens',
-                ensLabel:contributorsProfiles && contributorsProfiles?.displayName || contributorsProfiles?.address
+            const contributors: SubscribedPublication & { address?: string, displayName?: string } = Object.assign({}, {
+                type: 'personal' as 'personal' | 'ens',
+                ensLabel: contributorsProfiles && contributorsProfiles?.displayName || contributorsProfiles?.address
             }, contributorsProfiles);
             // delete contributors.address
             delete contributors.displayName
 
             const data = [contributors, ...publication]
-            .filter(function( element:any ) {
-                return element !== undefined && element.hasOwnProperty('avatarURL');
-            });
+                .filter(function (element: any) {
+                    return element !== undefined && element.hasOwnProperty('avatarURL');
+                });
 
             console.log('ens external data', data)
 
             return data
 
-         } catch(e){
+        } catch (e) {
             console.log('ens external', e)
         }
     }
 
-    
-    try{
-        const publicationsContributors = await request('https://mirror-api.com/graphql', queryPublicationInfo, {
-                    ensLabel: name,
-                }).then(({publication}) =>{
-                        return publication
-                    })
-                    .catch(() => {
-                        return 
-        })
 
-        const contributorsProfiles:User = await request('https://mirror-api.com/graphql', queryContributor, {
-                    address: name,
-                }).then(({userProfile}) =>{
-                        return userProfile
-                    })
-                    .catch(() => {
-                        return 
+    try {
+        const publicationsContributors = await request('https://mirror-api.com/graphql', queryPublicationInfo, {
+            ensLabel: name,
+        }).then(({ publication }) => {
+            return publication
         })
+            .catch(() => {
+                return
+            })
+
+        const contributorsProfiles: User = await request('https://mirror-api.com/graphql', queryContributor, {
+            address: name,
+        }).then(({ userProfile }) => {
+            return userProfile
+        })
+            .catch(() => {
+                return
+            })
 
 
         console.log('search', name, publicationsContributors, contributorsProfiles)
 
-        const publication:SubscribedPublication = Object.assign({}, publicationsContributors);
-        publication.type = 'ens'    
-        
+        const publication: SubscribedPublication = Object.assign({}, publicationsContributors);
+        publication.type = 'ens'
+
         //molding type User into SubscribedPublication
-        const contributors:SubscribedPublication & {address?:string, displayName?:string} = Object.assign({}, {
-            type:'personal' as 'personal' | 'ens',
-            ensLabel:contributorsProfiles && contributorsProfiles?.displayName || contributorsProfiles?.address
+        const contributors: SubscribedPublication & { address?: string, displayName?: string } = Object.assign({}, {
+            type: 'personal' as 'personal' | 'ens',
+            ensLabel: contributorsProfiles && contributorsProfiles?.displayName || contributorsProfiles?.address
         }, contributorsProfiles);
         // delete contributors.address
         delete contributors.displayName
 
-        const data = [publication, contributors].filter(function( element:any ) {
+        const data = [publication, contributors].filter(function (element: any) {
             return element !== undefined && element.hasOwnProperty('avatarURL');
         });
 

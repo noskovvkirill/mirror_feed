@@ -25,6 +25,7 @@ interface IProfile {
     size?: 'og' | 'lg' | 'md' | 'sm',
     isSelected?: boolean,
     isHover?: boolean,
+    loading?: boolean,
 }
 
 export const StyledAvatar = styled(Avatar.Root, {
@@ -174,7 +175,10 @@ export const isSpace = (x: any): x is SpaceTypeProfile => x && x.name;
 export const isSpaceExpanded = (x: any): x is SpaceTop => x && x.staked;
 
 
-const Profile = ({ profile, size = 'md', isSelected = false, isHover = true }: IProfile) => {
+const Profile = ({ profile, size = 'md', isSelected = false, isHover = true, loading }: IProfile) => {
+    if (loading) {
+        <StyledAvatar size={size} as='div'></StyledAvatar>
+    }
     return (
         <HoverCard.Root openDelay={!isHover ? 3000 : 500}>
             <StyledTrigger >

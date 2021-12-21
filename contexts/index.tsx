@@ -212,6 +212,14 @@ export const curationItems = atom({
     effects_UNSTABLE: [CurrationEffect()]
 })
 
+export const subscribedSpaces = selectorFamily({
+    key: 'userSpaces',
+    get: (id: string | undefined) => async () => {
+        if (!id || id === '') return []
+        const { data: subscribtions } = await fetch(`/api/getSubscribtions?owner_id=${id}`).then(res => res.json())
+        return subscribtions
+    }
+})
 
 
 
@@ -275,7 +283,7 @@ const AppSettingsEffect = (): AtomEffect<AppSettings> => ({ setSelf, onSet, trig
 export const settings = atom({
     key: 'app-settings',
     default: {
-        view: 'list'
+        view: 'card'
     } as AppSettings,
     effects_UNSTABLE: [AppSettingsEffect()]
 })

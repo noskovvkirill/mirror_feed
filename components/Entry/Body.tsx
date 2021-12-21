@@ -39,7 +39,7 @@ const StyledTitle = styled('h1', {
                 color: '$textBronze',
             },
             false: {
-                color: '$text',
+                color: '$foregroundText',
             }
         },
         type: {
@@ -205,7 +205,7 @@ const StyledText = styled('article', {
                 color: '$textBronze'
             },
             false: {
-                color: '$text'
+                color: '$foregroundText'
             }
         },
         // isHighlighted: {

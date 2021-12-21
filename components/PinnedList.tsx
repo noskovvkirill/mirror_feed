@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom'
 import Draggable from '@/design-system/Drag/Draggable'
 import DragOverlay from '@/design-system/Drag/DragOverlay'
 
-const AnimationContentDisplay = keyframes({
+export const AnimationContentDisplay = keyframes({
     '0%': { opacity: 0, transform: `translate(0%, -100%)` },
     '100%': { opacity: 1, transform: `translate(0%, 0%)` }
 })

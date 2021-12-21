@@ -1,24 +1,32 @@
-import { styled } from 'stitches.config'
+//components
+import { styled, keyframes } from 'stitches.config'
 import Box from '@/design-system/primitives/Box'
 import Nav from '@/design-system/Nav'
-
+import Label from '@/design-system/primitives/Label'
+import Tag from '@/design-system/primitives/Tag'
+import OnBoarding from '@/design-system/Onboarding'
+import Search from '@/design-system/Search'
+import Portal from '@/design-system/Portal'
+import Notifications from '@/design-system/Notifications'
 import Head from 'next/head'
+import Link from 'next/link'
+//state
 import React, { ReactNode, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { pinnedItems, readLaterList, portalState, curatedSpaceNotSyncSelected, curatedSpaceNotSync, PinnedItem } from 'contexts'
-import type { CuratedSpaceNotSync, CuratedSpaceItem } from 'contexts'
+import { pinnedItems, portalState, curatedSpaceNotSyncSelected, curatedSpaceNotSync } from 'contexts'
 import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil'
 import useScrollPosition from '@react-hook/window-scroll'
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
-
-import OnBoarding from '@/design-system/Onboarding'
-import PinnedList from '@/design-system/PinnedList'
-import { Current } from 'contexts'
 import { DndContext } from '@dnd-kit/core';
-import Portal from '@/design-system/Portal'
-import Notifications from '@/design-system/Notifications'
 
+//types
+import type { CuratedSpaceNotSync, CuratedSpaceItem, PinnedItem } from 'contexts'
+
+
+export const AnimationContentDisplay = keyframes({
+    '0%': { opacity: 0, transform: `translate(0%, 100%)` },
+    '100%': { opacity: 1, transform: `translate(0%, 0%)` }
+})
 
 const StyledMain = styled('main', {
     backgroundColor: '$background',
@@ -39,19 +47,19 @@ const StyledMain = styled('main', {
 const StyledHeader = styled('header', {
     position: 'sticky',
     zIndex: '100',
-    width: 'fit-content',
+    width: '100%',
     maxWidth: '100%',
     boxSizing: 'border-box',
     overflowY: 'hidden',
     background: 'transparent',
     // backdropFilter:'opacity(0.25)',
     top: '0',
-    padding: '$2 0 0 $4',
+    padding: '$2 $4 0 $4',
     color: '$text',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     overflowX: 'hidden',
     display: 'flex',
-    alignItems: 'flex-start',
     flexDirection: 'row',
     gap: '$2',
     '@bp1': {
@@ -73,6 +81,25 @@ const StyledNavControls = styled(Box, {
     }
 })
 
+
+const StyledFooter = styled('footer', {
+    transition: '$all',
+    fontSize: '$6',
+    color: '$foregroundText',
+    opacity: 0.5,
+    backdropFilter: 'opacity(50%)',
+    mixBlendMode: 'screen',
+    '@media (prefers-reduced-motion: no-preference)': {
+        animationName: `${AnimationContentDisplay}`,
+        animationDuration: '500ms',
+        animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        animationFillMode: 'forwards',
+    },
+    willChange: 'transform, opacity',
+    position: 'fixed',
+    backgroundColor: '$tint',
+    justifyContent: 'space-between', padding: '$1 $4', bottom: 0, left: 0, width: '100%', boxSizing: 'border-box'
+})
 
 
 type Props = {
@@ -96,11 +123,11 @@ export const history: Array<{
 
 const Layout = ({ children }: Props) => {
     const [isPinnedList, setIsPinnedList] = useState(false)
-    const setReadLater = useSetRecoilState(readLaterList)
+    // const setReadLater = useSetRecoilState(readLaterList)
     const pinnedList = useRecoilValueAfterMount(pinnedItems, [])
     const setPinnedList = useSetRecoilState(pinnedItems)
-    const currentArticle = useRecoilValue(Current)
-    const router = useRouter()
+    // const currentArticle = useRecoilValue(Current)
+    // const router = useRouter()
 
     // const curated = useRecoilValueAfterMount(curationItems, [])
     const [isPortal, setIsPortal] = useRecoilState(portalState)
@@ -169,23 +196,7 @@ const Layout = ({ children }: Props) => {
             </Head>
 
             <OnBoarding />
-            <Nav pinnedListLength={pinnedList.length} isPinnedList={isPinnedList}
-                setIsPinnedList={setIsPinnedList} />
 
-            {/* Main feed key */}
-            {/* <SpaceKeysMapping index={1}
-                Open={() => router.push('/')} />
-            {curated.length > 0 && (
-                <>
-                    {curated.map((item: CurationList, i) => (
-                        <SpaceKeysMapping
-                            index={i + 2}
-                            key={'hotkey curation' + i} Open={() => {
-                                router.push(`/spaces/${item.title}`)
-                            }} />
-                    ))}
-                </>
-            )} */}
             <DndContext
                 onDragEnd={(e) => {
                     const over = e.over
@@ -216,15 +227,27 @@ const Layout = ({ children }: Props) => {
                 onDragStart={(e) => {
                     setActiveId(e.active.id)
                 }}>
-                <StyledHeader css={{ position: 'sticky', height: '160px' }}>
+                {/* <StyledHeader css={{ position: 'sticky', height: '160px' }}> */}
+                <StyledHeader css={{ position: 'sticky', height: 'fit-content', marginBottom: '$2' }}>
 
                     <StyledNavControls layout='flexBoxColumn'>
                         <Portal
-                            isSearch={isSearch}
+                            // isSearch={isSearch}
                             setIsSearch={setIsSearch}
                         />
                     </StyledNavControls>
-                    <PinnedList
+                    {isPinnedList && (
+                        <Search
+                            isSearch={isSearch}
+                            setIsOpen={setIsSearch}
+                        />
+                    )}
+
+                    <Nav pinnedListLength={pinnedList.length} isPinnedList={isPinnedList}
+                        setIsPinnedList={setIsPinnedList} />
+
+                    {/* WORK IN PROGRESS */}
+                    {/* <PinnedList
                         activeId={activeId}
                         pinnedList={pinnedList}
                         setPinnedList={setPinnedList}
@@ -235,12 +258,40 @@ const Layout = ({ children }: Props) => {
                         }}
                         isPinnedList={isPinnedList}
                         setReadLater={setReadLater}
-                    />
+                    /> */}
                 </StyledHeader>
                 <Notifications />
                 <StyledMain>
                     {children}
                 </StyledMain>
+                <StyledFooter css={{
+                    display: isPinnedList ? 'flex' : 'none',
+                }}>
+                    <Box layout='flexBoxRow' css={{ alignItems: 'center', '@bp1': { visibility: 'hidden' } }}>
+                        <Box layout='flexBoxRow' css={{ gap: '$0', alignItems: 'center' }}>
+                            <Label>Search</Label>
+                            <Tag color='default' css={{ backgroundColor: '$background', padding: '$0', borderRadius: '$1', fontSize: '10px' }}>CMD&thinsp;+&thinsp;/</Tag>
+                        </Box>
+                        <Box layout='flexBoxRow' css={{ gap: '$0', alignItems: 'center' }}>
+                            <Label>Door</Label>
+                            <Tag color='default' css={{ backgroundColor: '$background', padding: '$0', borderRadius: '$1', fontSize: '10px' }}>ALT</Tag>
+                        </Box>
+                    </Box>
+                    <Box layout='flexBoxRow' css={{ alignItems: 'center' }}>
+                        <Link passHref href={'/about'}><Label css={{ textDecoration: 'underline', cursor: 'pointer' }}>About</Label></Link>
+                        <Label>2022</Label>
+                    </Box>
+                </StyledFooter>
+                {/* <Box as='footer' css={{
+                    padding: '$0',
+                    overflow: 'hidden',
+                    // mixBlendMode: 'screen',
+                    borderRadius: '$round',
+                    position: 'fixed', right: '$4', bottom: '$4', width: 'calc($4*2)', height: 'calc($4 * 2)',
+                    backgroundColor: '$highlight'
+                }}>
+                    <img src={'/welcome.png'} width='100%' height='100%' />
+                </Box> */}
             </DndContext>
         </Box>
     )

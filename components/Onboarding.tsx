@@ -2,6 +2,7 @@ import { styled } from 'stitches.config'
 import Remove from '@/design-system/icons/Remove'
 import PinnedIcon from '@/design-system/icons/Pin'
 import AddIcon from '@/design-system/icons/Add'
+import Label from '@/design-system/primitives/Label'
 
 import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import Button from '@/design-system/primitives/Button'
@@ -279,6 +280,7 @@ const OnBoarding = () => {
     const [isPortal, setIsPortal] = useRecoilState(portalState)
 
     useEffect(() => {
+        console.log('onboarding', router)
         if (router.pathname !== '/') {
             return
         }
@@ -309,17 +311,20 @@ const OnBoarding = () => {
         <StyledToast css={{
             width: '532px',
             height: '192px',
-            bottom: '$2',
-            right: 'calc($4 + $4 )',
+            bottom: 'calc($4 + $2)',
+            right: 'calc($4 + $1 )',
             padding: '0',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            '@bp1': {
+                display: 'none'
+            }
         }}>
             <Box layout='flexBoxRow' css={{ gap: '$0', overflow: 'hidden' }}>
                 <Box css={{ minWidth: '192px', background: '$highlight', overflow: 'hidden', boxSizing: 'border-box', height: '100%', objectFit: 'cover' }}>
                     <Box css={{
                         width: '192px',
                         overflow: 'hidden',
-                        opacity: 0.75,
+                        opacity: 0.55,
                         mixBlendMode: 'multiply'
                     }}>
                         <video
@@ -343,6 +348,7 @@ const OnBoarding = () => {
                     </StyledContent>
                     <StyledFooter css={{ justifyContent: 'flex-start' }}>
                         <Button onClick={() => { setIsPortal({ isPortal: true, modal: false }); setStep(prevStep => prevStep += 1); }}>Show me around</Button>
+                        <Label>~&thinsp;30 sec</Label>
                     </StyledFooter>
                 </StyledBody>
             </Box>

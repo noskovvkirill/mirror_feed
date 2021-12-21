@@ -1,24 +1,34 @@
+//components
 import Layout from '@/design-system/Layout'
 import Box from '@/design-system/primitives/Box'
 import Heading from '@/design-system/primitives/Heading'
 import Profile from '@/design-system/primitives/Profile'
+import Button from '@/design-system/primitives/Button'
 import * as Header from '@/design-system/Feed/Header'
 import Link from 'next/link'
 import GridPage from '@/design-system/Feed/GridPage'
+import Contributors from '@/design-system/Contributors';
+
+//utils
 import { request } from 'graphql-request';
+import { supabase } from 'src/client'
+
+//types
 import type { GetStaticProps } from 'next'
 import type { SubscribedPublication } from 'contexts';
 import type { EntryType } from '@/design-system/Entry'
-import { Current, PinnedItem, pinnedItems } from 'contexts';
-import { useSetRecoilState } from 'recoil';
+import type { ParsedUrlQuery } from 'querystring'
+import type { UserTypeProfile } from 'contexts/user'
+
+//state
+import { Current, PinnedItem, pinnedItems, curationItems, subscribedSpaces } from 'contexts';
+import { useSetRecoilState, useRecoilValueLoadable, useRecoilRefresher_UNSTABLE as useRecoilRefresher } from 'recoil';
 import { useEffect } from 'react';
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
-import type { UserTypeProfile } from 'contexts/user'
 import { queryEntry, queryPublications, queryPublication } from 'src/queries';
 import { getContributorsListAvatars } from 'src/publication-contents'
-import Contributors from '@/design-system/Contributors';
 import { useRouter } from 'next/router'
-import type { ParsedUrlQuery } from 'querystring'
+import { useAuth } from 'contexts/user'
 
 const mirrorendpoint = process.env.NEXT_PUBLIC_MIRROR_API;
 
@@ -62,7 +72,20 @@ export async function getStaticPaths() {
 
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  console.log('params', ctx.params)
+
+  // to have a redirect here we would need to cache pages and then use SSR + redirect to them
+  // const host = ctx?.params?.host
+  // if(host){
+  //   const domain = req?.headers?.host?.split('.').slice(1, req?.headers?.host?.split('.').length)[0]
+  //   return {
+  //       redirect: {
+  //           destination: process.env.NODE_ENV === "development" ? `http://${domain}/${host}` : `https://${domain}/${host}`,
+  //           permanent: false,
+  //       },
+  //   }
+  // }
+
+
   const { publication } = ctx.params as IParams;
 
   if (!publication) {
@@ -136,6 +159,15 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       return element !== undefined;
     });
 
+    //need to count subscribers later 
+
+    // const { data, error, count } = await supabase
+    //   .from('user_subscriptions')
+    //   .select('*')
+    //   .eq('publication', 'jake')
+
+    // console.log(error, data, count)
+
     return {
       props: { pbl: pbl, entries: entrieFiltered, profiles: profiles },
     }
@@ -151,11 +183,16 @@ type Props = {
 }
 
 
-const Data = ({ pbl, entries, profiles }: Props) => {
+export const Data = ({ pbl, entries, profiles }: Props) => {
 
+  // const subscribed = useRecoilValueAfterMount(curationItems, [])
   const setCurrentArticle = useSetRecoilState(Current)
   const pinnedList = useRecoilValueAfterMount(pinnedItems, null) //we set the items to null to prevent initial rendering with empty values and waiting for the list to load
   const router = useRouter()
+  const { user } = useAuth()
+  const subscribed = useRecoilValueLoadable(subscribedSpaces(user?.id))
+  const refreshSubscribed = useRecoilRefresher(subscribedSpaces(user?.id))
+
 
   useEffect(() => {
     setCurrentArticle({
@@ -170,14 +207,31 @@ const Data = ({ pbl, entries, profiles }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entries])
 
+  const Subscribe = async () => {
+    if (!user || !user.id) { return }
+    await supabase.from('user_subscriptions')
+      .insert([{ type: 'PUBLICATION', publication: pbl.ensLabel, owner: user.id }])
+    // supabase
+    refreshSubscribed()
+  }
+
+  const Unsubscribe = async () => {
+    if (!user || !user.id) { return }
+    await supabase.from('user_subscriptions')
+      .delete()
+      .eq('type', 'PUBLICATION')
+      .eq('owner', user.id)
+    refreshSubscribed()
+  }
+
   return (
     <Layout>
       <Box layout='flexBoxRow' css={{ width: '100%', justifyContent: 'space-between' }}>
-        <Box layout='flexBoxColumn' css={{ width: '100%' }}>
+        <Box layout='flexBoxColumn' css={{ width: '$body', }}>
           <Header.Root controls={<Header.ViewControls />}>
-            <Box layout='flexBoxRow' css={{ gap: '$4' }}>
-              <Box layout='flexBoxColumn'>
-                <Box layout='flexBoxRow'>
+            <Box layout='flexBoxRow' css={{ gap: '$4', width: '100%', height: '100%', }}>
+              <Box layout='flexBoxRow' css={{ width: '100%', height: '100%', justifyContent: 'flex-start', gap: '$2', alignItems: 'center' }}>
+                <Box layout='flexBoxRow' css={{ height: '100%', alignItems: 'center' }}>
                   <Profile
                     size={'lg'}
                     profile={{ avatarURL: entries[0]?.publication?.avatarURL, displayName: entries[0]?.publication?.displayName, ensLabel: pbl.ensLabel }} />
@@ -186,13 +240,44 @@ const Data = ({ pbl, entries, profiles }: Props) => {
                   <Link passHref={true} href={`/${pbl.ensLabel}`}>
                     <Box>
                       <Heading
-                        css={{ cursor: 'pointer', transition: '$color', '&:hover': { color: '$foregroundTextBronze' } }}
+                        css={{
+                          position: 'relative', top: '-4px', //<- optical adjustment
+                          cursor: 'pointer', transition: '$color', '&:hover': { color: '$foregroundTextBronze' }
+                        }}
                         size={'h1'}
                         color={"foregroundText"}>{entries[0]?.publication?.displayName ? entries[0]?.publication?.displayName : pbl.ensLabel}&nbsp;</Heading>
                     </Box>
                   </Link>
-
                 </Box>
+
+                <Button
+                  css={{
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      border: '1px solid transparent',
+                      color: '$foregroundTextBronze',
+                    },
+                    border: '1px solid transparent'
+                  }}
+                  disabled={!user?.isConnected || !user.id || subscribed.state === 'loading' || subscribed.state === 'hasError'}
+                  onClick={() => {
+                    if (subscribed.state !== 'hasValue') return;
+                    if (subscribed.contents.find((item: any) => item.publication === pbl.ensLabel)) {
+                      Unsubscribe()
+                    } else {
+                      Subscribe()
+                    }
+                  }}>
+                  {subscribed.state === 'hasValue' && (
+                    subscribed.contents.find((item: any) => item.publication === pbl.ensLabel) ? 'Unsubscribe' : <>●&thinsp;●&thinsp;●</>
+                  )}
+                  {subscribed.state === 'loading' && (
+                    <>Loading</>
+                  )}
+                  {subscribed.state === 'hasError' && ('Subscribe')}
+                </Button>
+
+
 
               </Box>
             </Box>
@@ -216,7 +301,7 @@ const Data = ({ pbl, entries, profiles }: Props) => {
           <Contributors data={profiles} Open={(route: string) => router.push(route)} />
         </Box>
       </Box>
-    </Layout>
+    </Layout >
   )
 }
 

@@ -47,7 +47,7 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
         },
         fontWeights: {
             min: 300,
-            max: 700,
+            max: 500,
         },
         lineHeights: {
             1: "125%",
@@ -78,6 +78,7 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             round: "9999px",
         },
         shadows: {
+            small: `0px 2px 4px 2px  ${sand.sand7}`,
             normal: `0px 2px 8px 2px ${sand.sand6}`,
             large: `0px 1px 8px ${sand.sand6}`,
         },
@@ -148,6 +149,7 @@ export const lightThemeBlue = createTheme('light-blue', {
         error: red.red10
     },
     shadows: {
+        small: `0px 2px 4px 2px rgba(0,0,0, 0.1)`,
         normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
         large: `0px 1px 8px ${sand.sand6}`,
     },
@@ -163,14 +165,14 @@ export const darkThemePlain = createTheme('dark-plain', {
         foregroundBorder: sandDark.sand8,
         highlight: sandDark.sand3,
         tint: sandDark.sand2,
-        foregroundText: sandDark.sand9,
+        foregroundText: sandDark.sand10,
         text: sandDark.sand12,
         //bronze
         backgroundBronze: sandDark.sand1,
         foregroundBronze: sandDark.sand9,
         foregroundTintBronze: sandDark.sand5,
         highlightBronze: sandDark.sand3,
-        foregroundTextBronze: sandDark.sand9,
+        foregroundTextBronze: sandDark.sand10,
         textBronze: sandDark.sand12,
         error: red.red10
     },
@@ -185,22 +187,23 @@ export const darkTheme = createTheme('dark-blue', {
     colors: {
         // ...sand,
         background: sandDark.sand1,
-        foreground: sandDark.sand8,
-        foregroundBorder: sandDark.sand8,
+        foreground: sandDark.sand9,
+        foregroundBorder: sandDark.sand9,
         highlight: sandDark.sand3,
         tint: sandDark.sand2,
-        foregroundText: sandDark.sand9,
+        foregroundText: sandDark.sand11,
         text: sandDark.sand12,
         //bronze
         backgroundBronze: indigoDark.indigo1,
         foregroundTintBronze: indigoDark.indigo5,
-        foregroundBronze: indigoDark.indigo8,
+        foregroundBronze: indigoDark.indigo9,
         highlightBronze: indigoDark.indigo3,
         foregroundTextBronze: indigoDark.indigo9,
         textBronze: indigoDark.indigo12,
         error: red.red10
     },
     shadows: {
+        small: `0px 2px 4px 2px rgba(0,0,0, 0.1)`,
         normal: `0px 2px 8px 4px rgba(0,0,0, 0.15)`,
         large: `0px 4px 8px 4px rgba(0,0,0, 0.15)`,
     },
@@ -261,22 +264,22 @@ export const globalStyles = globalCss({
     },
     "body": { background: '$background' },
     "body, html, #__next": { minHeight: "100%", height: "100%" },
-    h1: { fontSize: "$1", letterSpacing: '-1px', fontFamily: 'Inter, Helvetica, sans-serif', lineHeight: "$6", fontWeight: "500", margin: 'calc($4 * 1) 0 $3 0' },
-    h2: { fontSize: "$2", lineHeight: "$5", fontWeight: "500", margin: 'calc($4 * 1.5) 0 $2 0', fontFamily: 'Inter, Helvetica, sans-serif' },
-    h3: { fontSize: "$3", lineHeight: "$4", margin: '$4 0 $2 0', fontWeight: "500", fontFamily: 'Inter, Helvetica, sans-serif' },
-    h4: { fontSize: "$4", lineHeight: "$3", margin: '$4 0 $2 0', fontWeight: "500", fontFamily: 'Inter, Helvetica, sans-serif' },
-    h5: { fontSize: "$5", lineHeight: "$2", margin: '$4 0 $2 0', fontWeight: "500", fontFamily: 'Inter, Helvetica, sans-serif' },
+    h1: { fontSize: "$1", letterSpacing: '-1px', fontFamily: 'Inter, Helvetica, sans-serif', lineHeight: "$6", fontWeight: "$max", margin: 'calc($4 * 1) 0 $3 0' },
+    h2: { fontSize: "$2", lineHeight: "$5", fontWeight: "$max", margin: 'calc($4 * 1.5) 0 $2 0', fontFamily: 'Inter, Helvetica, sans-serif' },
+    h3: { fontSize: "$3", lineHeight: "$4", margin: '$4 0 $2 0', fontWeight: "$max", fontFamily: 'Inter, Helvetica, sans-serif' },
+    h4: { fontSize: "$4", lineHeight: "$3", margin: '$4 0 $2 0', fontWeight: "$max", fontFamily: 'Inter, Helvetica, sans-serif' },
+    h5: { fontSize: "$5", lineHeight: "$2", margin: '$4 0 $2 0', fontWeight: "$max", fontFamily: 'Inter, Helvetica, sans-serif' },
     p: { fontSize: "$p", lineHeight: "$p", margin: '$2 0', fontWeight: "300" },
     span: { fontSize: "$p", lineHeight: "$p", fontWeight: "300" },
     b: {
-        fontWeight: "700",
+        fontWeight: "$max",
         fontSize: 'inherit'
     },
     i: {
         fontSize: 'inherit'
     },
     strong: {
-        fontWeight: "700",
+        fontWeight: "$max",
         fontSize: 'inherit'
     },
     hr: {

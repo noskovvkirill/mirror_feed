@@ -98,7 +98,7 @@ const Data = ({ entry }: Props) => {
               <Box layout='flexBoxRow'>
                 <Profile
                   size={'md'}
-                  profile={{ avatarURL: entry.publication.avatarURL, displayName: entry.publication.ensLabel, ensLabel: entry.publication.ensLabel }} />
+                  profile={{ avatarURL: entry.publication?.avatarURL, displayName: entry.publication.ensLabel, ensLabel: entry.publication.ensLabel }} />
                 &nbsp;&nbsp;
                 <Link passHref={true} href={`/${entry.publication.ensLabel}`}>
                   <Box>

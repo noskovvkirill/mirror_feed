@@ -2,14 +2,13 @@ import { Contract } from "ethers";
 import { ERC20Abi } from "contracts/ERC20";
 
 
-export const AddressPrettyPrint = (address:string, maxLength=10) =>{
-    if(!address || typeof address !== 'string' || address === undefined) return ''
-    if(address.length <= maxLength) return address
-    if(maxLength <=4) return address.slice(0,maxLength)
-    const newAddress = address.slice(0,maxLength/2) + '...' + address.slice(-maxLength/2, address.length)
+export const AddressPrettyPrint = (address: string, maxLength = 10) => {
+    if (!address || typeof address !== 'string' || address === undefined) return ''
+    if (address.length <= maxLength) return address
+    if (maxLength <= 4) return address.slice(0, maxLength)
+    const newAddress = address.slice(0, maxLength / 2) + '...' + address.slice(-maxLength / 2, address.length)
     return newAddress
 }
-
 
 
 const tokenAddress = process.env.NEXT_PUBLIC_FEED_CONTRACT;
@@ -21,11 +20,11 @@ interface IGetBalance {
 
 export const getBalance = async ({ provider, address }: IGetBalance) => {
     if (!tokenAddress) return;
-    try{
+    try {
         const contract = new Contract(tokenAddress, ERC20Abi, provider);
-            const balance = await contract.balanceOf(address);
+        const balance = await contract.balanceOf(address);
         return balance.toString();
-    } catch(e){
+    } catch (e) {
         return 0
     }
 };
@@ -35,17 +34,16 @@ export const getBalance = async ({ provider, address }: IGetBalance) => {
 interface IGetAllowance {
     provider: any;
     address: string;
-    addressSpender:string;
+    addressSpender: string;
 }
 
 export const getAllowance = async ({ provider, address, addressSpender }: IGetAllowance) => {
     if (!tokenAddress) return;
-    try{
+    try {
         const contract = new Contract(tokenAddress, ERC20Abi, provider);
         const balance = await contract.allowance(address, addressSpender);
-        console.log('allowance get allowance',  address, addressSpender)
         return balance.toString();
-    } catch(e){
+    } catch (e) {
         return 0
     }
 };

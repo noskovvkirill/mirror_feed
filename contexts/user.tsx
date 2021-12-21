@@ -1,6 +1,7 @@
 import React, { useContext, createContext, useState, useMemo, useCallback, useEffect } from 'react'
 import type { Dispatch } from 'react'
 import type { providers } from 'ethers'
+import jwt from 'jsonwebtoken'
 // import type {TransactionResponse} from '@ethersproject/abstract-provider'
 
 import WalletConnectProvider from "@walletconnect/web3-provider";
@@ -8,12 +9,15 @@ import { getBalance, getAllowance } from 'src/utils'
 import { ethers } from 'ethers'
 import { queryContributor } from 'src/queries'
 import { request } from 'graphql-request'
+import { supabase } from 'src/client'
 
 declare let window: any;
+
 
 export type UserTypeProfile = Pick<UserType, 'avatarURL' | 'displayName' | 'address'> & { publications?: { id: number, ensLabel: string }[] }
 
 export type UserType = {
+    id?: string,
     address?: string,
     balance?: number,
     allowance?: {
@@ -24,6 +28,7 @@ export type UserType = {
     network?: providers.Network,
     displayName?: string,
     avatarURL?: string,
+    email?: string,
     provider?: providers.Web3Provider | providers.WebSocketProvider,
 }
 
@@ -43,6 +48,29 @@ type UserContext = {
 const User = createContext<UserContext | null>(null)
 
 
+const ParseCookie = (cookies: string) => {
+    const cookie = cookies
+        .split(';')
+        .reduce((res, c) => {
+            const [key, val] = c.trim().split('=').map(decodeURIComponent)
+            try {
+                return Object.assign(res, { [key]: JSON.parse(val) })
+            } catch (e) {
+                return Object.assign(res, { [key]: val })
+            }
+        }, {}) as { token: string }
+    return cookie.token
+}
+
+const ValidateCookie = (token: string) => {
+    const payload = jwt.decode(token) as { exp: number, sub: string }
+    if (!payload) return { exp: false, sub: undefined }
+    const timeNow = Number(new Date())
+    const expiration = timeNow - payload.exp
+    if (expiration > 0) return { exp: false, sub: payload.sub }
+    else return { exp: true, sub: payload.sub }
+}
+
 export const UserProvider = ({ children }: { children: React.ReactNode[] | React.ReactNode }) => {
 
     const [user, changeUser] = useState<UserType | null>(null)
@@ -58,7 +86,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
         const spender = process.env.NEXT_PUBLIC_GOV_CONTRACT;
         if (!spender) throw "gov contract was not found";
         const allowance = await getAllowance({ provider: provider, address: address, addressSpender: spender })
-        console.log('gov allowanc', allowance)
         return ethers.utils.formatEther(allowance)
     }
 
@@ -68,44 +95,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
         const allowance = await getAllowance({ provider: provider, address: address, addressSpender: spender })
         return ethers.utils.formatEther(allowance)
     }
-
-
-    // const UpdateUserSpaces = useCallback(async() => {
-    //     const endpoint = process.env.NEXT_PUBLIC_GRAPH_ENDPOINT
-    //     const address = user?.address
-    //     console.group('update u spaces callback', address, endpoint)
-    //     if(!address) return;
-    //     if(!endpoint) throw "graphql endpoint was not found";
-
-    //     try{
-    //     const {spaces}:{spaces:SpaceType[]} = await request(endpoint, userSpaces, {owner:address})
-    //     // return spaces
-    //     // console.log('user spaces updates', spaces)
-    //     if(spaces){
-    //         console.log('setting spaces', spaces)
-    //     localStorage.setItem(`mirror-feed-user-space-${address}`, JSON.stringify(spaces))   
-    //     changeUser((prev)=>{
-    //         if(!prev) return prev;
-    //         return {...prev, spaces}
-    //     })} else {
-    //           console.log('setting zero spaces', spaces)
-    //          changeUser((prev)=>{
-    //         if(!prev) return prev;
-    //         return {...prev, spaces:[]}
-    //     })
-    // }} catch(e){
-    //     console.error('error in update user spaces', e)
-    // }
-
-    // },[user?.address])
-
-    // const getUserSpaces = async(address:string) => {
-    //     const endpoint = process.env.NEXT_PUBLIC_GRAPH_ENDPOINT
-    //     if(!endpoint) throw "graphql endpoint was not found";
-    //     const {spaces}:{spaces:SpaceType[]} = await request(endpoint, userSpaces, {owner:address})
-    //     return spaces
-    // }
-
 
     const UpdateBalance = useCallback(async () => {
         return new Promise<void>(async (resolve, reject) => {
@@ -143,6 +132,33 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                 const signer = web3Provider.getSigner();
                 const address = await signer.getAddress()
                 const network = await web3Provider.getNetwork()
+                const token = ParseCookie(document.cookie)
+                const { exp: isValidCookie, sub } = ValidateCookie(token)
+                let userId = sub;
+                if (!isValidCookie || !token) {
+                    const nonce = await fetch(`/api/generateNonce`, {
+                        method: 'POST',
+                        body: JSON.stringify({ walletAddress: address }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(res => res.json()).then(res => res.nonce[0].nonce)
+
+                    const signature = await signer.signMessage(nonce)
+                    const { token, id } = await fetch(`/api/validateNonce`, {
+                        method: 'POST',
+                        body: JSON.stringify({ nonce: nonce, walletAddress: address, signature: signature }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(res => res.json())
+                        .catch(e => console.log(e)) as { token: string, id: string }
+                    await supabase.auth.setAuth(token);
+                    userId = id;
+                }
+
+                await supabase.auth.setAuth(token);
                 const mirrorUser = await request('https://mirror-api.com/graphql', queryContributor, { address: address })
                     .then(({ userProfile }) => {
                         return userProfile
@@ -152,19 +168,19 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                         return
                     })
 
-                if (web3Provider && address && signer) {
+                if (web3Provider && address && signer && userId) {
                     try {
                         const balance = await getUserBalance(address, web3Provider)
                         const govAllowance = await getGovAllowance(address, web3Provider)
                         const spaceAllowance = await getSpacesAllowance(address, web3Provider)
-                        // const userSpaces = await getUserSpaces(address)
-                        // const userSpaces = localStorage.getItem(`mirror-feed-user-space-${address}`)    
                         localStorage.setItem('mirror-feed-last-provider', 'wc')
                         changeUser((user) => {
                             const newUser = Object.assign({}, user)
                             delete newUser.provider
+                            newUser.id = userId;
                             newUser.address = address
                             newUser.isConnected = true;
+                            newUser.email = mirrorUser?.email
                             newUser.network = network;
                             // load them in separate context to speed up the signing in
                             newUser.displayName = mirrorUser?.displayName
@@ -184,6 +200,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                             const newUser = Object.assign({}, user)
                             delete newUser.provider
                             newUser.address = address
+                            newUser.email = mirrorUser?.email
                             newUser.isConnected = true;
                             newUser.network = network;
                             newUser.balance = 0;
@@ -199,16 +216,38 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
             setIsLoading(false)
             return
         }
-        //not suppported yet
-        // const isUnlocked = await window.ethereum.isUnlocked()
-        // if(!isUnlocked) {
-        //     alert('unlock your metamask')
-        // }
 
         const web3Provider = new ethers.providers.Web3Provider(window.ethereum, "any");
         await web3Provider.send("eth_requestAccounts", []);
         const signer = web3Provider.getSigner();
         const address = await signer.getAddress()
+        const token = ParseCookie(document.cookie)
+        const { exp: isValidCookie, sub: sub } = ValidateCookie(token)
+        let userId = sub;
+        if (!isValidCookie || !token) {
+            const nonce = await fetch(`/api/generateNonce`, {
+                method: 'POST',
+                body: JSON.stringify({ walletAddress: address }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(res => res.json()).then(res => res.nonce[0].nonce)
+
+            const signature = await signer.signMessage(nonce)
+            const { token, id } = await fetch(`/api/validateNonce`, {
+                method: 'POST',
+                body: JSON.stringify({ nonce: nonce, walletAddress: address, signature: signature }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .catch(e => console.log(e)) as { token: string, id: string }
+            await supabase.auth.setAuth(token);
+            userId = id;
+        }
+
+        await supabase.auth.setAuth(token);
         const network = await web3Provider.getNetwork()
 
         const mirrorUser = await request('https://mirror-api.com/graphql', queryContributor, { address: address })
@@ -220,19 +259,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                 return
             })
 
-        if (web3Provider && address && signer) {
+        if (web3Provider && address && signer && userId) {
             try {
                 const balance = await getUserBalance(address, web3Provider)
                 const govAllowance = await getGovAllowance(address, web3Provider)
                 const spaceAllowance = await getSpacesAllowance(address, web3Provider)
-                // const userSpaces = await getUserSpaces(address)
-                // const userSpaces = localStorage.getItem(`mirror-feed-user-space-${address}`)    
-
                 localStorage.setItem('mirror-feed-last-provider', 'metamask')
                 changeUser((user) => {
                     const newUser = Object.assign({}, user)
                     delete newUser.provider
                     newUser.address = address
+                    newUser.email = mirrorUser?.email
+                    newUser.id = userId
                     newUser.isConnected = true;
                     //
                     newUser.displayName = mirrorUser?.displayName
@@ -242,7 +280,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                         space: parseInt(spaceAllowance)
                     }
                     //
-                    // newUser.spaces = userSpaces
                     newUser.network = network;
                     newUser.provider = web3Provider;
                     newUser.balance = parseFloat(balance)
@@ -253,9 +290,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                 changeUser((user) => {
                     const newUser = Object.assign({}, user)
                     delete newUser.provider
+                    newUser.id = userId
                     newUser.address = address
                     newUser.isConnected = true;
                     //
+                    newUser.email = mirrorUser?.email
                     newUser.displayName = mirrorUser?.displayName
                     newUser.avatarURL = mirrorUser?.avatarURL
                     //
@@ -267,15 +306,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
             }
             setIsLoading(false)
         }
-
-        // //
-        // const govAllowance = await getGovAllowance(address, web3Provider)
-        // const spaceAllowance = await getSpacesAllowance(address, web3Provider)
-        // const userSpaces = await getUserSpaces(address)
-
     }, [])
 
     const Disconnect = useCallback(async () => {
+        document.cookie = 'token='
         if (user && user.provider) {
             try {
                 changeUser({ isConnected: false })

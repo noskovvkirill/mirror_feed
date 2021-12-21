@@ -4,7 +4,8 @@ import type { CSS } from '@stitches/react'
 
 const StyledContainer = styled('div', {
     marginTop: 'calc($4 * 3)',
-    marginBottom: 'calc($4 * 2)',
+    marginBottom: 'calc($4 * 1.5)',
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
     width: '100%',

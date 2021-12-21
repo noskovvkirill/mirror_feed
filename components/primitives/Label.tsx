@@ -5,24 +5,27 @@ const Label = styled("span", {
     variants: {
         color: {
             default: {
-                color:'inherit'
+                color: 'inherit'
             },
-            error:{
-                color:'$error'
+            foreground: {
+                color: '$foregroundText'
+            },
+            error: {
+                color: '$error'
             }
         },
-        size:{
-            default:{
-                fontSize:'$6'
+        size: {
+            default: {
+                fontSize: '$6'
             },
-            normal:{
-                fontSize:'$p'
+            normal: {
+                fontSize: '$p'
             }
         }
     },
     defaultVariants: {
         color: "default",
-        size:'default'
+        size: 'default'
     },
 });
 
