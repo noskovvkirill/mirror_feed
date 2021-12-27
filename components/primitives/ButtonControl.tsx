@@ -176,6 +176,9 @@ const Control = ({ children, direction, label, pos }: {
     )
 }
 
+Control.displayName = 'Control'
+
+
 const ButtonControl = forwardRef((
     { children, selected,
         css,
@@ -234,5 +237,6 @@ const ButtonControl = forwardRef((
         </>
     )
 })
+ButtonControl.displayName = 'ButtonControl'
 
 export default memo(ButtonControl)
