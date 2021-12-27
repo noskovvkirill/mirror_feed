@@ -4,6 +4,7 @@ import { styled, keyframes } from "stitches.config"
 import ButtonPopover from "@/design-system/primitives/ButtonPopover"
 import * as Tabs from '@radix-ui/react-tabs';
 import Profile from '@/design-system/icons/Profile'
+import ManageSubscriptions from '@/design-system/ManageSubscriptions'
 import React from 'react'
 import { useRouter } from 'next/router'
 // import {Color} from '@/design-system/Nav'
@@ -64,6 +65,9 @@ export const StyledTabsTrigger = styled(Tabs.Trigger, {
     fontSize: '$6',
     padding: '$0 $2',
     boxSizing: 'border-box',
+    border: '0',
+    background: 'transparent',
+    color: '$foregroundText',
     height: '33px',
     '&:focus': {
         outline: 'none'
@@ -119,7 +123,8 @@ const Settings = ({ UpdateTheme, themes, theme }: ISettings) => {
                 width: "33px",
                 height: "33px",
                 display: 'flex',
-                outline: '1px solid $foreground',
+                // outline: '1px solid $foreground',
+                boxShadow: '$outline',
                 border: '3px solid $foreground',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -153,7 +158,7 @@ const Settings = ({ UpdateTheme, themes, theme }: ISettings) => {
                         width: "33px",
                         height: "33px",
                         display: 'flex',
-                        outline: '1px solid $foreground',
+                        boxShadow: '$outline',
                         border: '3px solid $foreground',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -201,6 +206,14 @@ const Settings = ({ UpdateTheme, themes, theme }: ISettings) => {
                                 }
 
                             })()}
+
+                            <ManageSubscriptions>
+                                <Button tabIndex={0}
+                                    // onClick={() => router.push('/list')}
+                                    css={{ width: '100%', border: '1px solid transparent' }}>
+                                    My Subscriptions
+                                </Button>
+                            </ManageSubscriptions>
 
                             <Button tabIndex={0}
                                 onClick={() => router.push('/list')}
@@ -259,9 +272,13 @@ const Settings = ({ UpdateTheme, themes, theme }: ISettings) => {
                                                         ? `linear-gradient(0deg, #273E89 50%, #2E2E2B 50%)`
                                                         : `linear-gradient(145deg, #1B1B18 50%, rgba(255, 255, 255, 1) 50%)`, //system
                                         borderRadius: '$round',
-                                        outline: item !== theme ? '1px solid $foreground' : '3px solid $foreground',
+                                        // WebKitBorderRadius: '$round',
+                                        // box-shadow: 0 0 3px #ddd;
+
+
+                                        boxShadow: item !== theme ? '$outline' : '$outlineLarge',
                                         '&:hover': {
-                                            outline: '3px solid $foreground'
+                                            boxShadow: '$outlineLarge'
                                         }
                                     }}>
 

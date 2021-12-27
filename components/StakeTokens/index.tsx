@@ -11,7 +11,7 @@ import Box from '@/design-system/primitives/Box'
 import Loader from '@/design-system/primitives/Loader'
 import Tag from '@/design-system/primitives/Tag'
 import Heading from '@/design-system/primitives/Heading'
-import { StyledContent, StyledTitle, StyledOverlay, Root } from '@/design-system/primitives/Dialog'
+import { StyledContent, StyledTitle, StyledOverlay, Root, Portal } from '@/design-system/primitives/Dialog'
 import Info from '@/design-system/primitives/Info'
 import Slider from '@/design-system/primitives/Slider'
 import Item from '@/design-system/StakeTokens/Item'
@@ -205,152 +205,154 @@ const StakeTokens = ({ spaceId, selectedId, spaceTitle, isOpen, setIsOpen, stake
             open={isOpen}
             onOpenChange={setIsOpen}
             modal={true}>
-            <StyledOverlay />
-            <StyledContent>
-                <Box layout='flexBoxRow' css={{ alignItems: 'center', marginBottom: '$2', justifyContent: 'space-between' }}>
-                    <Box layout='flexBoxRow' css={{ alignItems: 'center', margin: '0 0 $2 0' }} ><Heading size={'h4'} color={'foregroundText'}>Stake tokens</Heading> <Heading size={'h4'} color='highlight' >{spaceTitle}</Heading></Box>
-                    <Info>
-                        Stake your tokens for the selected entries. Authors
-                        a rewarded based on the amount + time
-                        of stacking. You can unstake the tokens after one week.
-                        All the entiries will be permanently displayed on your feed.
-                    </Info>
-                </Box>
-
-                <Box layout='flexBoxRow' css={{ width: '100%', position: 'relative' }}>
-                    {isCollapsed && (
-                        <Box
-                            onClick={() => { if (isCollapsed) setIsCollapsed(false) }}
-                            css={{
-                                width: '100%', height: '100%',
-                                // mixBlendMode:'multiply',
-                                opacity: 0.75,
-                                pointerEvents: 'all',
-                                borderRadius: '$2',
-                                transition: '$background',
-                                '&:hover': {
-                                    backgroundColor: '$tint',
-                                    cursor: 'pointer'
-                                },
-                                position: 'absolute', left: 0, top: 0, boxSizing: 'border-box',
-                                backgroundColor: 'transparent'
-                            }}>
-                        </Box>
-                    )}
-                    <StyledContainerAll
-                        collapsed={isCollapsed}
-                        onClick={() => { if (isCollapsed) setIsCollapsed(false) }}>
-                        <Slider
-                            onChange={ChangeValueSlider}
-                            color={'highlight'}
-                            disabled={isCollapsed}
-                            label={'stake amount'}
-                            min={0} />
-                    </StyledContainerAll>
-                    <StyledContainerAll
-                        collapsed={isCollapsed}
-                        css={{ width: '100%' }}
-                        onClick={() => { if (isCollapsed) setIsCollapsed(false) }}>
-                        <span>Batch stake tokens for all entries</span>
-                        <Box
-                            onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                                const code = e.key
-                                if (Number.isNaN(Number(code))) e.preventDefault();
-                            }}
-                            onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                const value = parseInt(e.target.innerHTML)
-                                if (isNaN(value)) { setPriceBatch(0); return }
-                                setPriceBatch(value)
-                            }}
-                            suppressContentEditableWarning={true}
-                            contentEditable={!isCollapsed}
-                            css={{
-                                maxWidth: '100%',
-                                fontSize: '$2',
-                                margin: 0,
-                                outline: 'none',
-                                width: '100%',
-                                color: !isCollapsed ? '$foregroundTextBronze' : '$foreground',
-                                minWidth: '$2',
-                                border: 0,
-                                padding: '0'
-                            }}
-
-                        >{defaultValue}</Box>
-                        <span>● Tokens per item</span>
-                    </StyledContainerAll>
-                </Box>
-
-
-                <Box layout='flexBoxColumn' css={{
-                    padding: '$2 0'
-                }}>
-
-                    <StyledContainerByItem
-                        collapsed={isCollapsed}
-                        tabIndex={0}
-                        onClick={() => {
-                            if (!isCollapsed) { setIsCollapsed(!isCollapsed) }
-                        }}
-                    >
-                        {notsync.items.length} items to stake
-                        <SettingsIcon />
-                    </StyledContainerByItem>
-
-                    {isCollapsed && (
-                        <StyledContainerItems>
-                            {notsync?.items.map((item, index: number) => {
-                                if (item) {
-                                    return (
-                                        <Item
-                                            priceBatch={priceBatch}
-                                            index={index}
-                                            onChange={ChangeValueItem}
-                                            key={item.item.digest}
-                                            item={item}
-                                        />
-                                    )
-                                }
-                            })}
-                        </StyledContainerItems>
-                    )}
-                </Box>
-
-                <Box layout='flexBoxRow' css={{ alignItems: 'center', padding: '$0 0', justifyContent: 'space-between' }}>
-                    {(user?.balance && user?.balance <= CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed))
-                        ? <Button onClick={BatchSync} disabled>Synchronize items</Button>
-                        : <>
-                            {(user?.allowance?.gov && user?.allowance?.gov >= CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed)
-                                && user?.balance && user?.balance >= CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed))
-                                ? <Button onClick={BatchSync}>Synchronize items</Button>
-                                :
-                                <Box layout='flexBoxRow'>
-                                    <Button onClick={ApproveSpend}>
-                                        {isApproved === 'false'
-                                            ? <>Approve to spend $FEED</>
-                                            : <Loader size='small' />
-                                        }
-                                    </Button>
-                                    {isApproved === 'error' && (
-                                        <Label>Something went wrong...Try to refresh the page</Label>
-                                    )}
-                                </Box>
-                            }
-                        </>
-                    }
-                    <Box layout='flexBoxRow'>
-                        <Label size='normal'
-                            color={(user?.balance && CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed) >= user?.balance) ? 'error' : 'default'}
-                        >Your Balance {user?.balance}&thinsp;● &nbsp;</Label>
-                        <Label size='normal'>Total {CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed)}&thinsp;●</Label>
+            <Portal>
+                <StyledOverlay />
+                <StyledContent>
+                    <Box layout='flexBoxRow' css={{ alignItems: 'center', marginBottom: '$2', justifyContent: 'space-between' }}>
+                        <Box layout='flexBoxRow' css={{ alignItems: 'center', margin: '0 0 $2 0' }} ><Heading size={'h4'} color={'foregroundText'}>Stake tokens</Heading> <Heading size={'h4'} color='highlight' >{spaceTitle}</Heading></Box>
+                        <Info>
+                            Stake your tokens for the selected entries. Authors
+                            a rewarded based on the amount + time
+                            of stacking. You can unstake the tokens after one week.
+                            All the entiries will be permanently displayed on your feed.
+                        </Info>
                     </Box>
-                </Box>
-                <Box css={{ width: '100%', padding: '$1 0' }}>
-                    <Label>Items with 0 values are automatically ignored</Label> <br />
-                    <Label>Verify the total price before transacting</Label>
-                </Box>
 
-            </StyledContent>
+                    <Box layout='flexBoxRow' css={{ width: '100%', position: 'relative' }}>
+                        {isCollapsed && (
+                            <Box
+                                onClick={() => { if (isCollapsed) setIsCollapsed(false) }}
+                                css={{
+                                    width: '100%', height: '100%',
+                                    // mixBlendMode:'multiply',
+                                    opacity: 0.75,
+                                    pointerEvents: 'all',
+                                    borderRadius: '$2',
+                                    transition: '$background',
+                                    '&:hover': {
+                                        backgroundColor: '$tint',
+                                        cursor: 'pointer'
+                                    },
+                                    position: 'absolute', left: 0, top: 0, boxSizing: 'border-box',
+                                    backgroundColor: 'transparent'
+                                }}>
+                            </Box>
+                        )}
+                        <StyledContainerAll
+                            collapsed={isCollapsed}
+                            onClick={() => { if (isCollapsed) setIsCollapsed(false) }}>
+                            <Slider
+                                onChange={ChangeValueSlider}
+                                color={'highlight'}
+                                disabled={isCollapsed}
+                                label={'stake amount'}
+                                min={0} />
+                        </StyledContainerAll>
+                        <StyledContainerAll
+                            collapsed={isCollapsed}
+                            css={{ width: '100%' }}
+                            onClick={() => { if (isCollapsed) setIsCollapsed(false) }}>
+                            <span>Batch stake tokens for all entries</span>
+                            <Box
+                                onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                    const code = e.key
+                                    if (Number.isNaN(Number(code))) e.preventDefault();
+                                }}
+                                onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    const value = parseInt(e.target.innerHTML)
+                                    if (isNaN(value)) { setPriceBatch(0); return }
+                                    setPriceBatch(value)
+                                }}
+                                suppressContentEditableWarning={true}
+                                contentEditable={!isCollapsed}
+                                css={{
+                                    maxWidth: '100%',
+                                    fontSize: '$2',
+                                    margin: 0,
+                                    outline: 'none',
+                                    width: '100%',
+                                    color: !isCollapsed ? '$foregroundTextBronze' : '$foreground',
+                                    minWidth: '$2',
+                                    border: 0,
+                                    padding: '0'
+                                }}
+
+                            >{defaultValue}</Box>
+                            <span>● Tokens per item</span>
+                        </StyledContainerAll>
+                    </Box>
+
+
+                    <Box layout='flexBoxColumn' css={{
+                        padding: '$2 0'
+                    }}>
+
+                        <StyledContainerByItem
+                            collapsed={isCollapsed}
+                            tabIndex={0}
+                            onClick={() => {
+                                if (!isCollapsed) { setIsCollapsed(!isCollapsed) }
+                            }}
+                        >
+                            {notsync.items.length} items to stake
+                            <SettingsIcon />
+                        </StyledContainerByItem>
+
+                        {isCollapsed && (
+                            <StyledContainerItems>
+                                {notsync?.items.map((item, index: number) => {
+                                    if (item) {
+                                        return (
+                                            <Item
+                                                priceBatch={priceBatch}
+                                                index={index}
+                                                onChange={ChangeValueItem}
+                                                key={item.item.digest}
+                                                item={item}
+                                            />
+                                        )
+                                    }
+                                })}
+                            </StyledContainerItems>
+                        )}
+                    </Box>
+
+                    <Box layout='flexBoxRow' css={{ alignItems: 'center', padding: '$0 0', justifyContent: 'space-between' }}>
+                        {(user?.balance && user?.balance <= CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed))
+                            ? <Button onClick={BatchSync} disabled>Synchronize items</Button>
+                            : <>
+                                {(user?.allowance?.gov && user?.allowance?.gov >= CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed)
+                                    && user?.balance && user?.balance >= CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed))
+                                    ? <Button onClick={BatchSync}>Synchronize items</Button>
+                                    :
+                                    <Box layout='flexBoxRow'>
+                                        <Button onClick={ApproveSpend}>
+                                            {isApproved === 'false'
+                                                ? <>Approve to spend $FEED</>
+                                                : <Loader size='small' />
+                                            }
+                                        </Button>
+                                        {isApproved === 'error' && (
+                                            <Label>Something went wrong...Try to refresh the page</Label>
+                                        )}
+                                    </Box>
+                                }
+                            </>
+                        }
+                        <Box layout='flexBoxRow'>
+                            <Label size='normal'
+                                color={(user?.balance && CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed) >= user?.balance) ? 'error' : 'default'}
+                            >Your Balance {user?.balance}&thinsp;● &nbsp;</Label>
+                            <Label size='normal'>Total {CalculateTotal(notsync.items.length, priceBatch, valuesPerItem, isCollapsed)}&thinsp;●</Label>
+                        </Box>
+                    </Box>
+                    <Box css={{ width: '100%', padding: '$1 0' }}>
+                        <Label>Items with 0 values are automatically ignored</Label> <br />
+                        <Label>Verify the total price before transacting</Label>
+                    </Box>
+
+                </StyledContent>
+            </Portal>
         </Root>
     )
 }

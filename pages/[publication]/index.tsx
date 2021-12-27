@@ -5,6 +5,7 @@ import Heading from '@/design-system/primitives/Heading'
 import Profile from '@/design-system/primitives/Profile'
 import Button from '@/design-system/primitives/Button'
 import * as Header from '@/design-system/Feed/Header'
+import SubscribeSettings from '@/design-system/Feed/Header/SubscribeSettings'
 import Link from 'next/link'
 import GridPage from '@/design-system/Feed/GridPage'
 import Contributors from '@/design-system/Contributors';
@@ -207,30 +208,48 @@ export const Data = ({ pbl, entries, profiles }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entries])
 
-  const Subscribe = async () => {
-    if (!user || !user.id) { return }
-    await supabase.from('user_subscriptions')
-      .insert([{ type: 'PUBLICATION', publication: pbl.ensLabel, owner: user.id }])
-    // supabase
-    refreshSubscribed()
+  const Subscribe = async (): Promise<void> => {
+    return new Promise(async (resolve, reject) => {
+      if (!user || !user.id) { reject('no user'); return }
+      const { error } = await supabase.from('user_subscriptions')
+        .insert([{ type: 'PUBLICATION', publication: pbl.ensLabel, owner: user.id }])
+      if (error) {
+        reject(error?.message)
+        return;
+      }
+      refreshSubscribed()
+      resolve()
+    })
   }
 
-  const Unsubscribe = async () => {
-    if (!user || !user.id) { return }
-    await supabase.from('user_subscriptions')
-      .delete()
-      .eq('type', 'PUBLICATION')
-      .eq('owner', user.id)
-    refreshSubscribed()
+  const Unsubscribe = async (): Promise<void> => {
+    return new Promise(async (resolve, reject) => {
+      if (!user || !user.id) { reject('no user'); return }
+      if (!user || !user.id) { return }
+      const { error } = await supabase.from('user_subscriptions')
+        .delete()
+        .eq('type', 'PUBLICATION')
+        .eq('owner', user.id)
+        .eq('publication', pbl.ensLabel)
+      if (error) {
+        reject(error?.message)
+        return;
+      }
+      refreshSubscribed()
+      resolve()
+    })
   }
 
   return (
     <Layout>
-      <Box layout='flexBoxRow' css={{ width: '100%', justifyContent: 'space-between' }}>
+      <Box layout='flexBoxRow' css={{
+        width: '100%', justifyContent: 'space-between',
+
+      }}>
         <Box layout='flexBoxColumn' css={{ width: '$body', }}>
           <Header.Root controls={<Header.ViewControls />}>
             <Box layout='flexBoxRow' css={{ gap: '$4', width: '100%', height: '100%', }}>
-              <Box layout='flexBoxRow' css={{ width: '100%', height: '100%', justifyContent: 'flex-start', gap: '$2', alignItems: 'center' }}>
+              <Box layout='flexBoxRow' css={{ width: '100%', height: '100%', color: '$foregroundText', justifyContent: 'flex-start', gap: '$2', alignItems: 'center' }}>
                 <Box layout='flexBoxRow' css={{ height: '100%', alignItems: 'center' }}>
                   <Profile
                     size={'lg'}
@@ -250,7 +269,14 @@ export const Data = ({ pbl, entries, profiles }: Props) => {
                   </Link>
                 </Box>
 
-                <Button
+                <SubscribeSettings
+                  disabled={!user?.isConnected || !user.id || subscribed.state === 'loading' || subscribed.state === 'hasError'}
+                  Subscribe={Subscribe}
+                  Unsubscribe={Unsubscribe}
+                  isSubscribed={subscribed.state === 'hasValue' && subscribed.contents?.find((item: any) => item.ensLabel === pbl.ensLabel)}
+                />
+
+                {/* <Button
                   css={{
                     '&:hover': {
                       backgroundColor: 'transparent',
@@ -275,7 +301,7 @@ export const Data = ({ pbl, entries, profiles }: Props) => {
                     <>Loading</>
                   )}
                   {subscribed.state === 'hasError' && ('Subscribe')}
-                </Button>
+                </Button> */}
 
 
 
@@ -291,12 +317,16 @@ export const Data = ({ pbl, entries, profiles }: Props) => {
         <Box
           layout='flexBoxColumn'
           css={{
-            marginTop: 'calc($4 * 2 + $2)',
+            marginTop: 'calc($4 * 3 + $2)',
             padding: '$2 $4',
             width: 'fit-content',
             height: 'fit-content',
             alignItems: 'flex-end',
             borderRadius: '$2',
+            '@bp1': {
+              margin: 0,
+              display: 'none',
+            }
           }}>
           <Contributors data={profiles} Open={(route: string) => router.push(route)} />
         </Box>

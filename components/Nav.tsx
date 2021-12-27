@@ -10,18 +10,12 @@ import { useAuth } from "contexts/user"
 
 const StyledNav = styled(Box, {
     zIndex: '1000000',
-    padding: '0 $4',
-    // backdropFilter:'opacity(10%)',
-    // backgroundColor:'$background',
-    // height:'120px',
-    // mixBlendMode:'screen',
+    padding: '$0 $4 $0 0',
+    height: 'fit-content',
+    overflow: 'visible',
     display: 'flex',
     flexDirection: 'row',
     gap: '$1',
-    // position: 'fixed', top: 'calc($4 + $2)', right: 'calc($4 + $4)',
-    '@bp1': {
-        // top: 'calc($2 + $2)', right: '$4',
-    }
 })
 
 

@@ -48,8 +48,10 @@ const StyledToast = styled('div', {
     boxSizing: 'border-box',
     backgroundColor: '$background',
     border: '1px solid $foreground',
-    backdropFilter: 'blur(2px) opacity(0.25)',
-    mixBlendMode: 'multiply',
+    backdropFilter: 'blur(4px) opacity(0.25)',
+    WebkitBackdropFilter: 'blur(100px) opacity(0.75)',
+    // mixBlendMode: 'multiply',
+    opacity: 0.95,
     boxShadow: '$normal',
 })
 

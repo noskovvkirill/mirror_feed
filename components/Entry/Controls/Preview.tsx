@@ -43,7 +43,10 @@ const StyledControls = styled('div', {
                 opacity: '1'
             },
             false: {
-                opacity: '0'
+                opacity: '0',
+                '@bp1': {
+                    opacity: '1'
+                }
             }
         },
         isPreview: {
@@ -128,6 +131,12 @@ const StyledHeader = styled('div', {
                     backgroundColor: '$highlight',
                     color: '$foregroundText'
                 },
+                '@bp1': {
+                    '&:hover': {
+                        backgroundColor: '$foregroundTintBronze',
+                        color: '$foregroundTextBronze',
+                    },
+                }
             }
         },
         type: {
@@ -186,7 +195,7 @@ const ControlsPreview = (
         <StyledControls type={view} isPreview={true} isVisible={(isHover || isFocused) ? true : false}>
             <ButtonControl
                 direction={view === 'list' ? 'right' : 'bottom'}
-                isHighlighted={(isHover || isFocused) ? true : false}
+                isHighlighted={(isHover || isFocused || (typeof window !== "undefined" && window?.innerWidth < 720)) ? true : false}
                 label='open'
                 onClick={() => {
                     entry.publication?.ensLabel
@@ -196,7 +205,7 @@ const ControlsPreview = (
                 <OpenIcon />
             </ButtonControl>
             <AddToSpace
-                isHighlighted={(isHover || isFocused) ? true : false}
+                isHighlighted={(isHover || isFocused || (typeof window !== "undefined" && window?.innerWidth < 720)) ? true : false}
                 direction={view === 'list' ? 'right' : 'bottom'}
                 setReadLater={setReadLater}
                 item={entry}
@@ -229,13 +238,13 @@ const ControlsPreview = (
                 ? <StyledHeader
                     type={view}
                     onClick={() => Open(`/${entry.publication.ensLabel}`)}
-                    isHighlighted={(isHover || isFocused) ? true : false}>
+                    isHighlighted={(isHover || isFocused || (typeof window !== "undefined" && window?.innerWidth < 720)) ? true : false}>
                     <h5>{entry.publication.ensLabel}</h5>
                 </StyledHeader>
                 : <StyledHeader
                     type={view}
                     onClick={() => Open(`/${entry.author.address}?type=personal`)}
-                    isHighlighted={(isHover || isFocused) ? true : false}>
+                    isHighlighted={(isHover || isFocused || (typeof window !== "undefined" && window?.innerWidth < 720)) ? true : false}>
                     <h5>
                         {entry.author.displayName ? entry.author.displayName : <>{AddressPrettyPrint(entry.author.address, 6)}</>}
                     </h5>

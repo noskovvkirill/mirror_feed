@@ -1,5 +1,5 @@
 import { styled } from 'stitches.config'
-import { m } from 'framer-motion'
+// import { m } from 'framer-motion'
 import { forwardRef, ReactElement } from 'react';
 
 //types
@@ -30,6 +30,9 @@ const StyledContainer = styled('div', {
             },
             false: {
                 backgroundColor: '$background',
+                '@bp1': {
+                    backgroundColor: '$highlightBronze',
+                }
             }
         },
         isPreview: {
@@ -54,6 +57,9 @@ const StyledContainer = styled('div', {
                 gridColumn: 'span 1',
                 margin: 'calc($2 * 1) 0',
                 overflow: 'hidden',
+                '@bp1': {
+                    padding: '$4 $2'
+                }
                 // height:'448px',
                 // textOverflow:"fade(10px)" 
             },
@@ -63,7 +69,7 @@ const StyledContainer = styled('div', {
                 width: '100%',
                 flexDirection: 'row',
                 '@bp1': {
-                    padding: '$4',
+                    padding: '$4 $2',
                     flexDirection: 'column',
                     width: '100%',
                     gridColumn: 'span 1',
@@ -85,7 +91,10 @@ const StyledContainer = styled('div', {
             isPreview: false,
             type: 'card',
             css: {
-                padding: 'calc($4 * 2) $2 calc($4 * 4) $2'
+                padding: 'calc($4 * 2) $2 calc($4 * 4) $2',
+                // '@bp3': {
+                //     padding: '$1'
+                // }
             }
         },
 
@@ -107,7 +116,8 @@ const StyledContainerComponent = forwardRef(function Component(props: any, ref: 
 });
 
 
-const StyledContainerMotion = m(StyledContainerComponent)
+// const StyledContainerMotion = m(StyledContainerComponent)
+const StyledContainerMotion = StyledContainerComponent
 
 
 
@@ -133,11 +143,11 @@ const Root = forwardRef<HTMLElement, Container>(
         setIsHover }, ref) {
         return (
             <StyledContainerMotion
-                initial={{ position: 'relative' }}
-                exit={isPreview && { opacity: 0, position: 'absolute' }}
-                layout='position'
+                // initial={{ position: 'relative' }}
+                // exit={isPreview && { opacity: 0, position: 'absolute' }}
+                // layout='position'
                 type={view}
-                layoutId={isPreview && `layout-${entry.digest}+${view}`} //transitions animations using framer motion
+                // layoutId={isPreview && `layout-${entry.digest}+${view}`} //transitions animations using framer motion
                 key={`key-${entry.digest}`} //transitions animations using framer motion
                 id={`preview-${entry.digest}`}
                 onTouchStart={() => setIsHover(true)}

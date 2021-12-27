@@ -29,8 +29,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     const supabaseKey = process.env.SERVICE_KEY || ''
     const supabase = createClient(supabaseUrl, supabaseKey)
 
+    console.log('host__debuggining ***', host, host.length)
+
+
     //home page
-    if (!host || host === "www" ||
+    if (!host || host === "www" || host.length >= 3 ||
         (process.env.NODE_ENV === "development" && host.split(':')[0] === "localhost")) {
         console.log('home page', host)
         const { data, error } = await supabase
@@ -44,6 +47,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         const newdata = data.map((item) => ({ entry: item }))
         return { props: { entries: newdata } }
     }
+
 
     const domain = req?.headers?.host?.split('.').slice(1, req?.headers?.host?.split('.').length)[0]
     return {

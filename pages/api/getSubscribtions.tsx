@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from '@supabase/supabase-js'
+import type { SubscribedPublication } from 'contexts'
 
 const supabaseUrl = 'https://tcmqmkigakxeiuratohw.supabase.co'
 const supabaseKey = process.env.SERVICE_KEY || ''
@@ -15,13 +16,26 @@ export default async function handler(
 
     const { data, error } = await supabase
         .from('user_subscriptions')
-        .select('*')
+        .select('*, publication(ensLabel, avatarURL, displayName)')
         .eq('owner', owner_id)
 
+    if (error || !data) return res.status(500).json({ error: error?.message.toString() })
+
+    const subscribed: SubscribedPublication[] = data.map((item: {
+        publication: {
+            ensLabel: string,
+            avatarURL: string,
+            displayName: string
+        }
+    }) => {
+        return ({
+            ensLabel: item.publication.ensLabel,
+            displayName: item.publication.displayName,
+            type: 'ens',
+            avatarURL: item.publication.avatarURL
+        })
+    })
 
 
-    if (error) return res.status(500).json({ error: error.message.toString() })
-
-
-    return res.status(200).json({ data });
+    return res.status(200).json({ data: subscribed });
 }

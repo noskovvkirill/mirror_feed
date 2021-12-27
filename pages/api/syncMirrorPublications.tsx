@@ -42,11 +42,13 @@ export default async function handler(
         }
     })
 
-    const { publications }: { publications: Publication[] } = await request(mirrorendpoint, queryPublications_wAvatars);
     type Publication = {
         ensLabel: string,
-        avatarURL: string
+        avatarURL: string,
+        displayName: string
     }
+    const { publications }: { publications: Publication[] } = await request(mirrorendpoint, queryPublications_wAvatars);
+
 
     const { error } = await supabase
         .from('mirrorpublications')

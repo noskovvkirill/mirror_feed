@@ -350,6 +350,7 @@ query Publications {
   publications{
       ensLabel
       avatarURL
+      displayName
   }
 }
 `

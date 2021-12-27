@@ -3,7 +3,7 @@ import React from 'react'
 import type { CSS } from '@stitches/react'
 
 const StyledContainer = styled('div', {
-    marginTop: 'calc($4 * 3)',
+    marginTop: 'calc($4 * 4)',
     marginBottom: 'calc($4 * 1.5)',
     alignItems: 'center',
     display: 'flex',
@@ -12,7 +12,7 @@ const StyledContainer = styled('div', {
     gap: 'calc($4 + $0)',
     '@bp1': {
         maxWidth: '100%',
-        overflow: 'hidden'
+        // overflow: 'hidden'
     },
     variants: {
         isFullScreen: {

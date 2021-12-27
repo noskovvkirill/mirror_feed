@@ -7,7 +7,8 @@ const overlayShow = keyframes({
   '100%': { opacity: 0.65 },
 });
 
-
+export const Title = Dialog.Title
+export const Portal = Dialog.Portal
 export const Root = Dialog.Root
 export const Trigger = Dialog.Trigger
 export const StyledContent = styled(Dialog.Content, {

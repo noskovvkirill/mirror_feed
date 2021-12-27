@@ -9,15 +9,17 @@ import ButtonPopover from "@/design-system/primitives/ButtonPopover"
 import * as Switch from '@radix-ui/react-switch';
 import Info from '@/design-system/primitives/Info'
 import Input from '@/design-system/primitives/Input'
-import EditIcon from '@/design-system/icons/Edit'
+import EditIcon from '@/design-system/icons/RemoveCircled'
 import Button from '@/design-system/primitives/Button'
+import Link from 'next/link'
 //state
 import { useEffect, useState } from "react"
 import { useAuth } from 'contexts/user'
 import React from 'react'
 import { supabase } from 'src/client'
 import { styled } from 'stitches.config'
-
+//utils
+import { parseDate } from 'src/date'
 //types
 import type { EntryType } from "@/design-system/Entry"
 
@@ -37,6 +39,7 @@ const StyledThumb = styled(Switch.Thumb, {
     display: 'block',
     width: '50%',
     height: '33px',
+    cursor: 'pointer',
     backgroundColor: '$text',
     borderRadius: '$2',
     boxShadow: '$normal',
@@ -69,7 +72,7 @@ const Updates = () => {
         if (!user) return;
         const { data, error } = await supabase
             .from('user_notifications')
-            .select('created_at, isSend, entry(title, publication)')
+            .select('created_at, isSend, entry(title, publication, digest)')
             .eq('owner', user.id)
             .limit(5)
         if (!data) { return }
@@ -85,6 +88,26 @@ const Updates = () => {
         if (!data) { return }
         setNotificationSettings(data[0])
         console.log('email', data, error)
+    }
+
+    const RemoveEmail = async () => {
+        if (!user) return;
+        const notificationSettingsCurrent = notificationSettings
+        setNotificationSettings({
+            delivery: null,
+            email: null,
+            areNotificationsEnabled: null,
+            schedule: null
+        })
+        const { error } = await supabase
+            .from('users')
+            .update({ email: null, areNotificationsEnabled: false })
+            .eq('id', user.id)
+            .single()
+
+        if (error) {
+            setNotificationSettings(notificationSettingsCurrent)
+        }
     }
 
     const ChangeUserEmail = async (e: React.FormEvent) => {
@@ -132,7 +155,7 @@ const Updates = () => {
 
     const ChangeNotificationType = async (newState: boolean) => {
         if (!user || !user.id) return;
-        const newSchedule = newState === true ? "DAILY" : "WEEKLY"
+        const newSchedule = newState !== true ? "DAILY" : "WEEKLY"
         setNotificationSettings((settings: any) => {
             return ({
                 delivery: settings.delivery,
@@ -211,7 +234,8 @@ const Updates = () => {
                         width: "33px",
                         height: "33px",
                         display: 'flex',
-                        outline: '1px solid $foreground',
+                        // outline: '1px solid $foreground',
+                        boxShadow: '$outline',
                         border: '3px solid $foreground',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -228,18 +252,26 @@ const Updates = () => {
 
 
                 <StyledTabsContent value='notifications'>
-                    <Box layout='flexBoxColumn' css={{ padding: '0 $2 $2 $2' }}>
+                    <Box layout='flexBoxColumn' css={{ padding: '0 $2 $2 $2', maxHeight: '256px', overflow: 'scroll' }}>
                         {notifications.map((space, index) => {
                             return (
                                 <Box
                                     layout='flexBoxColumn'
-                                    key={'notification' + index} css={{ padding: '$1 0' }}>
+                                    key={'notification' + index} css={{
+                                        padding: '$1 0',
+                                        paddingRight: '$4'
+                                    }}>
                                     <Box layout='flexBoxRow'>
-                                        <Tag>{space?.created_at?.slice(0, 5)}</Tag>
-                                        <Tag>{space?.entry?.publication?.ensLabel}</Tag>
+                                        <Tag css={{ height: '$3' }}>{parseDate(space?.created_at)}</Tag>
+                                        <Tag css={{ height: '$3' }}>{space?.entry?.publication?.ensLabel}</Tag>
                                     </Box>
 
-                                    <Label css={{ color: '$foregroundText' }}>{space.entry?.title}</Label>
+                                    <Link passHref
+                                        href={`/${space?.entry?.publication?.ensLabel}/${space?.entry.digest}`}
+                                    ><Label css={{
+                                        color: '$foregroundText',
+                                        cursor: 'pointer', '&:hover': { color: '$foregroundTextBronze' }
+                                    }}>{space.entry?.title}</Label></Link>
                                 </Box>
                             )
                         })
@@ -315,11 +347,13 @@ const Updates = () => {
                                     color: '$foregroundTextBronze'
                                 }}>
                                 <Label css={{ color: 'inherit' }}>{notificationSettings.email}</Label>
-                                <EditIcon label='edit email' />
+                                <Button
+                                    onClick={RemoveEmail}
+                                    css={{ padding: '0', borderColor: 'transparent', color: '$foregroundTextBronze' }}><EditIcon label='edit email' /></Button>
                             </Box>
                             <Box as='section' layout='flexBoxColumn' >
                                 <Box layout='flexBoxRow' css={{ color: '$foregroundText' }}>
-                                    <Label css={{ color: '$foregroundText' }}>What type of notifications do you prefer?</Label>
+                                    <Label css={{ color: '$foregroundText' }}>What is your preferred schedule?</Label>
                                     <Info>
                                         Digest sends you a summary of what&apos;s happening accross your subscriptions or suggests new content.<br />
                                         On demand only sends you a notification when the authors you follow publish a new entry.
@@ -327,18 +361,31 @@ const Updates = () => {
                                 </Box>
                                 <StyledSwitch
                                     onCheckedChange={ChangeNotificationType}
-                                    checked={notificationSettings?.schedule === 'WEEKLY' ? false : true}
+                                    css={{
+                                        backgroundColor: notificationSettings?.schedule !== 'WEEKLY' ? '$highlightBronze' : '$background'
+                                    }}
+                                    checked={notificationSettings?.schedule === 'WEEKLY' ? true : false}
                                 >
                                     <Box
-                                        layout='flexBoxRow'
                                         css={{
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr 1fr',
                                             justifyContent: 'space-around',
                                             alignItems: 'center',
                                             padding: '0 0',
                                             position: 'absolute', color: '$background', height: '100%', width: '100%', boxSizing: 'border-box', zIndex: '10000000'
                                         }}>
-                                        <Label>on-demand</Label>
-                                        <Label>digest</Label>
+                                        <Box css={{
+                                            textAlign: 'center',
+                                            color: notificationSettings?.schedule === 'DAILY' ? '$background' : '$foregroundText'
+
+                                        }}><Label>DAILY</Label></Box>
+                                        <Box css={{
+                                            textAlign: 'center',
+                                        }}><Label css={{
+                                            color: notificationSettings?.schedule !== 'WEEKLY' ? '$foregroundTextBronze' : '$background'
+
+                                        }}>WEEKLY</Label></Box>
                                     </Box>
                                     <StyledThumb />
                                 </StyledSwitch>
@@ -347,20 +394,28 @@ const Updates = () => {
                             <Box as='section' layout='flexBoxColumn' >
 
 
-                                <Label css={{ color: '$foregroundText' }}>When you want to receive your notification?</Label>
+                                <Label css={{ color: '$foregroundText' }}>When do you want to receive the notifications?</Label>
                                 <StyledSwitch
+                                    css={{
+                                        backgroundColor: notificationSettings?.delivery === 'DAY' ? '$highlightBronze' : '$background'
+                                    }}
                                     onCheckedChange={ChangeNotificationSchedule}
                                     checked={notificationSettings?.delivery === 'DAY' ? false : true}>
                                     <Box
                                         layout='flexBoxRow'
                                         css={{
+                                            pointerEvents: 'none',
                                             justifyContent: 'space-around',
                                             alignItems: 'center',
                                             padding: '0 0',
                                             position: 'absolute', color: '$background', height: '100%', width: '100%', boxSizing: 'border-box', zIndex: '10000000'
                                         }}>
-                                        <Label>GM 🌞</Label>
-                                        <Label>GN 🌚</Label>
+                                        <Label
+                                            css={{
+
+                                            }}
+                                            size='normal'>🌞</Label>
+                                        <Label size='normal'>🌚</Label>
                                     </Box>
                                     <StyledThumb></StyledThumb>
                                 </StyledSwitch>

@@ -1,6 +1,5 @@
 import { createPortal } from 'react-dom'
-import { styled, keyframes } from 'stitches.config'
-import { overlayShow } from 'stitches.config'
+import { styled, searchShow, contentShow, overlayShow } from 'stitches.config'
 import { useRef, useState, useEffect } from 'react'
 import useSWR from 'swr'
 //components
@@ -12,7 +11,7 @@ import Label from '@/design-system/primitives/Label'
 import Loader from '@/design-system/primitives/Loader'
 import Tag from '@/design-system/primitives/Tag'
 import { TopCurators } from '@/design-system/Feed/Header'
-import { StyledSpaceSelector, SpacePublication } from '@/design-system/Search/SearchPublication'
+import { SpacePublication } from '@/design-system/Search/SearchPublication'
 //hooks
 import { useOnClickOutside } from 'hooks/useClickOutside'
 import useLockBodyScroll from 'hooks/useLockBodyScroll'
@@ -37,14 +36,6 @@ import * as dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
-export const searchShow = keyframes({
-    '0%': { opacity: 0, transform: 'translate(-50%, 0%) scale(1.1)' },
-    '100%': { opacity: 1, transform: 'translate(-50%, 0%) scale(1)', }
-})
-export const AnimationContentDisplay = keyframes({
-    '0%': { opacity: 0, transform: `translate(0%, -100%)` },
-    '100%': { opacity: 1, transform: `translate(0%, 0%)` }
-})
 
 
 const StyledOverlay = styled('div', {
@@ -168,6 +159,7 @@ const StyledLocation = styled('li', {
 interface ISearch {
     setIsOpen: (newState: boolean) => void;
     isSearch: boolean;
+
 }
 
 
@@ -178,16 +170,29 @@ const fetcher = async (url: string) => { return await fetch(url).then(res => res
 //need to figure out how to use exactly the same input inside the searchpanel, probably with framer is the easiest solution
 
 
-const SearchBar = ({ isSearch, setIsOpen }: ISearch) => {
+const SearchBar = ({ isSearch, setIsOpen, isVisible, setIsVisible }: ISearch & { isVisible: boolean, setIsVisible: (newState: boolean) => void; }) => {
     return (
         <>
-            {!isSearch && (
+            {!isSearch && !isVisible && (
+                <Button
+                    onMouseEnter={() => {
+                        setIsVisible(true)
+                    }}
+                    css={{
+                        width: '320px',
+                        // height: '100%'
+                        opacity: 0,
+                    }}>
+                    &nbsp;
+                </Button>
+            )}
+            {!isSearch && isVisible && (
                 <Button
                     css={{
                         display: 'flex',
                         transition: '$all',
                         '@media (prefers-reduced-motion: no-preference)': {
-                            animationName: `${AnimationContentDisplay}`,
+                            animationName: `${contentShow}`,
                             animationDuration: '500ms',
                             animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
                             animationFillMode: 'forwards',
@@ -469,11 +474,11 @@ const SearchPanel = ({ setIsOpen }: ISearch) => {
                                     <Box tabIndex={-1} css={{
                                         padding: '0 0 $2 0'
                                     }} layout='flexBoxColumn'>
-                                        {search.current.value && search.current.value !== '' && (
-                                            <Box>Nothing was found</Box>
+                                        {search.current.value && searchResult?.length <= 0 && (
+                                            <Label color='foreground'>Nothing was found</Label>
                                         )}
                                         {search.current.value && search.current.value === '' && (
-                                            <Box>Search for something</Box>
+                                            <Label>Search for something</Label>
                                         )
                                         }
 

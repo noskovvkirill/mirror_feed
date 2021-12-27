@@ -9,16 +9,22 @@ import Profile from '@/design-system/primitives/Profile'
 import Link from 'next/link'
 import Button from '@/design-system/primitives/Button'
 import Label from '@/design-system/primitives/Label'
+import SubscribeSettings from '@/design-system/Feed/Header/SubscribeSettings'
+
 //types
 import type { EntryType } from '@/design-system/Entry'
 import type { GetStaticProps } from 'next'
 
 //state
 import { request } from 'graphql-request';
-import { Current } from 'contexts'
+import { Current, subscribedSpaces } from 'contexts'
 import { useSetRecoilState } from 'recoil';
 import { useEffect } from 'react';
 import { queryEntry, queryPublication, queryPublications } from 'src/queries';
+import { useAuth } from 'contexts/user'
+import { useRecoilValueLoadable, useRecoilRefresher_UNSTABLE as useRecoilRefresher } from 'recoil';
+//utils
+import { supabase } from 'src/client'
 
 const mirrorendpoint = process.env.NEXT_PUBLIC_MIRROR_API;
 
@@ -72,6 +78,41 @@ type Props = {
 
 const Data = ({ entry }: Props) => {
   const setCurrentArticle = useSetRecoilState(Current)
+  const { user } = useAuth()
+  const subscribed = useRecoilValueLoadable(subscribedSpaces(user?.id))
+  const refreshSubscribed = useRecoilRefresher(subscribedSpaces(user?.id))
+
+  const Subscribe = async (): Promise<void> => {
+    return new Promise(async (resolve, reject) => {
+      if (!user || !user.id) { reject('no user'); return }
+      const { error } = await supabase.from('user_subscriptions')
+        .insert([{ type: 'PUBLICATION', publication: entry.publication.ensLabel, owner: user.id }])
+      if (error) {
+        reject(error?.message)
+        return;
+      }
+      refreshSubscribed()
+      resolve()
+    })
+  }
+
+  const Unsubscribe = async (): Promise<void> => {
+    return new Promise(async (resolve, reject) => {
+      if (!user || !user.id) { reject('no user'); return }
+      if (!user || !user.id) { return }
+      const { error } = await supabase.from('user_subscriptions')
+        .delete()
+        .eq('type', 'PUBLICATION')
+        .eq('owner', user.id)
+        .eq('publication', entry.publication.ensLabel)
+      if (error) {
+        reject(error?.message)
+        return;
+      }
+      refreshSubscribed()
+      resolve()
+    })
+  }
 
   useEffect(() => {
     if (entry) {
@@ -117,8 +158,16 @@ const Data = ({ entry }: Props) => {
               </Box>
 
               <Box css={{ padding: '0 $4', alignItems: 'center', color: '$foreground', gap: '$2' }} layout='flexBoxRow'>
-                <Label>Coming Soon</Label>
-                <Button disabled>Subscribe</Button>
+                {/* <Label>Coming Soon</Label>
+                <Button disabled>Subscribe</Button> */}
+
+                <SubscribeSettings
+                  size='small'
+                  disabled={!user?.isConnected || !user.id || subscribed.state === 'loading' || subscribed.state === 'hasError'}
+                  Subscribe={Subscribe}
+                  Unsubscribe={Unsubscribe}
+                  isSubscribed={subscribed.state === 'hasValue' && subscribed.contents?.find((item: any) => item.ensLabel === entry.publication.ensLabel)}
+                />
               </Box>
 
             </Box>

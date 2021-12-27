@@ -74,6 +74,7 @@ export default async function handler(
     const { exp: isValidCookie, sub } = ValidateCookie(ParseCookie(req.headers.cookie))
 
     if (!isValidCookie) {
+        console.log('e0', 'not valid cookie')
         return res.status(500).json({ error: "invalid credentials" })
     }
 
@@ -87,6 +88,7 @@ export default async function handler(
     }
 
     if (error) {
+        console.log('e1', error)
         return res.status(500).json({ error: error.toString() })
     }
 
@@ -97,6 +99,7 @@ export default async function handler(
         .eq('owner', sub)
 
     if (errorConfirmations) {
+        console.log('e2', errorConfirmations)
         return res.status(500).json({ error: errorConfirmations.toString() })
     }
 

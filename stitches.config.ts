@@ -81,6 +81,10 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             small: `0px 2px 4px 2px  ${sand.sand7}`,
             normal: `0px 2px 8px 2px ${sand.sand6}`,
             large: `0px 1px 8px ${sand.sand6}`,
+            outline: `0 0 1px ${sand.sand8}`,
+            outlineLarge: `0 0 3px ${sand.sand8}`,
+            outlineSelected: `0 0 0 1px ${bronze.bronze7}`, //==foreground
+            outlineLargeSelected: `0 0 0 3px ${bronze.bronze7}`,
         },
         zIndices: {},
         transitions: {
@@ -124,6 +128,10 @@ export const lightThemePlain = createTheme('light-plain', {
     shadows: {
         normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
         large: `0px 1px 8px ${sand.sand6}`,
+        outline: `0 0 0 1px ${sand.sand9}`, //==foreground
+        outlineLarge: `0 0 0 3px ${sand.sand9}`,
+        outlineSelected: `0 0 0 1px ${sand.sand11}`, //==foreground
+        outlineLargeSelected: `0 0 0 3px ${sand.sand11}`,
     },
 });
 
@@ -152,6 +160,10 @@ export const lightThemeBlue = createTheme('light-blue', {
         small: `0px 2px 4px 2px rgba(0,0,0, 0.1)`,
         normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
         large: `0px 1px 8px ${sand.sand6}`,
+        outline: `0 0 0 1px ${sand.sand9}`,
+        outlineLarge: `0 0 0 3px ${sand.sand9}`,
+        outlineSelected: `0 0 0 1px ${indigo.indigo9}`, //==foreground
+        outlineLargeSelected: `0 0 0 3px ${indigo.indigo9}`,
     },
 });
 
@@ -179,6 +191,10 @@ export const darkThemePlain = createTheme('dark-plain', {
     shadows: {
         normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
         large: `0px 4px 8px rgba(0,0,0, 0.15)`,
+        outline: `0 0 0 1px ${sandDark.sand9}`,
+        outlineLarge: `0 0 0 3px ${sandDark.sand9}`,
+        outlineSelected: `0 0 0 1px ${sandDark.sand7}`, //==foreground
+        outlineLargeSelected: `0 0 0 3px ${sandDark.sand7}`,
     },
 });
 
@@ -206,6 +222,10 @@ export const darkTheme = createTheme('dark-blue', {
         small: `0px 2px 4px 2px rgba(0,0,0, 0.1)`,
         normal: `0px 2px 8px 4px rgba(0,0,0, 0.15)`,
         large: `0px 4px 8px 4px rgba(0,0,0, 0.15)`,
+        outline: `0 0 0 1px ${sandDark.sand9}`,
+        outlineLarge: `0 0 0 3px ${sandDark.sand9}`,
+        outlineSelected: `0 0 0 1px ${indigoDark.indigo9}`, //==foreground
+        outlineLargeSelected: `0 0 0 3px ${indigoDark.indigo9}`,
     },
 });
 
@@ -321,9 +341,17 @@ export const dialogShow = keyframes({
     '100%': { opacity: 1, transform: 'translate(-50%, -50%) scale(1)', }
 })
 
-
 export const overlayShow = keyframes({
     '0%': { opacity: 0 },
     '100%': { opacity: 0.65 },
 });
 
+export const searchShow = keyframes({
+    '0%': { opacity: 0, transform: 'translate(-50%, 0%) scale(1.1)' },
+    '100%': { opacity: 1, transform: 'translate(-50%, 0%) scale(1)', }
+})
+
+export const contentShow = keyframes({
+    '0%': { opacity: 0, transform: `translate(0%, -100%)` },
+    '100%': { opacity: 1, transform: `translate(0%, 0%)` }
+})

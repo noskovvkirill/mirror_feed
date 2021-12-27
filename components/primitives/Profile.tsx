@@ -41,15 +41,19 @@ export const StyledAvatar = styled(Avatar.Root, {
     variants: {
         isSelected: {
             true: {
-                outlineColor: '$foregroundBronze',
-                outlineOffsetColor: '$foreground',
-                outlineStyle: 'solid',
-                outlineWidth: '3px',
+                boxShadow: '$outlineSelected',
+                '&:hover': {
+                    boxShadow: '$outlineLargeSelected',
+                }
+                // outlineColor: '$foregroundBronze',
+                // outlineOffsetColor: '$foreground',
+                // outlineStyle: 'solid',
+                // outlineWidth: '3px',
             },
             false: {
-                outlineStyle: 'solid',
-                outlineColor: '$foreground',
-                outlineOffsetColor: '$foreground',
+                // outlineStyle: 'solid',
+                // outlineColor: '$foreground',
+                // outlineOffsetColor: '$foreground',
             }
         },
         size: {
@@ -57,31 +61,31 @@ export const StyledAvatar = styled(Avatar.Root, {
                 width: 'calc($4 * 3)',
                 height: 'calc($4 * 3)',
                 '&:hover': {
-                    outline: '4px solid inherit',
+                    boxShadow: '$outlineLarge',
                 },
             },
             lg: {
-                outlineWidth: '3px',
+                boxShadow: '$outlineLarge',
                 width: 'calc($4 * 1.5)',
                 height: 'calc($4 * 1.5)',
                 '&:hover': {
-                    outlineWidth: '4px',
+                    boxShadow: '$outlineLargeSelected',
                 },
             },
             md: {
-                outlineWidth: '2px',
+                boxShadow: '$outlineLarge',
                 width: '$4',
                 height: '$4',
                 '&:hover': {
-                    outlineWidth: '4px',
+                    boxShadow: '$outlineLargeSelected'
                 },
             },
             sm: {
-                outlineWidth: '3px',
+                boxShadow: '$outline',
                 width: 'calc($4 * 0.8)',
                 height: 'calc($4 * 0.8)',
                 '&:hover': {
-                    outlineWidth: '4px',
+                    boxShadow: '$outlineLarge',
                 },
             }
         }
@@ -115,31 +119,31 @@ const StyledFallback = styled(Avatar.Fallback, {
                 width: 'calc($4 * 3)',
                 height: 'calc($4 * 3)',
                 '&:hover': {
-                    outline: '4px solid $foreground',
+                    boxShadow: '$outlineLarge',
                 },
             },
             lg: {
-                outline: '3px solid $foreground',
+                boxShadow: '$outline',
                 width: 'calc($4 * 1.5)',
                 height: 'calc($4 * 1.5)',
                 '&:hover': {
-                    outline: '4px solid $foreground',
+                    boxShadow: '$outlineLarge',
                 },
             },
             md: {
-                outline: '3px solid $foreground',
+                boxShadow: '$outline',
                 width: '$4',
                 height: '$4',
                 '&:hover': {
-                    outline: '4px solid $foreground',
+                    boxShadow: '$outlineLarge',
                 },
             },
             sm: {
-                outline: '3px solid $foreground',
+                boxShadow: '$outline',
                 width: 'calc($4 * 0.8)',
                 height: 'calc($4 * 0.8)',
                 '&:hover': {
-                    outline: '4px solid $foreground',
+                    boxShadow: '$outlineLarge'
                 },
             }
         }

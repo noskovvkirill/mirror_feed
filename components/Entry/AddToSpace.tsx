@@ -227,7 +227,7 @@ const AddToSpace = ({ item, setReadLater, isHighlighted = true, direction = 'bot
                             key={'space-list-add' + space.tokenId.toString()}>
                             {addState[0] === index &&
                                 <>
-                                    {addState[1] === -2 && <span><Loader size='small' /></span>}
+                                    {addState[1] === -2 && <span><Loader isInline size='small' /></span>}
                                     {addState[1] === -3 && <Label size={'default'}>Added to the space</Label>}
                                 </>
                             }
@@ -236,7 +236,7 @@ const AddToSpace = ({ item, setReadLater, isHighlighted = true, direction = 'bot
                     ))}
                     {spaces.state === 'loading' || spaces.state === 'hasError' && (
                         <>
-                            {user?.isConnected && <Loader size='small'>Loading spaces...</Loader>}
+                            {user?.isConnected && <Loader isInline size='small'>Loading spaces...</Loader>}
                             {user?.isConnected === false &&
                                 <Label size='default' css={{ color: '$foregroundText', textAlign: 'center' }}>Please connect your wallet <br /> to see the spaces</Label>
                             }

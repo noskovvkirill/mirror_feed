@@ -21,7 +21,7 @@ export default async function handler(
     const { data, error } = await supabase
         .from('users_email_confirmation')
         .select('nonce, email, expires_at')
-        .eq('owner', '75a4cda7-6215-40a8-b540-4921822748f0')
+        .eq('owner', owner)
         .single()
 
 
@@ -32,7 +32,7 @@ export default async function handler(
     if (data.nonce === nonce) {
         if (data.expires_at >= Number(new Date())) {
             const { error: errorUpdate } = await supabase.from('users')
-                .update({ email: data.email })
+                .update({ email: data.email, areNotificationsEnabled: true })
                 .eq('id', owner)
             if (errorUpdate) {
                 return res.redirect(400, '/')

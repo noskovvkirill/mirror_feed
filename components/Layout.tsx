@@ -17,10 +17,10 @@ import { pinnedItems, portalState, curatedSpaceNotSyncSelected, curatedSpaceNotS
 import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil'
 import useScrollPosition from '@react-hook/window-scroll'
 import { useRecoilValueAfterMount } from 'hooks/useRecoilValueAfterMount'
-import { DndContext } from '@dnd-kit/core';
+// import { DndContext } from '@dnd-kit/core';
 
 //types
-import type { CuratedSpaceNotSync, CuratedSpaceItem, PinnedItem } from 'contexts'
+// import type { CuratedSpaceNotSync, CuratedSpaceItem, PinnedItem } from 'contexts'
 
 
 export const AnimationContentDisplay = keyframes({
@@ -39,7 +39,7 @@ const StyledMain = styled('main', {
     flexDirection: 'column',
     gap: '$5',
     '@bp1': {
-        padding: '$2 $2'
+        padding: '$2 $1'
     }
 })
 
@@ -55,6 +55,7 @@ const StyledHeader = styled('header', {
     // backdropFilter:'opacity(0.25)',
     top: '0',
     padding: '$2 $4 0 $4',
+    paddingTop: '$5',
     color: '$text',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -70,7 +71,7 @@ const StyledHeader = styled('header', {
 })
 
 const StyledNavControls = styled(Box, {
-    margin: '$4',
+    margin: '0 0 0 $4',
     alignItems: 'flex-start',
     justifyContent: 'center',
     marginRight: '$5',
@@ -197,7 +198,7 @@ const Layout = ({ children }: Props) => {
 
             <OnBoarding />
 
-            <DndContext
+            {/* <DndContext
                 onDragEnd={(e) => {
                     const over = e.over
                     console.log('drop', e)
@@ -226,28 +227,31 @@ const Layout = ({ children }: Props) => {
                 }}
                 onDragStart={(e) => {
                     setActiveId(e.active.id)
-                }}>
-                {/* <StyledHeader css={{ position: 'sticky', height: '160px' }}> */}
-                <StyledHeader css={{ position: 'sticky', height: 'fit-content', marginBottom: '$2' }}>
+                }}> */}
 
-                    <StyledNavControls layout='flexBoxColumn'>
-                        <Portal
-                            // isSearch={isSearch}
-                            setIsSearch={setIsSearch}
-                        />
-                    </StyledNavControls>
-                    {isPinnedList && (
-                        <Search
-                            isSearch={isSearch}
-                            setIsOpen={setIsSearch}
-                        />
-                    )}
+            {/* <StyledHeader css={{ position: 'sticky', height: '160px' }}> */}
+            <StyledHeader css={{ position: 'sticky', height: 'fit-content', marginBottom: '$2' }}>
 
-                    <Nav pinnedListLength={pinnedList.length} isPinnedList={isPinnedList}
-                        setIsPinnedList={setIsPinnedList} />
+                <StyledNavControls layout='flexBoxColumn'>
+                    <Portal
+                        // isSearch={isSearch}
+                        setIsSearch={setIsSearch}
+                    />
+                </StyledNavControls>
+                {/* {isPinnedList && ( */}
+                <Search
+                    setIsVisible={setIsPinnedList}
+                    isVisible={isPinnedList}
+                    isSearch={isSearch}
+                    setIsOpen={setIsSearch}
+                />
+                {/* )} */}
 
-                    {/* WORK IN PROGRESS */}
-                    {/* <PinnedList
+                <Nav pinnedListLength={pinnedList.length} isPinnedList={isPinnedList}
+                    setIsPinnedList={setIsPinnedList} />
+
+                {/* WORK IN PROGRESS */}
+                {/* <PinnedList
                         activeId={activeId}
                         pinnedList={pinnedList}
                         setPinnedList={setPinnedList}
@@ -259,30 +263,30 @@ const Layout = ({ children }: Props) => {
                         isPinnedList={isPinnedList}
                         setReadLater={setReadLater}
                     /> */}
-                </StyledHeader>
-                <Notifications />
-                <StyledMain>
-                    {children}
-                </StyledMain>
-                <StyledFooter css={{
-                    display: isPinnedList ? 'flex' : 'none',
-                }}>
-                    <Box layout='flexBoxRow' css={{ alignItems: 'center', '@bp1': { visibility: 'hidden' } }}>
-                        <Box layout='flexBoxRow' css={{ gap: '$0', alignItems: 'center' }}>
-                            <Label>Search</Label>
-                            <Tag color='default' css={{ backgroundColor: '$background', padding: '$0', borderRadius: '$1', fontSize: '10px' }}>CMD&thinsp;+&thinsp;/</Tag>
-                        </Box>
-                        <Box layout='flexBoxRow' css={{ gap: '$0', alignItems: 'center' }}>
-                            <Label>Door</Label>
-                            <Tag color='default' css={{ backgroundColor: '$background', padding: '$0', borderRadius: '$1', fontSize: '10px' }}>ALT</Tag>
-                        </Box>
+            </StyledHeader>
+            <Notifications />
+            <StyledMain>
+                {children}
+            </StyledMain>
+            <StyledFooter css={{
+                display: isPinnedList ? 'flex' : 'none',
+            }}>
+                <Box layout='flexBoxRow' css={{ alignItems: 'center', '@bp1': { visibility: 'hidden' } }}>
+                    <Box layout='flexBoxRow' css={{ gap: '$0', alignItems: 'center' }}>
+                        <Label>Search</Label>
+                        <Tag color='default' css={{ backgroundColor: '$background', padding: '$0', borderRadius: '$1', fontSize: '10px' }}>CMD&thinsp;+&thinsp;/</Tag>
                     </Box>
-                    <Box layout='flexBoxRow' css={{ alignItems: 'center' }}>
-                        <Link passHref href={'/about'}><Label css={{ textDecoration: 'underline', cursor: 'pointer' }}>About</Label></Link>
-                        <Label>2022</Label>
+                    <Box layout='flexBoxRow' css={{ gap: '$0', alignItems: 'center' }}>
+                        <Label>Door</Label>
+                        <Tag color='default' css={{ backgroundColor: '$background', padding: '$0', borderRadius: '$1', fontSize: '10px' }}>ALT</Tag>
                     </Box>
-                </StyledFooter>
-                {/* <Box as='footer' css={{
+                </Box>
+                <Box layout='flexBoxRow' css={{ alignItems: 'center' }}>
+                    <Link passHref href={'/about'}><Label css={{ textDecoration: 'underline', cursor: 'pointer' }}>About</Label></Link>
+                    <Label>2022</Label>
+                </Box>
+            </StyledFooter>
+            {/* <Box as='footer' css={{
                     padding: '$0',
                     overflow: 'hidden',
                     // mixBlendMode: 'screen',
@@ -292,7 +296,7 @@ const Layout = ({ children }: Props) => {
                 }}>
                     <img src={'/welcome.png'} width='100%' height='100%' />
                 </Box> */}
-            </DndContext>
+            {/* </DndContext> */}
         </Box>
     )
 }

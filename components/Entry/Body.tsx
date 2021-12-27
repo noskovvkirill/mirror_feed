@@ -40,6 +40,9 @@ const StyledTitle = styled('h1', {
             },
             false: {
                 color: '$foregroundText',
+                '@bp1': {
+                    color: '$textBronze'
+                }
             }
         },
         type: {
@@ -205,7 +208,10 @@ const StyledText = styled('article', {
                 color: '$textBronze'
             },
             false: {
-                color: '$foregroundText'
+                color: '$foregroundText',
+                '@bp1': {
+                    color: '$textBronze'
+                }
             }
         },
         // isHighlighted: {

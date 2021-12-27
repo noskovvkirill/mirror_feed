@@ -1,5 +1,5 @@
 //components
-import { StyledContent, StyledOverlay, Root } from '@/design-system/primitives/Dialog'
+import { StyledContent, StyledOverlay, Root, Portal } from '@/design-system/primitives/Dialog'
 import Box from '@/design-system/primitives/Box'
 import Heading from '@/design-system/primitives/Heading'
 import Info from '@/design-system/primitives/Info'
@@ -143,93 +143,95 @@ const UnStakeTokens = ({ unstakeCallback }: IUnstakeTokens) => {
             }}
             modal={true}
         >
-            <StyledOverlay />
-            <StyledContent>
-                <Box layout='flexBoxRow' css={{ alignItems: 'center', margin: '0 0 $4 0', justifyContent: 'space-between' }}>
-                    <Box layout='flexBoxRow' css={{ alignItems: 'center', userSelect: 'none' }} >
-                        <Heading size={'h4'} color={'foregroundText'}>Unstake tokens</Heading> <Heading size={'h4'} color='highlight' >{selectedItem?.space.name}</Heading>
+            <Portal>
+                <StyledOverlay />
+                <StyledContent>
+                    <Box layout='flexBoxRow' css={{ alignItems: 'center', margin: '0 0 $4 0', justifyContent: 'space-between' }}>
+                        <Box layout='flexBoxRow' css={{ alignItems: 'center', userSelect: 'none' }} >
+                            <Heading size={'h4'} color={'foregroundText'}>Unstake tokens</Heading> <Heading size={'h4'} color='highlight' >{selectedItem?.space.name}</Heading>
+                        </Box>
+                        <Info>
+                            You can unstake tokens from your space after 7 days period.
+                            Be aware, in some cases unstaking may fail due to the way time is calculated
+                            on a blockchain. We are looking forward to verify it upfront in updated version.
+                        </Info>
                     </Box>
-                    <Info>
-                        You can unstake tokens from your space after 7 days period.
-                        Be aware, in some cases unstaking may fail due to the way time is calculated
-                        on a blockchain. We are looking forward to verify it upfront in updated version.
-                    </Info>
-                </Box>
 
 
-                <Box layout='flexBoxColumn' css={{
-                    padding: '$1 0'
-                }}>
-                    <StyledContainerByItem
-                        collapsed={true}
-                        tabIndex={-1}
-                        css={{ userSelect: 'none' }}
-                    >
-                        Unstake tokens from selected item
-                    </StyledContainerByItem>
+                    <Box layout='flexBoxColumn' css={{
+                        padding: '$1 0'
+                    }}>
+                        <StyledContainerByItem
+                            collapsed={true}
+                            tabIndex={-1}
+                            css={{ userSelect: 'none' }}
+                        >
+                            Unstake tokens from selected item
+                        </StyledContainerByItem>
 
-                    {selectedItem && (
-                        <StyledContainerItems>
-                            <Box
-                                tabIndex={0}
-                                layout='flexBoxColumn'
-                                css={{
-                                    padding: '$2 $3',
-                                    boxSizing: 'border-box',
-                                    backgroundColor: isBefore ? '$highlightBronze' : '$tint',
-                                    color: isBefore ? '$foregroundTextBronze' : "$foreground", paddingBottom: '$4', borderRadius: '$2', cursor: isBefore ? 'pointer' : 'not-allowed'
-                                }}
-                            >
-                                <Box layout='flexBoxRow'>
-
-
-                                    {selectedItem?.lastStakeTimestamp && !isBefore && (
-                                        <Label size='normal' css={{ color: '$foregroundTextBronze' }}>
-                                            {dayjs.unix(parseInt(selectedItem.lastStakeTimestamp) + 604800).fromNow()}
-                                        </Label>)}
-
-                                    {isBefore && (
-                                        <>
-                                            <Tag isHighlighted={true}>
-                                                {selectedItem.item.entry.publication
-                                                    ? selectedItem.item.entry.publication.ensLabel
-                                                    : selectedItem.item.entry.author.displayName
-                                                }
-                                            </Tag>
-                                            <Tag isHighlighted={true}>
-                                                {selectedItem.item.entry.digest.slice(0, 5)}...
-                                            </Tag>
-                                        </>
-                                    )}
-                                </Box>
+                        {selectedItem && (
+                            <StyledContainerItems>
                                 <Box
-                                    css={{ justifyContent: 'space-between', userSelect: 'none', alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
-                                    <span>{selectedItem.item.entry.title}</span>
-                                    <span>{selectedItem.item.staked}&thinsp;●</span>
+                                    tabIndex={0}
+                                    layout='flexBoxColumn'
+                                    css={{
+                                        padding: '$2 $3',
+                                        boxSizing: 'border-box',
+                                        backgroundColor: isBefore ? '$highlightBronze' : '$tint',
+                                        color: isBefore ? '$foregroundTextBronze' : "$foreground", paddingBottom: '$4', borderRadius: '$2', cursor: isBefore ? 'pointer' : 'not-allowed'
+                                    }}
+                                >
+                                    <Box layout='flexBoxRow'>
+
+
+                                        {selectedItem?.lastStakeTimestamp && !isBefore && (
+                                            <Label size='normal' css={{ color: '$foregroundTextBronze' }}>
+                                                {dayjs.unix(parseInt(selectedItem.lastStakeTimestamp) + 604800).fromNow()}
+                                            </Label>)}
+
+                                        {isBefore && (
+                                            <>
+                                                <Tag isHighlighted={true}>
+                                                    {selectedItem.item.entry.publication
+                                                        ? selectedItem.item.entry.publication.ensLabel
+                                                        : selectedItem.item.entry.author.displayName
+                                                    }
+                                                </Tag>
+                                                <Tag isHighlighted={true}>
+                                                    {selectedItem.item.entry.digest.slice(0, 5)}...
+                                                </Tag>
+                                            </>
+                                        )}
+                                    </Box>
+                                    <Box
+                                        css={{ justifyContent: 'space-between', userSelect: 'none', alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
+                                        <span>{selectedItem.item.entry.title}</span>
+                                        <span>{selectedItem.item.staked}&thinsp;●</span>
+                                    </Box>
                                 </Box>
-                            </Box>
-                        </StyledContainerItems>
-                    )}
-                </Box>
-
-                <Box layout='flexBoxRow' css={{ alignItems: 'center', padding: '$1 0', justifyContent: 'space-between' }}>
-                    <Button
-                        disabled={!isBefore}
-
-                        onClick={UnSync}>Unstake</Button>
-                    <Box layout='flexBoxRow'>
-                        <Label size='normal'
-                            color={'default'}
-                        >Your Balance {user?.balance}&thinsp;● &nbsp;</Label>
-                        {(selectedItem && user?.balance) && (
-                            <Label size='normal'>Balance after {user?.balance + selectedItem?.item?.staked}&thinsp;●</Label>
+                            </StyledContainerItems>
                         )}
                     </Box>
-                </Box>
-                <Box css={{ width: '100%', padding: '$1 0' }}>
-                    <Label>Verify the numbers before transacting</Label>
-                </Box>
-            </StyledContent>
+
+                    <Box layout='flexBoxRow' css={{ alignItems: 'center', padding: '$1 0', justifyContent: 'space-between' }}>
+                        <Button
+                            disabled={!isBefore}
+
+                            onClick={UnSync}>Unstake</Button>
+                        <Box layout='flexBoxRow'>
+                            <Label size='normal'
+                                color={'default'}
+                            >Your Balance {user?.balance}&thinsp;● &nbsp;</Label>
+                            {(selectedItem && user?.balance) && (
+                                <Label size='normal'>Balance after {user?.balance + selectedItem?.item?.staked}&thinsp;●</Label>
+                            )}
+                        </Box>
+                    </Box>
+                    <Box css={{ width: '100%', padding: '$1 0' }}>
+                        <Label>Verify the numbers before transacting</Label>
+                    </Box>
+                </StyledContent>
+            </Portal>
         </Root>
     )
 }
