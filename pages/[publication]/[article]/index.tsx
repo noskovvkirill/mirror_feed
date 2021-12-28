@@ -131,7 +131,7 @@ const Data = ({ entry }: Props) => {
 
   if (entry) {
     return (
-      <Layout>
+      <Layout title={`${entry.title} by ${entry.author?.displayName} | MirrorFeed`}>
         <Box layout='flexBoxColumn'>
           <Header.Root css={{ marginBottom: 'calc($4 * 1)' }} isFullScreen={true}>
             <Box layout='flexBoxRow' css={{ width: '100%', gap: '$4', justifyContent: 'space-between' }}>
@@ -150,6 +150,11 @@ const Data = ({ entry }: Props) => {
                   </Box>
                 </Link>
                 <Heading
+                  css={{
+                    '@bp1': {
+                      display: 'none!important'
+                    }
+                  }}
                   size={'h3'}
                   color={"highlight"}>
                   {entry.author?.displayName}
@@ -157,10 +162,15 @@ const Data = ({ entry }: Props) => {
                 </Heading>
               </Box>
 
-              <Box css={{ padding: '0 $4', alignItems: 'center', color: '$foreground', gap: '$2' }} layout='flexBoxRow'>
+              <Box css={{
+                padding: '0 $4', alignItems: 'center', color: '$foreground', gap: '$2',
+                '@bp1': { padding: '0' }
+              }} layout='flexBoxRow'>
                 {/* <Label>Coming Soon</Label>
                 <Button disabled>Subscribe</Button> */}
-
+                {!user?.isConnected && (
+                  <Label>Connect wallet to subscribe</Label>
+                )}
                 <SubscribeSettings
                   size='small'
                   disabled={!user?.isConnected || !user.id || subscribed.state === 'loading' || subscribed.state === 'hasError'}
@@ -168,6 +178,7 @@ const Data = ({ entry }: Props) => {
                   Unsubscribe={Unsubscribe}
                   isSubscribed={subscribed.state === 'hasValue' && subscribed.contents?.find((item: any) => item.ensLabel === entry.publication.ensLabel)}
                 />
+
               </Box>
 
             </Box>

@@ -72,6 +72,13 @@ const StyledSearchContainter = styled('div', {
         animation: `${searchShow} 550ms cubic-bezier(0.16, 1, 0.3, 1)`,
         animationFillMode: 'forwards'
     },
+    '@bp1': {
+        maxWidth: '100vw',
+        width: '100%',
+        top: '$4',
+        height: '100%',
+        padding: '$2'
+    }
 })
 
 const StyledSearchHeader = styled('div', {

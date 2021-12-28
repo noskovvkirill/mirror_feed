@@ -12,6 +12,7 @@ const AnimationContentDisplay = keyframes({
 const StyledCurationButton = styled(DropdownMenu.Trigger, {
     display: 'flex',
     alignItems: 'center',
+    whiteSpace: 'nowrap',
     justifyContent: 'center',
     background: 'none',
     borderRadius: '$round',
@@ -25,6 +26,9 @@ const StyledCurationButton = styled(DropdownMenu.Trigger, {
     },
     '&[data-state="open"]': {
         color: '$foregroundTextBronze'
+    },
+    '@bp1': {
+        fontSize: '$6'
     }
 })
 

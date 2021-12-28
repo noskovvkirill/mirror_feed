@@ -31,6 +31,12 @@ export const StyledContent = styled(Dialog.Content, {
     animation: `${dialogShow} 550ms cubic-bezier(0.16, 1, 0.3, 1)`,
     animationFillMode: 'forwards'
   },
+  '@bp1': {
+    maxWidth: '100%',
+    width: '100%',
+    boxSizing: 'border-box',
+    padding: '$4 $2'
+  }
 })
 
 export const StyledOverlay = styled(Dialog.Overlay, {

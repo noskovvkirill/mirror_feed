@@ -39,7 +39,7 @@ const StyledMain = styled('main', {
     flexDirection: 'column',
     gap: '$5',
     '@bp1': {
-        padding: '$2 $1'
+        padding: '$2 $1',
     }
 })
 
@@ -66,7 +66,8 @@ const StyledHeader = styled('header', {
     '@bp1': {
         width: "100%",
         overflow: 'hidden',
-        padding: '$4 0 0 $4',
+        padding: '$4 0 0 $3',
+        gap: '$2'
     }
 })
 
@@ -99,12 +100,16 @@ const StyledFooter = styled('footer', {
     willChange: 'transform, opacity',
     position: 'fixed',
     backgroundColor: '$tint',
-    justifyContent: 'space-between', padding: '$1 $4', bottom: 0, left: 0, width: '100%', boxSizing: 'border-box'
+    justifyContent: 'space-between', padding: '$1 $4', bottom: 0, left: 0, width: '100%', boxSizing: 'border-box',
+    '@bp1': {
+        display: 'none!important'
+    }
 })
 
 
 type Props = {
     children?: ReactNode;
+    title?: string;
 }
 
 export const history: Array<{
@@ -122,7 +127,7 @@ export const history: Array<{
 // }
 
 
-const Layout = ({ children }: Props) => {
+const Layout = ({ children, title = 'Mirror feed' }: Props) => {
     const [isPinnedList, setIsPinnedList] = useState(false)
     // const setReadLater = useSetRecoilState(readLaterList)
     const pinnedList = useRecoilValueAfterMount(pinnedItems, [])
@@ -191,7 +196,7 @@ const Layout = ({ children }: Props) => {
     return (
         <Box>
             <Head>
-                <title>Mirror feed</title>
+                <title>{title}</title>
                 <meta name="description" content="Mirror.xyz curation feed" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>

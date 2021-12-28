@@ -84,14 +84,14 @@ const StyledContainer = styled('div', {
             isPreview: false,
             type: 'list',
             css: {
-                padding: 'calc($4 * 2) $2 calc($4 * 4) $2'
+                padding: 'calc($4 * 1) $2 calc($4 * 4) $2'
             }
         },
         {
             isPreview: false,
             type: 'card',
             css: {
-                padding: 'calc($4 * 2) $2 calc($4 * 4) $2',
+                padding: 'calc($4 * 1) $2 calc($4 * 4) $2',
                 // '@bp3': {
                 //     padding: '$1'
                 // }

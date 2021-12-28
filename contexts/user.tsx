@@ -126,8 +126,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                 infuraId: "87ff3775011f44d1ad3ae2c38d63d950",
                 chainId: 4
             });
-            await provider.enable();
             try {
+                await provider.enable();
                 const web3Provider = new ethers.providers.Web3Provider(provider, "any");
                 const signer = web3Provider.getSigner();
                 const address = await signer.getAddress()
@@ -217,95 +217,100 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
             return
         }
 
-        const web3Provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-        await web3Provider.send("eth_requestAccounts", []);
-        const signer = web3Provider.getSigner();
-        const address = await signer.getAddress()
-        const token = ParseCookie(document.cookie)
-        const { exp: isValidCookie, sub: sub } = ValidateCookie(token)
-        let userId = sub;
-        if (!isValidCookie || !token) {
-            const nonce = await fetch(`/api/generateNonce`, {
-                method: 'POST',
-                body: JSON.stringify({ walletAddress: address }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(res => res.json()).then(res => res.nonce[0].nonce)
-
-            const signature = await signer.signMessage(nonce)
-            const { token, id } = await fetch(`/api/validateNonce`, {
-                method: 'POST',
-                body: JSON.stringify({ nonce: nonce, walletAddress: address, signature: signature }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(res => res.json())
-                .catch(e => console.log(e)) as { token: string, id: string }
-            await supabase.auth.setAuth(token);
-            userId = id;
-        }
-
-        await supabase.auth.setAuth(token);
-        const network = await web3Provider.getNetwork()
-
-        const mirrorUser = await request('https://mirror-api.com/graphql', queryContributor, { address: address })
-            .then(({ userProfile }) => {
-                return userProfile
-            })
-            .catch((e) => {
-                console.log('errorgetting user', e)
-                return
-            })
-
-        if (web3Provider && address && signer && userId) {
-            try {
-                const balance = await getUserBalance(address, web3Provider)
-                const govAllowance = await getGovAllowance(address, web3Provider)
-                const spaceAllowance = await getSpacesAllowance(address, web3Provider)
-                localStorage.setItem('mirror-feed-last-provider', 'metamask')
-                changeUser((user) => {
-                    const newUser = Object.assign({}, user)
-                    delete newUser.provider
-                    newUser.address = address
-                    newUser.email = mirrorUser?.email
-                    newUser.id = userId
-                    newUser.isConnected = true;
-                    //
-                    newUser.displayName = mirrorUser?.displayName
-                    newUser.avatarURL = mirrorUser?.avatarURL
-                    newUser.allowance = {
-                        gov: parseInt(govAllowance),
-                        space: parseInt(spaceAllowance)
+        try {
+            const web3Provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+            await web3Provider.send("eth_requestAccounts", []);
+            const signer = web3Provider.getSigner();
+            const address = await signer.getAddress()
+            const token = ParseCookie(document.cookie)
+            const { exp: isValidCookie, sub: sub } = ValidateCookie(token)
+            let userId = sub;
+            if (!isValidCookie || !token) {
+                const nonce = await fetch(`/api/generateNonce`, {
+                    method: 'POST',
+                    body: JSON.stringify({ walletAddress: address }),
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
-                    //
-                    newUser.network = network;
-                    newUser.provider = web3Provider;
-                    newUser.balance = parseFloat(balance)
-                    return newUser
+                }).then(res => res.json()).then(res => res.nonce[0].nonce)
+
+                const signature = await signer.signMessage(nonce)
+                const { token, id } = await fetch(`/api/validateNonce`, {
+                    method: 'POST',
+                    body: JSON.stringify({ nonce: nonce, walletAddress: address, signature: signature }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 })
-            } catch (e) {
-                console.log(e)
-                changeUser((user) => {
-                    const newUser = Object.assign({}, user)
-                    delete newUser.provider
-                    newUser.id = userId
-                    newUser.address = address
-                    newUser.isConnected = true;
-                    //
-                    newUser.email = mirrorUser?.email
-                    newUser.displayName = mirrorUser?.displayName
-                    newUser.avatarURL = mirrorUser?.avatarURL
-                    //
-                    newUser.network = network;
-                    newUser.balance = 0;
-                    newUser.provider = web3Provider;
-                    return newUser
-                })
+                    .then(res => res.json())
+                    .catch(e => console.log(e)) as { token: string, id: string }
+                await supabase.auth.setAuth(token);
+                userId = id;
             }
+            await supabase.auth.setAuth(token);
+            const network = await web3Provider.getNetwork()
+
+            const mirrorUser = await request('https://mirror-api.com/graphql', queryContributor, { address: address })
+                .then(({ userProfile }) => {
+                    return userProfile
+                })
+                .catch((e) => {
+                    console.log('errorgetting user', e)
+                    return
+                })
+
+            if (web3Provider && address && signer && userId) {
+                try {
+                    const balance = await getUserBalance(address, web3Provider)
+                    const govAllowance = await getGovAllowance(address, web3Provider)
+                    const spaceAllowance = await getSpacesAllowance(address, web3Provider)
+                    localStorage.setItem('mirror-feed-last-provider', 'metamask')
+                    changeUser((user) => {
+                        const newUser = Object.assign({}, user)
+                        delete newUser.provider
+                        newUser.address = address
+                        newUser.email = mirrorUser?.email
+                        newUser.id = userId
+                        newUser.isConnected = true;
+                        //
+                        newUser.displayName = mirrorUser?.displayName
+                        newUser.avatarURL = mirrorUser?.avatarURL
+                        newUser.allowance = {
+                            gov: parseInt(govAllowance),
+                            space: parseInt(spaceAllowance)
+                        }
+                        //
+                        newUser.network = network;
+                        newUser.provider = web3Provider;
+                        newUser.balance = parseFloat(balance)
+                        return newUser
+                    })
+                } catch (e) {
+                    console.log(e)
+                    changeUser((user) => {
+                        const newUser = Object.assign({}, user)
+                        delete newUser.provider
+                        newUser.id = userId
+                        newUser.address = address
+                        newUser.isConnected = true;
+                        //
+                        newUser.email = mirrorUser?.email
+                        newUser.displayName = mirrorUser?.displayName
+                        newUser.avatarURL = mirrorUser?.avatarURL
+                        //
+                        newUser.network = network;
+                        newUser.balance = 0;
+                        newUser.provider = web3Provider;
+                        return newUser
+                    })
+                }
+                setIsLoading(false)
+            }
+        } catch (e) {
+            console.log(e)
             setIsLoading(false)
         }
+
     }, [])
 
     const Disconnect = useCallback(async () => {

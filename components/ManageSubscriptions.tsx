@@ -17,7 +17,7 @@ import { useRecoilValueLoadable, useRecoilRefresher_UNSTABLE as useRecoilRefresh
 import { useAuth } from 'contexts/user'
 //types
 import { SubscribedPublication } from 'contexts'
-
+import { AddressPrettyPrint } from 'src/utils'
 interface IManageSubscriptions {
     children: React.ReactNode;
 }
@@ -65,11 +65,14 @@ const ManageSubscriptions = ({ children }: IManageSubscriptions) => {
                     <Title asChild>
                         <Box layout='flexBoxRow' css={{ alignItems: 'center', userSelect: 'none', margin: '0 0 $3 0', }}>
                             <Heading size={'h4'} color={'foregroundText'}>Subscriptions</Heading>
-                            <Heading size={'h4'} color={'highlight'}>{user?.displayName ? user?.displayName : user?.address}</Heading>
+                            <Heading size={'h4'} color={'highlight'}>{user?.displayName ? user?.displayName : AddressPrettyPrint(user?.address)}</Heading>
                         </Box>
                     </Title>
                     {subscribed.state === 'hasValue'
                         ? <Toolbar.Root orientation='vertical'><Box layout='flexBoxColumn'>
+                            {subscribed.contents.length <= 0 && (
+                                <Label>You don&apos;t have any subscriptions yet</Label>
+                            )}
                             {subscribed.contents?.map((item: SubscribedPublication, index: number) => {
                                 return (
                                     <Toolbar.Link asChild key={item.displayName + index + 'subscribed_list'}>

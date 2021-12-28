@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     const supabaseKey = process.env.SERVICE_KEY || ''
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    console.log('host__debuggining ***', host, host.length)
+    console.log('host__debuggining ***', req?.headers?.host, host, req?.headers?.host?.length)
 
 
     //home page

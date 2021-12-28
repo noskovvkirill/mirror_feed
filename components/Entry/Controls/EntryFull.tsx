@@ -33,6 +33,8 @@ const StyledControls = styled('div', {
     transition: '$all',
     '@bp1': {
         flexDirection: 'row',
+        marginBottom: '$4',
+        padding: '0 0'
     },
     '@bp2': {
         flexDirection: 'row',

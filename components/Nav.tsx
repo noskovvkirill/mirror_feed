@@ -35,8 +35,8 @@ const Nav = ({ isPinnedList, setIsPinnedList, pinnedListLength }: INav) => {
 
     return (
         <StyledNav>
-            <Box layout='flexBoxRow'>
-                {/* {!isPinnedList && (
+            {/* <Box layout='flexBoxRow'> */}
+            {/* {!isPinnedList && (
                     <Box layout='flexBoxRow' css={{ userSelect: 'none', fontSize: '$6', color: '$foregroundText', alignItems: 'center', justifyContent: 'center' }}>{pinnedListLength}</Box>
                 )}
                 <ButtonControl
@@ -58,7 +58,7 @@ const Nav = ({ isPinnedList, setIsPinnedList, pinnedListLength }: INav) => {
                     </Box>
                 </ButtonControl> */}
 
-            </Box>
+            {/* </Box> */}
             {user?.isConnected && (
                 <Updates />
             )}

@@ -91,6 +91,10 @@ const StyledContent = styled(Popover.Content, {
       '&[data-side="left"]': {},
     },
   },
+  '@bp1': {
+    boxSizing: 'border-box',
+    width: '80vw'
+  }
 })
 
 const ButtonPopover = ({ icon, children, label = '', isHighlighted = true, isAvatar }: { icon: ReactElement, children: ReactNode | ReactNode[], label: string, isAvatar?: boolean, isHighlighted: boolean }) => {

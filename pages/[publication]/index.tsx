@@ -3,7 +3,7 @@ import Layout from '@/design-system/Layout'
 import Box from '@/design-system/primitives/Box'
 import Heading from '@/design-system/primitives/Heading'
 import Profile from '@/design-system/primitives/Profile'
-import Button from '@/design-system/primitives/Button'
+import Label from '@/design-system/primitives/Label'
 import * as Header from '@/design-system/Feed/Header'
 import SubscribeSettings from '@/design-system/Feed/Header/SubscribeSettings'
 import Link from 'next/link'
@@ -241,15 +241,21 @@ export const Data = ({ pbl, entries, profiles }: Props) => {
   }
 
   return (
-    <Layout>
+    <Layout title={`${pbl.ensLabel} by ${entries[0]?.author.displayName} | MirrorFeed`} >
       <Box layout='flexBoxRow' css={{
+        boxSizing: 'border-box',
         width: '100%', justifyContent: 'space-between',
-
+        overflow: 'hidden'
       }}>
-        <Box layout='flexBoxColumn' css={{ width: '$body', }}>
+        <Box layout='flexBoxColumn' css={{ width: '$body', '@bp1': { width: '100%' } }}>
           <Header.Root controls={<Header.ViewControls />}>
             <Box layout='flexBoxRow' css={{ gap: '$4', width: '100%', height: '100%', }}>
-              <Box layout='flexBoxRow' css={{ width: '100%', height: '100%', color: '$foregroundText', justifyContent: 'flex-start', gap: '$2', alignItems: 'center' }}>
+              <Box layout='flexBoxRow' css={{
+                width: '100%', height: '100%', color: '$foregroundText', justifyContent: 'flex-start', gap: '$2', alignItems: 'center',
+                '@bp1': {
+                  gap: '$0'
+                }
+              }}>
                 <Box layout='flexBoxRow' css={{ height: '100%', alignItems: 'center' }}>
                   <Profile
                     size={'lg'}
@@ -269,12 +275,17 @@ export const Data = ({ pbl, entries, profiles }: Props) => {
                   </Link>
                 </Box>
 
-                <SubscribeSettings
-                  disabled={!user?.isConnected || !user.id || subscribed.state === 'loading' || subscribed.state === 'hasError'}
-                  Subscribe={Subscribe}
-                  Unsubscribe={Unsubscribe}
-                  isSubscribed={subscribed.state === 'hasValue' && subscribed.contents?.find((item: any) => item.ensLabel === pbl.ensLabel)}
-                />
+                <Box layout='flexBoxRow' css={{ alignItems: 'center' }}>
+                  <SubscribeSettings
+                    disabled={!user?.isConnected || !user.id || subscribed.state === 'loading' || subscribed.state === 'hasError'}
+                    Subscribe={Subscribe}
+                    Unsubscribe={Unsubscribe}
+                    isSubscribed={subscribed.state === 'hasValue' && subscribed.contents?.find((item: any) => item.ensLabel === pbl.ensLabel)}
+                  />
+                  {!user?.isConnected && (
+                    <Label>Connect wallet to subscribe</Label>
+                  )}
+                </Box>
 
                 {/* <Button
                   css={{

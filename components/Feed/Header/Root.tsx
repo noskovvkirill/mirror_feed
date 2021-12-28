@@ -12,6 +12,9 @@ const StyledContainer = styled('div', {
     gap: 'calc($4 + $0)',
     '@bp1': {
         maxWidth: '100%',
+        boxSizing: 'border-box',
+        padding: '0 $2',
+        marginTop: 'calc($4 * 2)',
         // overflow: 'hidden'
     },
     variants: {
