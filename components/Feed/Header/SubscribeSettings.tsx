@@ -15,6 +15,7 @@ const StyledCurationButton = styled(DropdownMenu.Trigger, {
     whiteSpace: 'nowrap',
     justifyContent: 'center',
     background: 'none',
+    userSelect: 'none',
     borderRadius: '$round',
     border: '0px',
     color: 'inherit',
@@ -90,6 +91,23 @@ const StyledItem = styled(DropdownMenu.Item, {
         backgroundColor: '$foregroundBronze',
         border: '1px solid $foregroundBronze'
     },
+    variants: {
+        disabled: {
+            true: {
+                pointerEvents: 'none',
+                cursor: 'not-allowed',
+                // backgroundColor: '$foreground'
+            }
+        },
+        false: {
+
+        }
+    },
+    '&:disabled': {
+        color: 'red',
+        cursor: 'not-allowed',
+        backgroundColor: '$foreground'
+    }
     // '&:hover': {
     //     border: '1px solid $foregroundBronze',
     //     color: '$foregroundBronze',
@@ -157,7 +175,7 @@ const SubscribeSettings = ({ isSubscribed, Subscribe, Unsubscribe, disabled, siz
                         onSelect(e.target.parentNode.parentNode)
                     }
                 }}
-                disabled={disabled}>
+            >
                 {size === 'small'
                     ? <>•••</>
                     : <>●&thinsp;●&thinsp;●</>
@@ -168,18 +186,22 @@ const SubscribeSettings = ({ isSubscribed, Subscribe, Unsubscribe, disabled, siz
             // onCloseAutoFocus={(e) => e.preventDefault()}
 
             >
-                {/* <Box layout='flexBoxRow' css={{
-                    width: '100%',
-                    borderRadius: '$2',
-                    padding: '$1 $2',
-                    color: '$foregroundBronze',
-                    background: '$foregroundTintBronze'
-                }}>
-                    <span>321 subscribers</span>
-                </Box> */}
+
+                {disabled && (
+                    <Box layout='flexBoxRow' css={{
+                        width: '100%',
+                        borderRadius: '$2',
+                        padding: '$1 $2',
+                        color: '$foregroundBronze',
+                        background: '$foregroundTintBronze',
+                        fontSize: '$6'
+                    }}>
+                        Connect Wallet to subscribe/unsubscribe
+                    </Box>
+                )}
 
                 {(!isSubscribed && Subscribe)
-                    ? <StyledItem onSelect={onSubscribe}>
+                    ? <StyledItem disabled={disabled} onSelect={onSubscribe}>
                         {loadingState === 'default' && (
                             <>Subsribe</>
                         )}
@@ -195,7 +217,7 @@ const SubscribeSettings = ({ isSubscribed, Subscribe, Unsubscribe, disabled, siz
                     </StyledItem>
                     : <>
                         {Unsubscribe && (
-                            <StyledItem onSelect={onUnSubscribe}>
+                            <StyledItem disabled={disabled} onSelect={onUnSubscribe}>
                                 {loadingState === 'default' && (
                                     <>Unsubscribe</>
                                 )}

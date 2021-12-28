@@ -134,7 +134,12 @@ const Data = ({ entry }: Props) => {
       <Layout title={`${entry.title} by ${entry.author?.displayName} | MirrorFeed`}>
         <Box layout='flexBoxColumn'>
           <Header.Root css={{ marginBottom: 'calc($4 * 1)' }} isFullScreen={true}>
-            <Box layout='flexBoxRow' css={{ width: '100%', gap: '$4', justifyContent: 'space-between' }}>
+            <Box layout='flexBoxRow' css={{
+              width: '100%', gap: '$1', justifyContent: 'flex-start',
+              '@bp1': {
+                justifyContent: 'space-between'
+              }
+            }}>
 
               <Box layout='flexBoxRow'>
                 <Profile
@@ -163,14 +168,12 @@ const Data = ({ entry }: Props) => {
               </Box>
 
               <Box css={{
-                padding: '0 $4', alignItems: 'center', color: '$foreground', gap: '$2',
+                padding: '0 $2', alignItems: 'center', color: '$foreground', gap: '$2',
                 '@bp1': { padding: '0' }
               }} layout='flexBoxRow'>
                 {/* <Label>Coming Soon</Label>
                 <Button disabled>Subscribe</Button> */}
-                {!user?.isConnected && (
-                  <Label>Connect wallet to subscribe</Label>
-                )}
+
                 <SubscribeSettings
                   size='small'
                   disabled={!user?.isConnected || !user.id || subscribed.state === 'loading' || subscribed.state === 'hasError'}

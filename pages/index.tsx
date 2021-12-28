@@ -30,8 +30,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     const supabaseUrl = 'https://tcmqmkigakxeiuratohw.supabase.co'
     const supabaseKey = process.env.SERVICE_KEY || ''
     const supabase = createClient(supabaseUrl, supabaseKey)
-    console.log('host__debuggining ***', subdomain)
-
     //home page
     if (!subdomain || subdomain === "www") {
         console.log('home page')
@@ -47,9 +45,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         return { props: { entries: newdata } }
     }
 
+    //cache subdomain page if redirected
+    res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=1, stale-while-revalidate=59'
+    );
 
-    const domain = req?.headers?.host?.split('.').slice(1, req?.headers?.host?.split('.').length)[0]
-    console.log('domain', domain, 'subdomain', subdomain)
+    // const domain = req?.headers?.host?.split('.').slice(1, req?.headers?.host?.split('.').length)[0]
     return {
         redirect: {
             destination: process.env.NODE_ENV === "development" ? `http://${"mirrorfeed"}.xyz/${subdomain}` : `https://${"mirrorfeed"}.xyz/${subdomain}`,

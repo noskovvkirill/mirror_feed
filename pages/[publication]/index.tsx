@@ -171,6 +171,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
     return {
       props: { pbl: pbl, entries: entrieFiltered, profiles: profiles },
+      revalidate: 60,
     }
   } catch (e) {
     return ({ notFound: true })
@@ -282,9 +283,7 @@ export const Data = ({ pbl, entries, profiles }: Props) => {
                     Unsubscribe={Unsubscribe}
                     isSubscribed={subscribed.state === 'hasValue' && subscribed.contents?.find((item: any) => item.ensLabel === pbl.ensLabel)}
                   />
-                  {!user?.isConnected && (
-                    <Label>Connect wallet to subscribe</Label>
-                  )}
+
                 </Box>
 
                 {/* <Button
