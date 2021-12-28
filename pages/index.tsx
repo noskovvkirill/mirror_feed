@@ -18,7 +18,7 @@ import { createClient } from '@supabase/supabase-js'
 import type { EntryType } from '@/design-system/Entry'
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-    const domains = req?.headers?.host?.split(".")[0];
+    const domains = req?.headers?.host?.split(".");
     const subdomain =
         domains &&
         domains.length === (process.env.NODE_ENV === "development" ? 2 : 3) &&
