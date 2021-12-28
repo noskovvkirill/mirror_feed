@@ -18,24 +18,23 @@ import { createClient } from '@supabase/supabase-js'
 import type { EntryType } from '@/design-system/Entry'
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-    const host = req?.headers?.host?.split(".")[0];
-
+    const domains = req?.headers?.host?.split(".")[0];
+    const subdomain =
+        domains &&
+        domains.length === (process.env.NODE_ENV === "development" ? 2 : 3) &&
+        domains[0];
     // res.setHeader(
     //     'Cache-Control',
     //     'public, s-maxage=1, stale-while-revalidate=59'
     // );
-
     const supabaseUrl = 'https://tcmqmkigakxeiuratohw.supabase.co'
     const supabaseKey = process.env.SERVICE_KEY || ''
     const supabase = createClient(supabaseUrl, supabaseKey)
-
-    console.log('host__debuggining ***', req?.headers?.host, host, req?.headers?.host?.length)
-
+    console.log('host__debuggining ***', subdomain)
 
     //home page
-    if (!host || host === "www" || host.length >= 3 ||
-        (process.env.NODE_ENV === "development" && host.split(':')[0] === "localhost")) {
-        console.log('home page', host)
+    if (!subdomain || subdomain === "www") {
+        console.log('home page')
         const { data, error } = await supabase
             .from('mirroritems_test')
             .select('*')
@@ -50,9 +49,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
 
     const domain = req?.headers?.host?.split('.').slice(1, req?.headers?.host?.split('.').length)[0]
+    console.log('domain', domain, 'subdomain', subdomain)
     return {
         redirect: {
-            destination: process.env.NODE_ENV === "development" ? `http://${domain}/${host}` : `https://${domain}/${host}`,
+            destination: process.env.NODE_ENV === "development" ? `http://${"mirrorfeed"}.xyz/${subdomain}` : `https://${"mirrorfeed"}.xyz/${subdomain}`,
             permanent: true,
         },
     }
