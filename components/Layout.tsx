@@ -9,6 +9,7 @@ import Search from '@/design-system/Search'
 import Portal from '@/design-system/Portal'
 import Notifications from '@/design-system/Notifications'
 import Head from 'next/head'
+import PageLoadProgress from '@/design-system/Feed/PageLoadProgress'
 import Link from 'next/link'
 //state
 import React, { ReactNode, useEffect, useState } from 'react'
@@ -236,7 +237,7 @@ const Layout = ({ children, title = 'Mirror feed' }: Props) => {
 
             {/* <StyledHeader css={{ position: 'sticky', height: '160px' }}> */}
             <StyledHeader css={{ position: 'sticky', height: 'fit-content', marginBottom: '$2' }}>
-
+                <PageLoadProgress />
                 <StyledNavControls layout='flexBoxColumn'>
                     <Portal
                         // isSearch={isSearch}

@@ -253,7 +253,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                 await supabase.auth.setAuth(token);
                 userId = id;
             } else {
-                console.log('supabase token', token)
+                // console.log('supabase token', token)
                 await supabase.auth.setAuth(token);
             }
 
