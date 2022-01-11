@@ -22,6 +22,7 @@ export default async function handler(
   const { data, error } = await supabase
     .from('mirroritems_test')
     .select('*')
+    .eq('isPublished', true)
     .order('id', { ascending: false })
     .range(parseInt(from), parseInt(to))
 

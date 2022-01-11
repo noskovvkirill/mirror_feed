@@ -2,7 +2,7 @@ import * as Popover from '@radix-ui/react-popover';
 import Box from '@/design-system/primitives/Box'
 import { styled } from 'stitches.config';
 import { ReactNode, ReactElement } from 'react';
-import Button from '@/design-system/primitives/Button';
+// import Button from '@/design-system/primitives/Button';
 
 const StyledTrigger = styled(Popover.Trigger, {
   border: '1px solid $foreground',
@@ -16,6 +16,7 @@ const StyledTrigger = styled(Popover.Trigger, {
   borderRadius: '$round',
   display: 'flex',
   gap: '$0',
+  justifyContent: 'center',
   objectFit: 'scale-down',
   alignItems: 'center',
   fontSize: '$6',

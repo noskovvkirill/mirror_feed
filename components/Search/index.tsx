@@ -73,8 +73,12 @@ const StyledSearchContainter = styled('div', {
         animationFillMode: 'forwards'
     },
     '@bp1': {
-        maxWidth: '100vw',
-        width: '100%',
+        margin: '0 $2',
+        width: 'calc(100vw - $4)',
+        left: 'calc(50% - $2)',
+        maxWidth: '100%',
+        // minWidth: '100%',
+        // width: '100%',
         top: '$4',
         height: '100%',
         padding: '$2'
@@ -407,7 +411,12 @@ const SearchPanel = ({ setIsOpen }: ISearch) => {
                                                 setSelectedSpace(1)
                                             }
                                         }}
-                                        ref={search} css={{ transition: '$all', top: '0', width: '100%', height: 'auto', '&:focus': { boxShadow: '$large' } }}
+                                        ref={search} css={{
+                                            transition: '$all', top: '0', width: '100%', height: 'auto', '&:focus': {
+                                                boxShadow: '$large',
+                                                // outline: 'none', border: '1px solid $foregroundBronze', color: '$foregroundTextBronze'
+                                            }
+                                        }}
                                         // type='search'
                                         onChange={thottleSearch}
                                         placeholder='Search publication' />
@@ -440,7 +449,7 @@ const SearchPanel = ({ setIsOpen }: ISearch) => {
                                             color: '$foregroundText',
                                             outline: 'none',
                                             padding: '0 $2',
-                                            paddingLeft: '$3',
+                                            paddingLeft: 'calc($2 * 1.2)', //looks optically correct
                                             textAlign: 'center',
                                             fontSize: '$6',
                                             fontFamily: 'inherit',
@@ -522,8 +531,8 @@ const SearchPanel = ({ setIsOpen }: ISearch) => {
 
 
 
-                                <Box tabIndex={-1}>
-                                    <Box as='span' css={{ padding: '0', color: '$foregroundText' }}>Trending Spaces</Box>
+                                <Box tabIndex={-1} css={{ paddingTop: '$1' }}>
+                                    <Box as='span' css={{ color: '$foregroundText' }}>Trending Spaces</Box>
                                     <Box
                                         tabIndex={0}
                                         ref={curators} css={{

@@ -65,7 +65,7 @@ const ManageSubscriptions = ({ children }: IManageSubscriptions) => {
                     <Title asChild>
                         <Box layout='flexBoxRow' css={{ alignItems: 'center', userSelect: 'none', margin: '0 0 $3 0', }}>
                             <Heading size={'h4'} color={'foregroundText'}>Subscriptions</Heading>
-                            <Heading size={'h4'} color={'highlight'}>{user?.displayName ? user?.displayName : AddressPrettyPrint(user?.address)}</Heading>
+                            <Heading size={'h4'} color={'highlight'}>{(subscribed?.contents && subscribed.state === 'hasValue') ? subscribed.contents.length : 0} Items</Heading>
                         </Box>
                     </Title>
                     {subscribed.state === 'hasValue'

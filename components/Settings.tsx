@@ -4,6 +4,7 @@ import { styled, keyframes } from "stitches.config"
 import ButtonPopover from "@/design-system/primitives/ButtonPopover"
 import * as Tabs from '@radix-ui/react-tabs';
 import Profile from '@/design-system/icons/Profile'
+import Label from '@/design-system/primitives/Label'
 import ManageSubscriptions from '@/design-system/ManageSubscriptions'
 import React from 'react'
 import { useRouter } from 'next/router'
@@ -146,7 +147,7 @@ const Settings = ({ UpdateTheme, themes, theme }: ISettings) => {
     return (
         <ButtonPopover
             isAvatar={user?.avatarURL ? true : false}
-            icon={user?.avatarURL ? <img src={user.avatarURL} width='100%' height='auto' alt='Current user avatar' /> : <Profile />} label='change' isHighlighted={true}>
+            icon={user?.avatarURL ? <img src={user.avatarURL} width='100%' height='auto' alt='Current user avatar' /> : user?.isConnected ? <Label size='default'>{AddressPrettyPrint(user?.address || 'undefined', 3)}</Label> : <Profile />} label='change' isHighlighted={true}>
             <Tabs.Root defaultValue={(user && user.isConnected) ? 'login' : 'settings'}>
                 <Box layout='flexBoxRow' css={{ alignItems: 'center', boxSizing: 'border-box', padding: '$2 $2', justifyContent: 'space-between' }}>
                     <StyledTabsList css={{ boxSizing: 'border-box', color: '$foregroundText' }}>
@@ -164,13 +165,16 @@ const Settings = ({ UpdateTheme, themes, theme }: ISettings) => {
                         justifyContent: 'center',
                         boxSizing: 'border-box',
                         overflow: 'hidden',
+                        gap: '$0',
                         // padding:'$1',
                         objectFit: 'scale-down',
                         lineHeight: '$6',
                         borderRadius: '$round', color: '$background', background: '$foreground'
                     }}>
-                        {user?.avatarURL ? <img src={user.avatarURL} width='100%' height='auto' alt='Current user avatar' /> : <Profile />}
+                        {user?.avatarURL ? <img src={user.avatarURL} width='100%' height='auto' alt='Current user avatar' /> : user?.isConnected ? <Label size='default'>{AddressPrettyPrint(user?.address || 'undefined', 3)}</Label> : <Profile />}
                     </Box>
+                    {/* {user?.avatarURL ? <img src={user.avatarURL} width='100%' height='auto' alt='Current user avatar' /> : <Profile />} */}
+
                 </Box>
                 <StyledTabsContent value='login' css={{ overflow: 'hidden' }}>
                     {(user && user.isConnected) && (
@@ -201,7 +205,8 @@ const Settings = ({ UpdateTheme, themes, theme }: ISettings) => {
                                             </Box>
                                         )
                                     case 'homestead':
-                                        return (<Box as='p' css={{ color: '$error' }}>Mainnet is not supported yet. Switch to Rinkeby</Box>)
+                                        return (<></>)
+                                    // return (<Box as='p' css={{ color: '$error' }}>Mainnet curation is not supported yet. Switch to Rinkeby</Box>)
                                     default: return (<>Unsupported network</>)
                                 }
 
@@ -255,6 +260,12 @@ const Settings = ({ UpdateTheme, themes, theme }: ISettings) => {
                                 css={{ color: '$foreground', width: '33px', fontSize: '$6', whiteSpace: 'break-spaces', wordBreak: 'break-all' }}
                                 key={'theme' + item}>
                                 <Box
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            UpdateTheme(item)
+                                        }
+                                    }}
                                     onClick={() => {
                                         UpdateTheme(item)
                                     }}

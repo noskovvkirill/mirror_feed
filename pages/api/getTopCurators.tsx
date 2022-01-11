@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from '@supabase/supabase-js'
-import type {TopType} from 'pages/explore'
+import type { TopType } from 'pages/explore'
 
 const supabaseUrl = 'https://tcmqmkigakxeiuratohw.supabase.co'
 const supabaseKey = process.env.SERVICE_KEY || ''
@@ -10,17 +10,18 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  
-   const { data, error } = await supabase
+
+  const { data, error } = await supabase
     .from('topSync')
     .select('*')
-    .order('synced_at', {ascending: false})
+    .order('synced_at', { ascending: false })
     .limit(1)
     .single()
-    const topCurators = data.topCurators as Pick<TopType, 'topCurators'>
-    if(error){
-        return res.status(500).json({error: error.message.toString()})
-    }
+  if (error) {
+    return res.status(500).json({ error: error.message.toString() })
+  }
+  const topCurators = data.topCurators as Pick<TopType, 'topCurators'>
 
-    return res.status(200).json({topCurators});
+
+  return res.status(200).json({ topCurators });
 }

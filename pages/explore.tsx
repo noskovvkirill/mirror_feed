@@ -99,6 +99,8 @@ const Home = ({ entries, top }: Props) => {
 
     return (
         <Layout>
+            <Box as='h5' css={{ boxSizing: 'border-box', padding: '0 calc($4 * 2)', color: '$error' }}>Decentralized curation is a work in progress. if you want to help shaping it reach out @noskovvkirill on Twitter</Box>
+
             <Box layout='flexBoxColumn'>
                 <Header.Root controls={<Header.ViewControls />}>
                     <Box layout='flexBoxColumn' css={{ width: '100%' }}>

@@ -11,6 +11,8 @@ import useOnScreen from 'hooks/useOnScreen'
 import Profile from '@/design-system/primitives/Profile'
 import { AddressPrettyPrint } from 'src/utils'
 import Loader from '@/design-system/primitives/Loader'
+// import Tag from '@/design-system/primitives/Tag'
+// import Label from '@/design-system/primitives/Label'
 import Star from '@/design-system/icons/Star'
 import NotStar from '@/design-system/icons/NotStar'
 
@@ -95,6 +97,7 @@ export const SpacePublication = ({ index, isActive, isPointer, setCuratedPublica
                 ref={ref}
                 isActive={isActive}>
                 <Box layout='flexBoxRow' css={{ gap: '$2', fontSize: '$6', alignItems: 'center' }}>
+
                     {isAvatar && (
                         <Profile size='sm' profile={item} />
                     )}
@@ -124,7 +127,7 @@ export const SpacePublication = ({ index, isActive, isPointer, setCuratedPublica
                                     setCuratedPublications((prev: SubscribedPublication[]) => {
                                         const pub: SubscribedPublication = {
                                             avatarURL: item.avatarURL,
-                                            displayName: item.ensLabel,
+                                            displayName: item?.displayName,
                                             type: 'ens',
                                             ensLabel: item.ensLabel
                                         }
@@ -192,6 +195,7 @@ const SearchPublication = ({ isHover, isPointer, setIsPointer, setIsHover, curat
             }}>
 
                 {!data && [...curated].map((item: SubscribedPublication, index: number) => {
+                    // console.log('item_', item)
                     return (
                         <SpacePublication
                             isPointer={isPointer}
@@ -209,7 +213,7 @@ const SearchPublication = ({ isHover, isPointer, setIsPointer, setIsHover, curat
                 })}
 
                 {data && [...curated, ...data?.flat().filter((item: SubscribedPublication) => {
-                    return curated?.findIndex((publ: SubscribedPublication) => publ.ensLabel === item.ensLabel) === -1
+                    return curated?.findIndex((publ: SubscribedPublication) => publ?.ensLabel === item?.ensLabel) === -1
                 })].map((item: SubscribedPublication, index: number) => {
                     if (item) {
                         return (

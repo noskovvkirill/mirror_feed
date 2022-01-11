@@ -173,7 +173,7 @@ const Steps = ({ step, setStep, setIsOnboarded, setIsPortal }: { step: number, s
                         <Box as='h5' css={{ color: '$text' }}>Your control panel</Box>
                         <CloseButton onClick={() => { localStorage.setItem('mirror-feed-onboarding-state-new', "true"), setIsOnboarded(true) }}><Remove /></CloseButton>
                     </StyledHeader>
-                    <StyledContent>Login to your wallet or multisig here. Check your balance. Toggle themes settings. Find your reading list. Enjoy!</StyledContent>
+                    <StyledContent>Login to your wallet or multisig here. Check your balance. Toggle themes settings. Find your reading list & manage subscriptions. Enjoy!</StyledContent>
                     <StyledFooter>
                         <Button onClick={() => setStep(prevStep => prevStep -= 1)}>Prev</Button>
                         <Button onClick={() => { localStorage.setItem('mirror-feed-onboarding-state-new', "true"); setIsOnboarded(true) }}>Finish</Button>
@@ -197,7 +197,7 @@ const Steps = ({ step, setStep, setIsOnboarded, setIsPortal }: { step: number, s
                         <CloseButton onClick={() => { localStorage.setItem('mirror-feed-onboarding-state-new', "true"), setIsOnboarded(true) }}><Remove /></CloseButton>
                     </StyledHeader>
                     <StyledContent css={{ maxWidth: '548px' }}>Below you see <b>the newest articles</b> from Mirror.xyz contributors. <b>Explore</b> page shows you curated content.
-                        Save items <StyledLabel><AddIcon label={'Add Entry Icon Onboarding Example'} /></StyledLabel> to your space or add them to pinned list <StyledLabel><PinnedIcon label={'Pinned Icon Onboarding Example'} /></StyledLabel> and sort them later.</StyledContent>
+                        Save items <StyledLabel><AddIcon label={'Add Entry Icon Onboarding Example'} /></StyledLabel> to your space and sort them later.</StyledContent>
                     <StyledFooter>
                         <Button onClick={() => {
                             setStep(prevStep => prevStep -= 1)

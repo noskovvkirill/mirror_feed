@@ -130,7 +130,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                 await provider.enable();
                 const web3Provider = new ethers.providers.Web3Provider(provider, "any");
                 const signer = web3Provider.getSigner();
+                if (!signer) throw "signer doesnt exist"
                 const address = await signer.getAddress()
+                if (!address) throw "signer doesnt exist"
                 const network = await web3Provider.getNetwork()
                 const token = ParseCookie(document.cookie)
                 const { exp: isValidCookie, sub } = ValidateCookie(token)
@@ -157,16 +159,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                     await supabase.auth.setAuth(token);
                     userId = id;
                 }
+                else {
+                    await supabase.auth.setAuth(token);
+                }
 
-                await supabase.auth.setAuth(token);
-                const mirrorUser = await request('https://mirror-api.com/graphql', queryContributor, { address: address })
-                    .then(({ userProfile }) => {
-                        return userProfile
-                    })
-                    .catch((e) => {
-                        console.log('errorgetting user', e)
-                        return
-                    })
+                // const mirrorUser = await request('https://mirror-api.com/graphql', queryContributor, { address: address })
+                //     .then(({ userProfile }) => {
+                //         return userProfile
+                //     })
+                //     .catch((e) => {
+                //         console.log('errorgetting user', e)
+                //         return
+                //     })
 
                 if (web3Provider && address && signer && userId) {
                     try {
@@ -180,11 +184,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                             newUser.id = userId;
                             newUser.address = address
                             newUser.isConnected = true;
-                            newUser.email = mirrorUser?.email
+                            // newUser.email = mirrorUser?.email
                             newUser.network = network;
                             // load them in separate context to speed up the signing in
-                            newUser.displayName = mirrorUser?.displayName
-                            newUser.avatarURL = mirrorUser?.avatarURL
+                            // newUser.displayName = mirrorUser?.displayName
+                            // newUser.avatarURL = mirrorUser?.avatarURL
                             newUser.allowance = {
                                 gov: parseInt(govAllowance),
                                 space: parseInt(spaceAllowance)
@@ -200,7 +204,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                             const newUser = Object.assign({}, user)
                             delete newUser.provider
                             newUser.address = address
-                            newUser.email = mirrorUser?.email
+                            // newUser.email = mirrorUser?.email
                             newUser.isConnected = true;
                             newUser.network = network;
                             newUser.balance = 0;
@@ -221,7 +225,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
             const web3Provider = new ethers.providers.Web3Provider(window.ethereum, "any");
             await web3Provider.send("eth_requestAccounts", []);
             const signer = web3Provider.getSigner();
+            if (!signer) throw "signer doesnt exist"
             const address = await signer.getAddress()
+            if (!address) throw "signer doesnt exist"
             const token = ParseCookie(document.cookie)
             const { exp: isValidCookie, sub: sub } = ValidateCookie(token)
             let userId = sub;
@@ -246,18 +252,21 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                     .catch(e => console.log(e)) as { token: string, id: string }
                 await supabase.auth.setAuth(token);
                 userId = id;
+            } else {
+                console.log('supabase token', token)
+                await supabase.auth.setAuth(token);
             }
-            await supabase.auth.setAuth(token);
+
             const network = await web3Provider.getNetwork()
 
-            const mirrorUser = await request('https://mirror-api.com/graphql', queryContributor, { address: address })
-                .then(({ userProfile }) => {
-                    return userProfile
-                })
-                .catch((e) => {
-                    console.log('errorgetting user', e)
-                    return
-                })
+            // const mirrorUser = await request('https://mirror-api.com/graphql', queryContributor, { address: address })
+            //     .then(({ userProfile }) => {
+            //         return userProfile
+            //     })
+            //     .catch((e) => {
+            //         console.log('errorgetting user', e)
+            //         return
+            //     })
 
             if (web3Provider && address && signer && userId) {
                 try {
@@ -269,12 +278,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                         const newUser = Object.assign({}, user)
                         delete newUser.provider
                         newUser.address = address
-                        newUser.email = mirrorUser?.email
+                        // newUser.email = mirrorUser?.email
                         newUser.id = userId
                         newUser.isConnected = true;
                         //
-                        newUser.displayName = mirrorUser?.displayName
-                        newUser.avatarURL = mirrorUser?.avatarURL
+                        // newUser.displayName = mirrorUser?.displayName
+                        // newUser.avatarURL = mirrorUser?.avatarURL
                         newUser.allowance = {
                             gov: parseInt(govAllowance),
                             space: parseInt(spaceAllowance)
@@ -294,9 +303,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                         newUser.address = address
                         newUser.isConnected = true;
                         //
-                        newUser.email = mirrorUser?.email
-                        newUser.displayName = mirrorUser?.displayName
-                        newUser.avatarURL = mirrorUser?.avatarURL
+                        // newUser.email = mirrorUser?.email
+                        // newUser.displayName = mirrorUser?.displayName
+                        // newUser.avatarURL = mirrorUser?.avatarURL
                         //
                         newUser.network = network;
                         newUser.balance = 0;
@@ -375,6 +384,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode[] | React
                     newUser.isConnected = true;
                     return newUser
                 })
+                window.location.reload();
             })
         }
     }, [user])

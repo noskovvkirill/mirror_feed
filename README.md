@@ -1,16 +1,17 @@
 # An alternative reading client for the Mirror.xyz
+
+## Contacts
+Made by @noskovvkirill
+Find me on Twitter or noskovvkirill@gmail.com
+
+Contributions are welcomed :-) 
 ## Goals and principles
 
 ✦✦✦ Curation
-✦ Reading as a shared experience, conversation and exploration  
-✦ Come for the tool.. stay for the ...
-✦ Mirror as a protocol to build upon, not the
-parent project to look at
+✦ Reading as a shared experience and exploration  
+✦ Mirror as a protocol to build on, not the platform 
 ✦ Highly customizable
-
-I tried to verify mirror signatures onchain but realized that a simple legitimacy through staking may work. 
-I desensitize cybil attacks – the access to curation spaces is limited. Rewards are based on the N of people who staked for a specific item.  
-Rewards should be small ~0 if a small number of curators have staked the tokens. WIP 
+ 
 ## Design exploration
 Random explorations when thinking in code doesnt work 
 https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
@@ -20,25 +21,26 @@ https://www.figma.com/file/yJ8Ram0xgkGsufTkF8VTil/MirrorPubSub?node-id=0%3A1
 Work is divided into four parts: design, frontend, backend, contracts
 
 Backend & Frontend
-— [ ] Full text search, better indexing
-— [ ] Improve sync infrastrcture
+— [X] Text search, better indexing
+— [X] Improve sync infrastrcture
 — [ ] Support/indexing for non-members publication + frontend work 
-- [ ] Notifications & Subscribtions
+- [X] Notifications & Subscribtions
 - [ ] Auction & Editions Airdrop Embeds
 — [ ] Favourites only feed, members only feed, spaces feed and etc. Should provide a complete overview of Mirror.xyz
 - [ ] Separate feed for all different blocks within mirror 
 - [ ] Quadratic voting for the best entries in Explore tab  
 
 Contract & Web3
-- [ ] NFT Derivatives (possibility to create highlights & extract pieces of content with the attribution to initial creator)
-- [ ] Arweave test (split document into blocks with their own CID)
-— [ ] GraphAPI add support for transfers
-— [ ] Think on how royalties may work to support work of curators (?) https://github.com/manifoldxyz/royalty-registry-solidity
+- [ ] NFT Derivatives (possibility to create highlights & extract pieces of content with the attribution to initial creator). Glass hyperlink protocol. Maybe it's simpler than staking (?) or keep both (remint/remix or stake)
+- [ ] Staking economy doesn't work — it simply generated the extra coins for the authors. I need someones help to make it work sustainably — it has to be a combination from space creationg (NFT minting), bonding curve pricing, protocol owned liquidity. I'm not competent enough for that yet.
+- [ ] Arweave test (split document into blocks with their own CID). It may be the key for the atomic content curation in the future 
+- [ ] Design the NFT game for the spaces (it has to be exciting to mint, it should be scarce and crypto native [no IPFS]) to enable growth
+— [ ] GraphAPI add support for transfers (spaces NFT improvement)
+— [ ] Royalties to support work of curators (?) https://github.com/manifoldxyz/royalty-registry-solidity 
 — [ ] Test multisig ownership of the publication 
 — [ ] How do we reward authors? Right now the func is quite random and generic. Looking into other staking contracts 
-— [ ] Support for best NFT practices for the spaces. Right now it's a generic OpZeppelin ERC721
-— [ ] Every space is NFT, minting right now is open for everyone, but I want it to be a point of onboarding for curators. If you have NFT, you can mint two more for others or give permissions to someone else? What is a good way to ensure q. of Curators?
 
 Design 
-— [ ] How would 2 step process for groups/publications with review would work? Can we recreate traditional publishing experience?  
+— [ ] How would 2 step process for groups/publications with review would work? Can we recreate traditional publishing experience with a combination of Mirror (creation) and MirrorFeed (curation & exploration)?   
 — [ ] Change copy  
+

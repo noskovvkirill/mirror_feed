@@ -6,22 +6,20 @@ import { sand, indigo, indigoDark, bronze, sandDark, red, tomatoDark } from '@ra
 export const { styled, css, globalCss, getCssText, keyframes, createTheme } = createStitches({
     theme: {
         colors: {
-            // ...sand,
-            background: sand.sand1,
-            foreground: sand.sand8,
-            foregroundBorder: sand.sand8,
-            highlight: sand.sand5,
-            tint: sand.sand2,
-            foregroundText: sand.sand9,
-            text: sand.sand12,
+            background: sandDark.sand1,
+            foreground: sandDark.sand9,
+            foregroundBorder: sandDark.sand8,
+            highlight: sandDark.sand3,
+            tint: sandDark.sand2,
+            foregroundText: sandDark.sand10,
+            text: sandDark.sand12,
             //bronze
-            backgroundBronze: bronze.bronze1,
-            foregroundBronze: bronze.bronze7,
-            foregroundTintBronze: bronze.bronze5,
-            highlightBronze: bronze.bronze4,
-            tintBronze: bronze.bronze2,
-            foregroundTextBronze: bronze.bronze9,
-            textBronze: bronze.bronze12,
+            backgroundBronze: sandDark.sand1,
+            foregroundBronze: sandDark.sand9,
+            foregroundTintBronze: sandDark.sand5,
+            highlightBronze: sandDark.sand3,
+            foregroundTextBronze: sandDark.sand10,
+            textBronze: sandDark.sand12,
             error: red.red10
         },
         space: {
@@ -78,13 +76,13 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
             round: "9999px",
         },
         shadows: {
-            small: `0px 2px 4px 2px  ${sand.sand7}`,
-            normal: `0px 2px 8px 2px ${sand.sand6}`,
-            large: `0px 1px 8px ${sand.sand6}`,
-            outline: `0 0 1px ${sand.sand8}`,
-            outlineLarge: `0 0 3px ${sand.sand8}`,
-            outlineSelected: `0 0 0 1px ${bronze.bronze7}`, //==foreground
-            outlineLargeSelected: `0 0 0 3px ${bronze.bronze7}`,
+            small: `0px 2px 4px 2px rgba(0,0,0, 0.1)`,
+            normal: `0px 2px 8px 4px rgba(0,0,0, 0.15)`,
+            large: `0px 4px 8px 4px rgba(0,0,0, 0.15)`,
+            outline: `0 0 0 1px ${sandDark.sand9}`,
+            outlineLarge: `0 0 0 3px ${sandDark.sand9}`,
+            outlineSelected: `0 0 0 1px ${indigoDark.indigo9}`, //==foreground
+            outlineLargeSelected: `0 0 0 3px ${indigoDark.indigo9}`,
         },
         zIndices: {},
         transitions: {
@@ -106,34 +104,97 @@ export const { styled, css, globalCss, getCssText, keyframes, createTheme } = cr
 });
 
 
-export const lightThemePlain = createTheme('light-plain', {
+export const lightTheme = createTheme('light-cream', {
     colors: {
         // ...sand,
         background: sand.sand1,
-        foreground: sand.sand9,
+        foreground: sand.sand8,
         foregroundBorder: sand.sand8,
-        highlight: sand.sand4,
+        highlight: sand.sand5,
         tint: sand.sand2,
         foregroundText: sand.sand9,
         text: sand.sand12,
         //bronze
-        backgroundBronze: sand.sand1,
-        foregroundBronze: sand.sand9,
-        foregroundTintBronze: sand.sand5,
-        highlightBronze: sand.sand3,
-        foregroundTextBronze: sand.sand9,
-        textBronze: sand.sand12,
+        backgroundBronze: bronze.bronze1,
+        foregroundBronze: bronze.bronze7,
+        foregroundTintBronze: bronze.bronze5,
+        highlightBronze: bronze.bronze4,
+        tintBronze: bronze.bronze2,
+        foregroundTextBronze: bronze.bronze9,
+        textBronze: bronze.bronze12,
         error: red.red10
     },
     shadows: {
-        normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
+        small: `0px 2px 4px 2px  ${sand.sand7}`,
+        normal: `0px 2px 8px 2px ${sand.sand6}`,
         large: `0px 1px 8px ${sand.sand6}`,
-        outline: `0 0 0 1px ${sand.sand9}`, //==foreground
-        outlineLarge: `0 0 0 3px ${sand.sand9}`,
-        outlineSelected: `0 0 0 1px ${sand.sand11}`, //==foreground
-        outlineLargeSelected: `0 0 0 3px ${sand.sand11}`,
+        outline: `0 0 1px ${sand.sand8}`,
+        outlineLarge: `0 0 3px ${sand.sand8}`,
+        outlineSelected: `0 0 0 1px ${bronze.bronze7}`, //==foreground
+        outlineLargeSelected: `0 0 0 3px ${bronze.bronze7}`,
     },
 });
+
+
+
+export const darkTheme = createTheme('dark-blue', {
+    colors: {
+        // ...sand,
+        background: sandDark.sand1,
+        foreground: sandDark.sand9,
+        foregroundBorder: sandDark.sand9,
+        highlight: sandDark.sand3,
+        tint: sandDark.sand2,
+        foregroundText: sandDark.sand11,
+        text: sandDark.sand12,
+        //bronze
+        backgroundBronze: indigoDark.indigo1,
+        foregroundTintBronze: indigoDark.indigo5,
+        foregroundBronze: indigoDark.indigo9,
+        highlightBronze: indigoDark.indigo3,
+        foregroundTextBronze: indigoDark.indigo9,
+        textBronze: indigoDark.indigo12,
+        error: red.red10
+    },
+    shadows: {
+        small: `0px 2px 4px 2px rgba(0,0,0, 0.1)`,
+        normal: `0px 2px 8px 4px rgba(0,0,0, 0.15)`,
+        large: `0px 4px 8px 4px rgba(0,0,0, 0.15)`,
+        outline: `0 0 0 1px ${sandDark.sand9}`,
+        outlineLarge: `0 0 0 3px ${sandDark.sand9}`,
+        outlineSelected: `0 0 0 1px ${indigoDark.indigo9}`, //==foreground
+        outlineLargeSelected: `0 0 0 3px ${indigoDark.indigo9}`,
+    },
+});
+
+// export const lightThemePlain = createTheme('light-plain', {
+//     colors: {
+//         // ...sand,
+//         background: sand.sand1,
+//         foreground: sand.sand9,
+//         foregroundBorder: sand.sand8,
+//         highlight: sand.sand4,
+//         tint: sand.sand2,
+//         foregroundText: sand.sand9,
+//         text: sand.sand12,
+//         //bronze
+//         backgroundBronze: sand.sand1,
+//         foregroundBronze: sand.sand9,
+//         foregroundTintBronze: sand.sand5,
+//         highlightBronze: sand.sand3,
+//         foregroundTextBronze: sand.sand9,
+//         textBronze: sand.sand12,
+//         error: red.red10
+//     },
+//     shadows: {
+//         normal: `0px 2px 4px rgba(0,0,0, 0.5)`,
+//         large: `0px 1px 8px ${sand.sand6}`,
+//         outline: `0 0 0 1px ${sand.sand9}`, //==foreground
+//         outlineLarge: `0 0 0 3px ${sand.sand9}`,
+//         outlineSelected: `0 0 0 1px ${sand.sand11}`, //==foreground
+//         outlineLargeSelected: `0 0 0 3px ${sand.sand11}`,
+//     },
+// });
 
 
 
@@ -199,35 +260,6 @@ export const darkThemePlain = createTheme('dark-plain', {
 });
 
 
-export const darkTheme = createTheme('dark-blue', {
-    colors: {
-        // ...sand,
-        background: sandDark.sand1,
-        foreground: sandDark.sand9,
-        foregroundBorder: sandDark.sand9,
-        highlight: sandDark.sand3,
-        tint: sandDark.sand2,
-        foregroundText: sandDark.sand11,
-        text: sandDark.sand12,
-        //bronze
-        backgroundBronze: indigoDark.indigo1,
-        foregroundTintBronze: indigoDark.indigo5,
-        foregroundBronze: indigoDark.indigo9,
-        highlightBronze: indigoDark.indigo3,
-        foregroundTextBronze: indigoDark.indigo9,
-        textBronze: indigoDark.indigo12,
-        error: red.red10
-    },
-    shadows: {
-        small: `0px 2px 4px 2px rgba(0,0,0, 0.1)`,
-        normal: `0px 2px 8px 4px rgba(0,0,0, 0.15)`,
-        large: `0px 4px 8px 4px rgba(0,0,0, 0.15)`,
-        outline: `0 0 0 1px ${sandDark.sand9}`,
-        outlineLarge: `0 0 0 3px ${sandDark.sand9}`,
-        outlineSelected: `0 0 0 1px ${indigoDark.indigo9}`, //==foreground
-        outlineLargeSelected: `0 0 0 3px ${indigoDark.indigo9}`,
-    },
-});
 
 // export const redTheme = createTheme('dark-red', {
 //        colors: {

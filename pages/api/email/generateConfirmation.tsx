@@ -88,7 +88,7 @@ export default async function handler(
     }
 
     if (error) {
-        console.log('e1', error)
+        // console.log('e1', error)
         return res.status(500).json({ error: error.toString() })
     }
 

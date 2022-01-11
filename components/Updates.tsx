@@ -12,6 +12,8 @@ import Input from '@/design-system/primitives/Input'
 import EditIcon from '@/design-system/icons/RemoveCircled'
 import Button from '@/design-system/primitives/Button'
 import Link from 'next/link'
+import * as RadioGroup from '@radix-ui/react-radio-group';
+
 //state
 import { useEffect, useState } from "react"
 import { useAuth } from 'contexts/user'
@@ -23,25 +25,78 @@ import { parseDate } from 'src/date'
 //types
 import type { EntryType } from "@/design-system/Entry"
 
+
+const StyledRadio = styled(RadioGroup.Item, {
+    all: 'unset',
+    backgroundColor: '$highlight',
+    width: '$3',
+    height: '$3',
+    borderRadius: '100%',
+    position: 'relative',
+    boxSizing: 'border-box',
+    border: '1px solid transparent',
+    // display: 'flex',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    cursor: 'pointer',
+    // boxShadow: `0 2px 10px ${blackA.blackA7}`,
+    '&:hover': {
+        '&::after': {
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            content: '""',
+            display: 'block',
+            width: 11,
+            height: 11,
+            opacity: 0.5,
+            borderRadius: '$round',
+            backgroundColor: '$foregroundBronze'
+        },
+    }
+    ,
+    '&:focus': { border: '1px solid $highlightBronze' },
+})
+const StyledRadioIndicator = styled(RadioGroup.Indicator, {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    position: 'relative',
+    '&::after': {
+        content: '""',
+        display: 'block',
+        width: 11,
+        height: 11,
+        borderRadius: '$round',
+        backgroundColor: '$foregroundBronze'
+    },
+})
+
 const StyledSwitch = styled(Switch.Root, {
     all: 'unset',
     width: '100%',
     boxSizing: 'border-box',
     backgroundColor: '$highlightBronze',
-    borderRadius: '$2',
+    borderRadius: '$round',
+    cursor: 'pointer',
     position: 'relative',
+    padding: '$0 $0',
+    border: '1px solid transparent',
     WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
-    '&:focus': { boxShadow: `$small` },
+    '&:focus': { border: '1px solid $foreground' },
     '&[data-state="checked"]': { backgroundColor: '$highlight' },
 });
 
 const StyledThumb = styled(Switch.Thumb, {
     display: 'block',
     width: '50%',
-    height: '33px',
+    height: '$4',
     cursor: 'pointer',
-    backgroundColor: '$text',
-    borderRadius: '$2',
+    backgroundColor: 'white',
+    borderRadius: '$round',
     boxShadow: '$normal',
     transition: 'transform 100ms',
     transform: 'translateX(2px)',
@@ -60,7 +115,7 @@ const Updates = () => {
         <"default" | "confirm" | string>
         ("default");
 
-    const [notifications, setNotifications] = useState<EntryType[]>([])
+    const [notifications, setNotifications] = useState<{ entry: EntryType, created_at: string }[]>([])
     const [notificationSettings, setNotificationSettings] = useState<any>({
         delivery: null,
         email: null,
@@ -74,8 +129,9 @@ const Updates = () => {
             .from('user_notifications')
             .select('created_at, isSend, entry(title, publication, digest)')
             .eq('owner', user.id)
+            .order('created_at', { ascending: false })
             .limit(5)
-        if (!data) { return }
+        if (!data || error) { return }
         setNotifications(data)
     }
 
@@ -153,9 +209,25 @@ const Updates = () => {
 
     }
 
-    const ChangeNotificationType = async (newState: boolean) => {
+
+    const ChangeType = async (newState: string) => {
+        switch (newState) {
+            case 'ondemand':
+                ChangeNotificationType('ONDEMAND')
+                break;
+            case 'daily':
+                ChangeNotificationType('DAILY')
+                break;
+            case 'weekly':
+                ChangeNotificationType('WEEKLY')
+                break;
+            default:
+                throw new Error('not implemented')
+        }
+    }
+
+    const ChangeNotificationType = async (newSchedule: 'DAILY' | 'WEEKLY' | 'ONDEMAND') => {
         if (!user || !user.id) return;
-        const newSchedule = newState !== true ? "DAILY" : "WEEKLY"
         setNotificationSettings((settings: any) => {
             return ({
                 delivery: settings.delivery,
@@ -205,23 +277,17 @@ const Updates = () => {
         }
     }
 
-
     useEffect(() => {
         if (user && user.id) {
             getUserEmail()
             getItems()
         }
-    }, [user])
+    }, [user, supabase])
 
     return (
         <ButtonPopover
             icon={<NotificationsIcon />} label='change' isHighlighted={true}
         >
-            {/* <StyledCurationButton> */}
-
-            {/* <Label>{notifications?.length}</Label> */}
-            {/* </StyledCurationButton> */}
-            {/* <StyledContainer> */}
             <Tabs.Root defaultValue={'notifications'}>
                 <Box layout='flexBoxRow' css={{ alignItems: 'center', boxSizing: 'border-box', padding: '$2 $2', justifyContent: 'space-between' }}>
 
@@ -302,7 +368,8 @@ const Updates = () => {
                                     placeholder={'Your email'}
                                     css={{
                                         border: '0',
-                                        backgroundColor: '$highlightBronze', borderRadius: '$2', padding: '$0 $1',
+                                        height: '33px',
+                                        backgroundColor: '$highlightBronze', borderRadius: '$1', padding: '$1 $2',
                                         justifyContent: 'space-between',
                                         alignItems: 'center',
                                         color: '$foregroundTextBronze',
@@ -311,6 +378,9 @@ const Updates = () => {
                                         }
                                     }} />
                                 <Button type='submit'>Enable notifications</Button>
+                                <Label color='foreground'>
+                                    We store your email and notification settings on our server
+                                </Label>
                                 {(emailState !== "default" && emailState !== "confirm") && (
                                     <Box><Label css={{ color: '$foregroundTextBronze' }}>{emailState.toString()}</Label></Box>
                                 )}
@@ -321,6 +391,7 @@ const Updates = () => {
                                 <Box>
                                     <Label css={{ color: '$foregroundTextBronze' }}>
                                         Check your inbox for email confirmation
+
                                     </Label>
                                 </Box>
                             </Box>
@@ -355,47 +426,48 @@ const Updates = () => {
                                 <Box layout='flexBoxRow' css={{ color: '$foregroundText' }}>
                                     <Label css={{ color: '$foregroundText' }}>What is your preferred schedule?</Label>
                                     <Info>
-                                        Digest sends you a summary of what&apos;s happening accross your subscriptions or suggests new content.<br />
-                                        On demand only sends you a notification when the authors you follow publish a new entry.
+                                        <Label css={{ color: '$text' }} size='normal'>Daily</Label> or <Label css={{ color: '$text' }} size='normal'>Weekly</Label> digest is a summary of your subscriptions & content recommendations.<br /><br />
+                                        <Label css={{ color: '$text' }} size='normal'>On demand</Label> only sends you notifications when the authors you follow publish something new.
                                     </Info>
                                 </Box>
-                                <StyledSwitch
-                                    onCheckedChange={ChangeNotificationType}
-                                    css={{
-                                        backgroundColor: notificationSettings?.schedule !== 'WEEKLY' ? '$highlightBronze' : '$background'
-                                    }}
-                                    checked={notificationSettings?.schedule === 'WEEKLY' ? true : false}
-                                >
-                                    <Box
-                                        css={{
-                                            display: 'grid',
-                                            gridTemplateColumns: '1fr 1fr',
-                                            justifyContent: 'space-around',
-                                            alignItems: 'center',
-                                            padding: '0 0',
-                                            position: 'absolute', color: '$background', height: '100%', width: '100%', boxSizing: 'border-box', zIndex: '10000000'
-                                        }}>
-                                        <Box css={{
-                                            textAlign: 'center',
-                                            color: notificationSettings?.schedule === 'DAILY' ? '$background' : '$foregroundText'
 
-                                        }}><Label>DAILY</Label></Box>
-                                        <Box css={{
-                                            textAlign: 'center',
-                                        }}><Label css={{
-                                            color: notificationSettings?.schedule !== 'WEEKLY' ? '$foregroundTextBronze' : '$background'
-
-                                        }}>WEEKLY</Label></Box>
+                                <Box as={RadioGroup.Root}
+                                    onValueChange={ChangeType}
+                                    css={{ display: 'flex', flexDirection: 'column', gap: '$1' }} value={
+                                        notificationSettings?.schedule.toLowerCase()
+                                    } aria-label="View density">
+                                    <Box layout='flexBoxRow' css={{ alignItems: 'center' }}>
+                                        <StyledRadio value='ondemand' id='rd1'>
+                                            <StyledRadioIndicator />
+                                        </StyledRadio>
+                                        <Label as='label' htmlFor='rd1' color={'foreground'}>On demand</Label>
                                     </Box>
-                                    <StyledThumb />
-                                </StyledSwitch>
+                                    <Box layout='flexBoxRow' css={{ alignItems: 'center' }}>
+                                        <StyledRadio value='daily' id='rd2'>
+                                            <StyledRadioIndicator />
+                                        </StyledRadio>
+                                        <Label as='label' htmlFor='rd2' color={'foreground'}>Daily</Label>
+                                    </Box>
+                                    <Box layout='flexBoxRow' css={{ alignItems: 'center' }}>
+                                        <StyledRadio value='weekly' id='rd3'>
+                                            <StyledRadioIndicator />
+                                        </StyledRadio>
+                                        <Label as='label' htmlFor='rd3' color={'foreground'}>Weekly</Label>
+                                    </Box>
+                                </Box>
                             </Box>
 
-                            <Box as='section' layout='flexBoxColumn' >
+                            <Box as='section' layout='flexBoxColumn'
+                                css={{
+                                    opacity: notificationSettings?.schedule === 'ONDEMAND' ? 0.5 : 1,
+                                    pointerEvents: notificationSettings?.schedule === 'ONDEMAND' ? 'none' : 'all',
+                                    cursor: notificationSettings?.schedule === 'ONDEMAND' ? 'none' : 'pointer',
 
-
+                                }}
+                            >
                                 <Label css={{ color: '$foregroundText' }}>When do you want to receive the notifications?</Label>
                                 <StyledSwitch
+                                    tabIndex={notificationSettings?.schedule === 'ONDEMAND' ? -1 : 0}
                                     css={{
                                         backgroundColor: notificationSettings?.delivery === 'DAY' ? '$highlightBronze' : '$background'
                                     }}
@@ -406,8 +478,10 @@ const Updates = () => {
                                         css={{
                                             pointerEvents: 'none',
                                             justifyContent: 'space-around',
+                                            left: 0,
+                                            top: 0,
                                             alignItems: 'center',
-                                            padding: '0 0',
+                                            padding: '$0 $0',
                                             position: 'absolute', color: '$background', height: '100%', width: '100%', boxSizing: 'border-box', zIndex: '10000000'
                                         }}>
                                         <Label
@@ -419,13 +493,17 @@ const Updates = () => {
                                     </Box>
                                     <StyledThumb></StyledThumb>
                                 </StyledSwitch>
+                                <Label color='foreground'>
+                                    The schedule is based on EST-2 (Eastern Standard Time)
+                                </Label>
                             </Box>
+
+
                         </Box>
                     </StyledTabsContent>
                 )}
 
             </Tabs.Root>
-            {/* </StyledContainer> */}
 
         </ButtonPopover >
     )

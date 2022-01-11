@@ -248,6 +248,9 @@ const MySpace = () => {
     }
     return (
         <Layout>
+            {user.network?.name === 'homestead' && (
+                <Box as='h5' css={{ color: '$error' }}>Mainnet curation is not supported yet. Switch to Rinkeby</Box>)
+            }
             {(user && !isLoading) && (
                 <SpaceMethodsProvider user={user}>
                     <SpaceBody

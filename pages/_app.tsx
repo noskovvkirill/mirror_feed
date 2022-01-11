@@ -5,7 +5,7 @@ import { globalStyles } from "stitches.config";
 import { RecoilRoot } from 'recoil'
 // import { LazyMotion } from "framer-motion"
 import { ThemeProvider } from 'next-themes'
-import { darkThemePlain, lightThemePlain, lightThemeBlue, darkTheme } from 'stitches.config'
+import { darkThemePlain, lightTheme, lightThemeBlue, darkTheme } from 'stitches.config'
 import { UserProvider } from 'contexts/user'
 
 // const loadFeatures = () =>
@@ -24,8 +24,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           defaultTheme="dark-blue"
           value={{
             'dark-blue': darkTheme.className,
-            'light-cream': "light-cream",
-            'light-plain': lightThemePlain.className,
+            'light-cream': lightTheme.className,
             'dark-plain': darkThemePlain.className,
             'light-blue': lightThemeBlue.className,
           }}

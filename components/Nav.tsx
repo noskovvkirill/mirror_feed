@@ -3,8 +3,8 @@ import { styled } from "stitches.config"
 import { useTheme } from 'next-themes'
 import Settings from '@/design-system/Settings'
 import React from 'react'
-import ArrowDownIcon from '@/design-system/icons/ArrowDown'
-import ButtonControl from "@/design-system/primitives/ButtonControl"
+// import ArrowDownIcon from '@/design-system/icons/ArrowDown'
+// import ButtonControl from "@/design-system/primitives/ButtonControl"
 import Updates from "@/design-system/Updates"
 import { useAuth } from "contexts/user"
 
@@ -16,6 +16,9 @@ const StyledNav = styled(Box, {
     display: 'flex',
     flexDirection: 'row',
     gap: '$1',
+    '@bp1': {
+        padding: '$0 $3 $0 0'
+    }
 })
 
 

@@ -109,6 +109,7 @@ const StyledFallback = styled(Avatar.Fallback, {
     justifyContent: 'center',
     backgroundColor: '$highlightBronze',
     color: '$foregroundTextBronze',
+    borderRadius: '100%',
     fontSize: '$6',
     lineHeight: 1,
     fontWeight: 500,
@@ -140,8 +141,8 @@ const StyledFallback = styled(Avatar.Fallback, {
             },
             sm: {
                 boxShadow: '$outline',
-                width: 'calc($4 * 0.8)',
-                height: 'calc($4 * 0.8)',
+                width: '100%',
+                height: '100%',
                 '&:hover': {
                     boxShadow: '$outlineLarge'
                 },

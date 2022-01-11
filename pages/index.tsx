@@ -37,9 +37,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
             .from('mirroritems_test')
             .select('*')
             .order('timestamp', { ascending: false })
+            .eq('isPublished', true)
             .limit(19)
         if (error || data === null) {
-            return ({ notFound: true })
+            return { props: { entries: [] } }
         }
         const newdata = data.map((item) => ({ entry: item }))
         return { props: { entries: newdata } }
@@ -50,6 +51,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         'Cache-Control',
         'public, s-maxage=1, stale-while-revalidate=59'
     );
+
+
+    if (subdomain === "mirror-feed") {
+        return {
+            redirect: {
+                destination: `http://${"mirrorfeed"}.xyz/`,
+                permanent: true,
+            },
+        }
+    }
 
     // const domain = req?.headers?.host?.split('.').slice(1, req?.headers?.host?.split('.').length)[0]
     return {

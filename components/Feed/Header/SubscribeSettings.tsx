@@ -200,6 +200,19 @@ const SubscribeSettings = ({ isSubscribed, Subscribe, Unsubscribe, disabled, siz
                     </Box>
                 )}
 
+                {!disabled && (
+                    <Box layout='flexBoxRow' css={{
+                        width: '100%',
+                        borderRadius: '$2',
+                        padding: '$1 $2',
+                        color: '$foregroundBronze',
+                        background: '$foregroundTintBronze',
+                        fontSize: '$6'
+                    }}>
+                        Configure email & notification type in Settings
+                    </Box>
+                )}
+
                 {(!isSubscribed && Subscribe)
                     ? <StyledItem disabled={disabled} onSelect={onSubscribe}>
                         {loadingState === 'default' && (

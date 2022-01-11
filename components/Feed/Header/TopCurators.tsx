@@ -34,7 +34,7 @@ const TopCurators = ({ top, loading }: { top: TopType, loading?: boolean }) => {
                   <Profile profile={{}} size={'lg'} loading={loading} />
                </>
             )}
-            {top?.topCurators.map((curator) => {
+            {top?.topCurators?.map((curator) => {
                return (
                   <Profile
                      loading={loading}

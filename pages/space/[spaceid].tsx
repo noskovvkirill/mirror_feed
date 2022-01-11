@@ -7,6 +7,7 @@ import { ethers } from 'ethers';
 import Layout from '@/design-system/Layout'
 import CuratedArticle from '@/design-system/Curation/CuratedArticle'
 import Header from '@/design-system/Curation/Header'
+import Box from '@/design-system/primitives/Box'
 import { useAuth } from 'contexts/user';
 
 import type { ParsedUrlQuery } from 'querystring'
@@ -98,8 +99,11 @@ const Space = ({ space, entries }: Props) => {
     const { user } = useAuth();
     return (
         <Layout>
+            <Box as='h5' css={{ boxSizing: 'border-box', padding: '$2 calc($4 * 2)', color: '$error' }}>Curation is a work in progress. if you want to help shaping it reach out @noskovvkirill on Twitter</Box>
             <Header space={space}
-                isOwner={user?.address?.toLowerCase() === space?.owner.toLowerCase() ? true : false} />
+                isOwner={true}
+            // isOwner={user?.address?.toLowerCase() === space?.owner.toLowerCase() ? true : false} 
+            />
             {entries.map((item: any) => {
                 return (
                     <CuratedArticle

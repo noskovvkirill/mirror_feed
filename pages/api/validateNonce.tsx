@@ -57,7 +57,7 @@ export default async function handler(
       throw "database error"
     }
     const selectedUser = user as { id: string, address: string }
-    const expires = Number(new Date()) + 86400000
+    const expires = Number(new Date()) + 604800000
     console.log({
       "aud": "authenticated",
       "exp": expires,

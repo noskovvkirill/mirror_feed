@@ -169,6 +169,7 @@ query Entry($digest: String!) {
         body
         digest
         timestamp
+        publishStatus
         title
         featuredImage {
           mimetype

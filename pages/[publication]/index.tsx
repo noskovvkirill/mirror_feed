@@ -137,8 +137,20 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       return { notFound: true }
     }
 
+    const { data, error } = await supabase
+      .from('mirrorpublications')
+      .select('avatarURL, displayName')
+      .eq('ensLabel', publication.toString())
+      .single()
+
+    if (error || !data) {
+      console.log(error)
+      return { notFound: true }
+    }
+
     const pbl: SubscribedPublication = {
-      displayName: publication.toString(),
+      displayName: data.displayName ? data.displayName : null,
+      avatarURL: data.avatarURL,
       ensLabel: publication.toString(),
       type: 'ens'
     }
@@ -157,7 +169,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     }))
 
     const entrieFiltered = entriesData.filter(function (element: any) {
-      return element !== undefined;
+      return element !== undefined && element?.publishStatus === 'public'
     });
 
     //need to count subscribers later 
@@ -260,7 +272,7 @@ export const Data = ({ pbl, entries, profiles }: Props) => {
                 <Box layout='flexBoxRow' css={{ height: '100%', alignItems: 'center' }}>
                   <Profile
                     size={'lg'}
-                    profile={{ avatarURL: entries[0]?.publication?.avatarURL, displayName: entries[0]?.publication?.displayName, ensLabel: pbl.ensLabel }} />
+                    profile={{ avatarURL: pbl.avatarURL ? pbl.avatarURL : entries[0]?.publication?.avatarURL, displayName: entries[0]?.publication?.displayName, ensLabel: pbl.ensLabel }} />
                   &nbsp;&nbsp;
 
                   <Link passHref={true} href={`/${pbl.ensLabel}`}>
@@ -271,7 +283,7 @@ export const Data = ({ pbl, entries, profiles }: Props) => {
                           cursor: 'pointer', transition: '$color', '&:hover': { color: '$foregroundTextBronze' }
                         }}
                         size={'h1'}
-                        color={"foregroundText"}>{entries[0]?.publication?.displayName ? entries[0]?.publication?.displayName : pbl.ensLabel}&nbsp;</Heading>
+                        color={"foregroundText"}>{pbl.displayName ? pbl.displayName : pbl.ensLabel}&nbsp;</Heading>
                     </Box>
                   </Link>
                 </Box>
@@ -283,6 +295,11 @@ export const Data = ({ pbl, entries, profiles }: Props) => {
                     Unsubscribe={Unsubscribe}
                     isSubscribed={subscribed.state === 'hasValue' && subscribed.contents?.find((item: any) => item.ensLabel === pbl.ensLabel)}
                   />
+
+                  {/* {!user?.isConnected &&
+                    <Label css={{ display: 'flex', '@bp1': { display: 'none' } }}>
+                      Sign in to subscribe/unsubscribe
+                    </Label>} */}
 
                 </Box>
 

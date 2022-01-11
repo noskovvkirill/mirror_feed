@@ -67,7 +67,7 @@ export default async function handler(
     return res.status(200).json({ nonce: noncedata });
   }
   else {
-    console.log(' data', data)
+    // console.log(' data', data)
 
     return res.status(200).json({ nonce: data });
   }
