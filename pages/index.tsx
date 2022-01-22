@@ -40,8 +40,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
             .eq('isPublished', true)
             .limit(19)
         if (error || data === null) {
+            console.log('error', error)
             return { props: { entries: [] } }
         }
+
         const newdata = data.map((item) => ({ entry: item }))
         return { props: { entries: newdata } }
     }
